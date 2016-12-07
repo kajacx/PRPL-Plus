@@ -77,8 +77,8 @@ Identifier = [a-zA-Z_][0-9a-zA-Z_]*
 
 /*  ----  WHITESPACE  ----  */
 \#.*				{ return new WhitespaceSymbol(this); } /* comment */
-[ \t]+				{ return new WhitespaceSymbol(this); }
-\r\n|\n|\r			{ return new WhitespaceSymbol(this); }
+[ \t]+				{ return new WhitespaceSymbol(this); } /* normal whitespace */
+\r\n|\n|\r			{ return new WhitespaceSymbol(this); } /* new line */
 
 
 
@@ -88,12 +88,25 @@ Identifier = [a-zA-Z_][0-9a-zA-Z_]*
 
 
 
-/* ----  COPY PASTA ----  */
+/*  ----  PARENTHESIS  ----  */
+"("					{ return new ParSymbol(this, ParSymbol.Type.LEFT_PAR); }
+")"					{ return new ParSymbol(this, ParSymbol.Type.RIGHT_PAR); }
+
+
+
+/*  ----  COPY PASTA ----  */
 {Identifier}		{ return new Symbol(this); } /* Build-in function */
-[\:\[\]]			{ return new Symbol(this); } /* Random characters */
+[\[\]]				{ return new Symbol(this); } /* List indexers */
+-?[0-9]+(\.[0-9]+)?	{ return new Symbol(this); } /* Number constant */
+\"[^\"\#]*\"		{ return new Symbol(this); } /* String constant */
+
+
+
+/*  ----  END OF FILE  ----  */
+<<EOF>>				{ return null; }
 
 
 
 /* error fallback */
-[^]                 { throw new Error("Illegal character <"+yytext()+">"); }
+[^]                 { System.out.println("Illegal character <"+yytext()+">"); }
                                                         

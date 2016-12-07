@@ -29,9 +29,12 @@ public class VarSymbol extends Symbol {
     public VarSymbol(PrplPlusLexer lexer, Operation op, Scope scope, boolean isRef) {
         super(lexer);
 
-        if (!isRef) {
+        if (scope == Scope.ARGUMENT) {
+            varName = text.substring(1);
+        } else if (!isRef) {
             varName = text.substring(2);
         }
+
         this.op = op;
         this.scope = scope;
         this.isRef = isRef;
