@@ -10,7 +10,7 @@ public class UserFunctionSymbol extends Symbol {
     public UserFunctionSymbol(PrplPlusLexer lexer, boolean isDefinition) {
         super(lexer);
 
-        functionName = text.substring(0);
+        functionName = text.substring(1);
         this.isDefinition = isDefinition;
     }
 

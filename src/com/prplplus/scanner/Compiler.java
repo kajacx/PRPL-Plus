@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import com.prplplus.errors.ErrorHandler;
 import com.prplplus.errors.ErrorHandler.ErrorType;
 import com.prplplus.jflex.Symbol;
+import com.prplplus.jflex.symbols.SpecialSymbol;
+import com.prplplus.jflex.symbols.SpecialSymbol.Type;
+import com.prplplus.jflex.symbols.UserFunctionSymbol;
 import com.prplplus.jflex.symbols.VarSymbol;
 import com.prplplus.jflex.symbols.VarSymbol.Operation;
 import com.prplplus.jflex.symbols.VarSymbol.Scope;
@@ -29,10 +32,10 @@ public class Compiler {
         String scriptNamespace = manager.getPrefixFor("main");
         String functNamespace = null;
 
-        Symbol curSymbol;
+        while (true) {
+            Symbol curSymbol = lexer.getNextSymbol();
 
-        while (!(curSymbol = lexer.getNextSymbol()).isEOF()) {
-
+            //parenthesis
             if (curSymbol.isLeftPar()) {
                 if (ignoreNextLPar) {
                     ignoreNextLPar = false;
@@ -45,7 +48,9 @@ public class Compiler {
             }
 
             if (curSymbol.isRightPar()) {
-                if (lexer.peekNextUseful().isLeftPar()) {
+                if (parDepth == 0) {
+                    ErrorHandler.reportError(ErrorType.UNEXPECTED_RIGHT_PAR, curSymbol);
+                } else if (lexer.peekNextUseful().isLeftPar()) {
                     ignoreNextLPar = true;
                 } else {
                     varRefParStack.remove(parDepth);
@@ -57,6 +62,38 @@ public class Compiler {
                     }
                 }
                 writer.print(curSymbol.text);
+                continue;
+            }
+
+            //function definition
+            if (curSymbol instanceof UserFunctionSymbol) {
+                UserFunctionSymbol funcSym = (UserFunctionSymbol) curSymbol;
+                if (funcSym.isDefinition) {
+                    if (parDepth != 0) {
+                        ErrorHandler.reportError(ErrorType.UNCLOSED_LEFT_PAR, curSymbol);
+                        parDepth = 0;
+                        varRefParStack.clear();
+                        varRefParStack.add(null);
+                    }
+
+                    functNamespace = manager.getPrefixFor(funcSym.functionName);
+                }
+                writer.print(curSymbol.text);
+                continue;
+            }
+
+            //a special symbol
+            if (curSymbol instanceof SpecialSymbol) {
+                SpecialSymbol specSym = (SpecialSymbol) curSymbol;
+                if (specSym.type == Type.LOCAL_PREFIX) {
+                    if (functNamespace == null) {
+                        ErrorHandler.reportError(ErrorType.NOT_INSIDE_FUNCTION, specSym);
+                        return;
+                    }
+                    writer.print("\"" + functNamespace + "\"");
+                } else if (specSym.type == Type.SEMI_GLOBAL_PREFIX) {
+                    writer.print("\"" + scriptNamespace + "\"");
+                }
                 continue;
             }
 
@@ -106,6 +143,15 @@ public class Compiler {
 
                 continue;
             } //DONE if for variable
+
+            //end of file
+            if (curSymbol.isEOF()) {
+                if (parDepth != 0) {
+                    ErrorHandler.reportError(ErrorType.UNCLOSED_LEFT_PAR, curSymbol);
+                }
+
+                break;
+            }
 
             writer.print(curSymbol.text); //just print text for now
         }

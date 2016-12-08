@@ -11,8 +11,8 @@ public class Symbol {
      */
     public Symbol(PrplPlusLexer lexer) {
         text = lexer.yytext();
-        line = lexer.getLineNumber();
-        column = lexer.getColumnNumber();
+        line = lexer.getLineNumber() + 1;
+        column = lexer.getColumnNumber() + 1;
     }
 
     /**
