@@ -16,4 +16,14 @@ public class ParSymbol extends Symbol {
         this.type = type;
     }
 
+    @Override
+    public boolean isLeftPar() {
+        return type == Type.LEFT_PAR;
+    }
+
+    @Override
+    public boolean isRightPar() {
+        return type == Type.RIGHT_PAR;
+    }
+
 }

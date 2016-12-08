@@ -22,4 +22,16 @@ public class Symbol {
     public boolean isImportant() {
         return true;
     }
+
+    public boolean isEOF() {
+        return false;
+    }
+
+    public boolean isLeftPar() {
+        return false;
+    }
+
+    public boolean isRightPar() {
+        return false;
+    }
 }

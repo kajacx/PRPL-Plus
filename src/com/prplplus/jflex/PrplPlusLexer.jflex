@@ -3,6 +3,7 @@ package com.prplplus.jflex;
 
 import com.prplplus.jflex.symbols.*;
 import com.prplplus.jflex.symbols.VarSymbol.*;
+import com.prplplus.errors.*;
 
 /**
  * This class is a simple example lexer.
@@ -46,6 +47,7 @@ Identifier = [a-zA-Z_][0-9a-zA-Z_]*
 "+>!"				{ return new VarSymbol(this, Operation.WRITE, Scope.LOCAL, true); }
 "+?!"				{ return new VarSymbol(this, Operation.EXISTS, Scope.LOCAL, true); }
 "++?"				{ return new VarSymbol(this, Operation.DELETE, Scope.LOCAL, true); }
+"++%"				{ return new SpecialSymbol(this, SpecialSymbol.Type.LOCAL_PREFIX); }
 
 /* Semi-global variables */
 \<\-{Identifier}		{ return new VarSymbol(this, Operation.READ, Scope.SEMI_GLOBAL, false); }
@@ -58,6 +60,7 @@ Identifier = [a-zA-Z_][0-9a-zA-Z_]*
 "->!"				{ return new VarSymbol(this, Operation.WRITE, Scope.SEMI_GLOBAL, true); }
 "-?!"				{ return new VarSymbol(this, Operation.EXISTS, Scope.SEMI_GLOBAL, true); }
 "--?"				{ return new VarSymbol(this, Operation.DELETE, Scope.SEMI_GLOBAL, true); }
+"--%"				{ return new SpecialSymbol(this, SpecialSymbol.Type.SEMI_GLOBAL_PREFIX); }
 
 /* Global variables */
 \<\*{Identifier}		{ return new VarSymbol(this, Operation.READ, Scope.SEMI_GLOBAL, false); }
@@ -96,17 +99,21 @@ Identifier = [a-zA-Z_][0-9a-zA-Z_]*
 
 /*  ----  COPY PASTA ----  */
 {Identifier}		{ return new Symbol(this); } /* Build-in function */
-[\[\]]				{ return new Symbol(this); } /* List indexers */
+[\[\]\:]			{ return new Symbol(this); } /* List indexers and stuff */
 -?[0-9]+(\.[0-9]+)?	{ return new Symbol(this); } /* Number constant */
 \"[^\"\#]*\"		{ return new Symbol(this); } /* String constant */
 
 
 
 /*  ----  END OF FILE  ----  */
-<<EOF>>				{ return null; }
+<<EOF>>				{ return new EOFSymbol(this); }
 
 
 
 /* error fallback */
-[^]                 { System.out.println("Illegal character <"+yytext()+">"); }
+[^]                 { 
+					Symbol s = new Symbol(this);
+					ErrorHandler.reportError(ErrorHandler.ErrorType.INVALID_CHARACTER, s);
+					return s;
+					}
                                                         
