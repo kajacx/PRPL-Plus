@@ -11,7 +11,10 @@ import com.prplplus.scanner.Compiler;
 
 public class PrplPlusTest {
     public static void main(String[] args) throws IOException {
-        File fileIn = new File("c:\\Users\\kajacx\\Documents\\My Games\\particlefleet\\editor\\Creative Shipyard\\scripts\\test.prpl+");
+        //File fileIn = new File("c:\\Users\\kajacx\\Documents\\My Games\\particlefleet\\editor\\Creative Shipyard\\scripts\\test.prpl+");
+        File fileIn = new File("c:\\Users\\Karel\\Documents\\My Games\\particlefleet\\editor\\Creative Shipyard\\scripts\\test.prpl+");
+
+
         FileReader reader = new FileReader(fileIn);
         PrintWriter writer = new PrintWriter(System.out);
 
