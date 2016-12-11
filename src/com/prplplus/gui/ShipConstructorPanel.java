@@ -31,6 +31,7 @@ public class ShipConstructorPanel extends JPanel {
 
     private JTextField nameField;
     private Module selectedModule;
+    private int selectedHull = -1;
     private int[] hullSection = new int[MAX_SIZE * MAX_SIZE];
 
     private List<ModuleAtPosition> modules = new ArrayList<>();
@@ -55,11 +56,11 @@ public class ShipConstructorPanel extends JPanel {
         nameBar.add(nameField = new JTextField(20));
         topBar.add(nameBar, BorderLayout.WEST);
 
-        JPanel hullBar = new JPanel(new FlowLayout());
-        hullBar.setOpaque(false);
-        hullBar.add(new JLabel("Hull"));
-        hullBar.add(new JLabel("Section"));
-        topBar.add(hullBar, BorderLayout.EAST);
+        //JPanel hullBar = new JPanel(new FlowLayout());
+        //hullBar.setOpaque(false);
+        //hullBar.add(new JLabel("Hull"));
+        //hullBar.add(new JLabel("Section"));
+        topBar.add(new HullSelector(), BorderLayout.EAST);
 
         return topBar;
     }
@@ -74,7 +75,10 @@ public class ShipConstructorPanel extends JPanel {
         for (Module m : Module.values()) {
             JButton button = new JButton(m.name);
             button.setIcon(getImageForModule(m));
-            button.addActionListener(e -> selectedModule = m);
+            button.addActionListener(e -> {
+                selectedModule = m;
+                selectedHull = -1;
+            });
 
             modulesPanel.add(button);
         }
@@ -92,11 +96,71 @@ public class ShipConstructorPanel extends JPanel {
         return new ImageIcon(i);
     }
 
+    private int[] hullToDraw = { Hull.HULL_BLOCK, Hull.HULL_CORNER_LB, Hull.HULL_SPIKE_B };
+
+    private class HullSelector extends JPanel implements MouseListener {
+        public HullSelector() {
+            setPreferredSize(new Dimension(300, 30));
+            setBackground(new Color(196, 128, 64));
+
+            addMouseListener(this);
+        }
+
+        @Override
+        public void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            g.setColor(Color.black);
+
+            for (int i = 0; i < hullToDraw.length; i++) {
+                int x = 8 + i * (14 + 8);
+                int y = 8;
+                g.drawRect(x - 1, y - 1, 14 + 1, 14 + 1);
+                g.drawImage(Hull.hullImages[hullToDraw[i]], x, y, null);
+            }
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            //System.out.println("Kappa " + e.getPoint());
+            if (e.getButton() == MouseEvent.BUTTON1) {
+                for (int i = 0; i < hullToDraw.length; i++) {
+                    int x = 8 + i * (14 + 8);
+                    int y = 8;
+
+                    if (e.getX() >= x && e.getX() < x + 14 && e.getY() >= y && e.getY() <= y + 14) {
+                        selectedHull = hullToDraw[i];
+                        selectedModule = null;
+                        //System.out.println("Selected " + selectedHull);
+                        break;
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+        }
+
+
+    }
+
     private class ShipRenderer extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
         private int posX = 5; //offset, in pixels
         private int posY = 5; //offset, in pixels
 
-        private boolean dragging = false;
+        //private boolean dragging = false;
         private int lastX, lastY; //last position of the mouse
 
         private ShipRenderer() {
@@ -146,6 +210,13 @@ public class ShipConstructorPanel extends JPanel {
                 g.drawImage(m.module.image, m.x * zoom, m.y * zoom, m.module.width * zoom, m.module.height * zoom, null);
             }
 
+            //selected hull
+            if (selectedHull != -1) {
+                ModuleAtPosition pos = tryPlace(Module.LASER);
+                //if(inBounds(pos))
+                g.drawImage(Hull.hullImages[selectedHull], pos.x * zoom, pos.y * zoom, pos.module.width * zoom, pos.module.height * zoom, null);
+            }
+
             //selected module
             if (selectedModule != null) {
                 //System.out.println(selectedModule);
@@ -181,15 +252,33 @@ public class ShipConstructorPanel extends JPanel {
             return new ModuleAtPosition((int) Math.round(xPos), (int) Math.round(yPos), m);
         }
 
+        private void removeModuleAtMouseLocation() {
+            ModuleAtPosition pos = tryPlace(Module.LASER);
+            ModuleAtPosition module = null;
+
+            for (ModuleAtPosition m : modules) {
+                if (m.intersectsWith(pos)) {
+                    module = m;
+                    break;
+                }
+            }
+
+            modules.remove(module);
+        }
+
         private boolean nothingSelected() {
-            return selectedModule == null;
+            return selectedModule == null && selectedHull == -1;
+        }
+
+        private boolean inBounds(ModuleAtPosition module) {
+            return module.x >= 0 &&
+                    module.y >= 0 &&
+                    module.x + module.module.width <= MAX_SIZE &&
+                    module.y + module.module.height <= MAX_SIZE;
         }
 
         private boolean canBePlaced(ModuleAtPosition module) {
-            if (module.x < 0 ||
-                    module.y < 0 ||
-                    module.x + module.module.width > MAX_SIZE ||
-                    module.y + module.module.height > MAX_SIZE)
+            if (!inBounds(module))
                 return false;
 
             for (int i = module.x; i < module.x + module.module.width; i++) {
@@ -209,29 +298,31 @@ public class ShipConstructorPanel extends JPanel {
 
         @Override
         public void mouseClicked(MouseEvent e) {
-
-        }
-
-        @Override
-        public void mousePressed(MouseEvent e) {
             if (e.getButton() == MouseEvent.BUTTON1) {
-                if (selectedModule != null) {
+                if (selectedModule != null) { //module placement
                     ModuleAtPosition pos = tryPlace(selectedModule);
                     if (canBePlaced(pos)) {
                         modules.add(pos);
                     }
-                } else {
-                    //nothing selected
-                    //dragging = true;
-                    //lastX = e.getX();
-                    //lastY = e.getY();
+                } else if (selectedHull != -1) {
+                    ModuleAtPosition pos = tryPlace(Module.LASER);
+                    if (canBePlaced(pos)) {
+                        hullSection[pos.x * MAX_SIZE + pos.y] = selectedHull;
+                    }
                 }
             }
             if (e.getButton() == MouseEvent.BUTTON3) {
+                if (nothingSelected()) {
+                    removeModuleAtMouseLocation();
+                }
                 selectedModule = null;
             }
 
             this.repaint();
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
         }
 
         @Override
@@ -309,6 +400,7 @@ public class ShipConstructorPanel extends JPanel {
                 this.repaint();
             }
         }
+
 
 
     }

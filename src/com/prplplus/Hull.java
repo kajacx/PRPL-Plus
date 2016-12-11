@@ -46,6 +46,7 @@ public class Hull {
                     Image i = ImageIO.read(new File("img/hull/" + name + ".png"));
                     hullImages[value] = i;
                 } catch (Exception e) {
+                    System.out.println("Exception when reading: " + f.getName());
                     e.printStackTrace(System.out);
                 }
             }
