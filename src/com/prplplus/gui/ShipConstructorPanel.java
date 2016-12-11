@@ -270,29 +270,32 @@ public class ShipConstructorPanel extends JPanel {
             return selectedModule == null && selectedHull == -1;
         }
 
-        private boolean inBounds(ModuleAtPosition module) {
-            return module.x >= 0 &&
-                    module.y >= 0 &&
-                    module.x + module.module.width <= MAX_SIZE &&
-                    module.y + module.module.height <= MAX_SIZE;
+        private boolean canBePlaced(ModuleAtPosition module) {
+            return canBePlaced(module, true, true, true);
         }
 
-        private boolean canBePlaced(ModuleAtPosition module) {
-            if (!inBounds(module))
+        private boolean canBePlaced(ModuleAtPosition module, boolean checkBounds, boolean checkHull, boolean checkModules) {
+            if (checkBounds && !(module.x >= 0 &&
+                    module.y >= 0 &&
+                    module.x + module.module.width <= MAX_SIZE &&
+                    module.y + module.module.height <= MAX_SIZE))
                 return false;
 
-            for (int i = module.x; i < module.x + module.module.width; i++) {
-                for (int j = module.y; j < module.y + module.module.height; j++) {
-                    if (hullSection[i * MAX_SIZE + j] != Hull.HULL_BLOCK) {
-                        return false;
+            if (checkHull)
+                for (int i = module.x; i < module.x + module.module.width; i++) {
+                    for (int j = module.y; j < module.y + module.module.height; j++) {
+                        if (hullSection[i * MAX_SIZE + j] != Hull.HULL_BLOCK) {
+                            return false;
+                        }
                     }
                 }
-            }
 
-            for (ModuleAtPosition m : modules) {
-                if (m.intersectsWith(module))
-                    return false;
-            }
+            if (checkModules)
+                for (ModuleAtPosition m : modules) {
+                    if (m.intersectsWith(module))
+                        return false;
+                }
+
             return true;
         }
 
@@ -304,9 +307,9 @@ public class ShipConstructorPanel extends JPanel {
                     if (canBePlaced(pos)) {
                         modules.add(pos);
                     }
-                } else if (selectedHull != -1) {
+                } else if (selectedHull != -1) { //hull placement
                     ModuleAtPosition pos = tryPlace(Module.LASER);
-                    if (canBePlaced(pos)) {
+                    if (canBePlaced(pos, true, false, true)) {
                         hullSection[pos.x * MAX_SIZE + pos.y] = selectedHull;
                     }
                 }
