@@ -1,4 +1,4 @@
-package com.prplplus;
+package com.prplplus.shipconstruct;
 
 import java.awt.Image;
 import java.io.File;

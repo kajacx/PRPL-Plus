@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -21,10 +22,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import com.prplplus.Hull;
-import com.prplplus.Module;
-import com.prplplus.ModuleAtPosition;
+import com.prplplus.Clipboard;
 import com.prplplus.Settings;
+import com.prplplus.shipconstruct.Hull;
+import com.prplplus.shipconstruct.Module;
+import com.prplplus.shipconstruct.ModuleAtPosition;
+import com.prplplus.shipconstruct.ShipConstructor;
+import com.prplplus.shipconstruct.ShipConstructor.Ship;
+import com.prplplus.shipconstruct.ShipDeconstructor;
 
 public class ShipConstructorPanel extends JPanel {
     public static final int MAX_SIZE = 32;
@@ -44,6 +49,7 @@ public class ShipConstructorPanel extends JPanel {
         add(createTopBar(), BorderLayout.NORTH);
         add(new ShipRenderer(), BorderLayout.CENTER);
         add(createModulesPanel(), BorderLayout.EAST);
+        add(createBottomBar(), BorderLayout.SOUTH);
     }
 
     private JPanel createTopBar() {
@@ -86,6 +92,70 @@ public class ShipConstructorPanel extends JPanel {
         return modulesPanel;
     }
 
+    private JPanel createBottomBar() {
+        JPanel bar = new JPanel(new GridLayout(2, 1));
+        bar.setOpaque(false);
+        JPanel row;
+
+        //export
+        row = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        row.setOpaque(false);
+
+        JButton export = new JButton("Export to Base64");
+        JTextField area = new JTextField();
+        JButton copy = new JButton("Copy to clipboard");
+
+        export.addActionListener(e -> area.setText(export()));
+        area.setColumns(30);
+        //area.setEditable(false);
+        copy.addActionListener(e -> {
+            String text = area.getText();
+            if (!text.startsWith("Error: ")) {
+                Clipboard.copy(text);
+            }
+        });
+
+        row.add(export);
+        row.add(area);
+        row.add(copy);
+        bar.add(row);
+
+        //import
+        row = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        row.setOpaque(false);
+
+        JButton importButton = new JButton("Import from Base64");
+        JTextField importArea = new JTextField();
+        JButton paste = new JButton("Paste from clipboard");
+
+        importButton.addActionListener(e -> {
+            try {
+                Ship imported = ShipDeconstructor.deconstruct(importArea.getText());
+                importShip(imported);
+            } catch (RuntimeException ex) {
+                ex.printStackTrace(System.out);
+                importArea.setText("Error on import: " + ex.getMessage());
+            }
+        });
+        importArea.setColumns(30);
+        importArea.setEditable(true);
+        paste.addActionListener(e -> {
+            String text = Clipboard.paste();
+            if (text == null) {
+                importArea.setText("Error: Cannot paste from clipboard");
+            } else {
+                importArea.setText(text);
+            }
+        });
+
+        row.add(importButton);
+        row.add(importArea);
+        row.add(paste);
+        bar.add(row);
+
+        return bar;
+    }
+
     private ImageIcon getImageForModule(Module m) {
         int scaleFactor = 24 / Math.max(3, Math.max(m.width, m.height));
         Image i = m.image;
@@ -94,6 +164,103 @@ public class ShipConstructorPanel extends JPanel {
         }
         i = i.getScaledInstance(m.width * scaleFactor, m.height * scaleFactor, Image.SCALE_DEFAULT);
         return new ImageIcon(i);
+    }
+
+    private String export() {
+        String name = nameField.getText();
+        if (name.length() == 0) {
+            return "Error: Empty name";
+        }
+
+        //get bounds
+        int minX = Integer.MAX_VALUE;
+        int minY = Integer.MAX_VALUE;
+        int maxX = Integer.MIN_VALUE;
+        int maxY = Integer.MIN_VALUE;
+
+        for (int x = 0; x < MAX_SIZE; x++) {
+            for (int y = 0; y < MAX_SIZE; y++) {
+                if (hullSection[x * MAX_SIZE + y] != Hull.HULL_SPACE) {
+                    minX = Math.min(minX, x);
+                    minY = Math.min(minY, y);
+                    maxX = Math.max(maxX, x);
+                    maxY = Math.max(maxY, y);
+                }
+            }
+        }
+
+        int width = maxX - minX + 1;
+        int height = maxY - minY + 1;
+
+        //remap modules
+        List<ModuleAtPosition> newModuels = new ArrayList<>();
+        int commandX = -1;
+        int commandY = -1;
+        for (ModuleAtPosition module : modules) {
+            ModuleAtPosition newModule = module.copy();
+            newModule.x = newModule.x - minX; //relative remap
+            newModule.y = newModule.y - minY; //relative remap
+            newModule.y = height - newModule.y - newModule.module.height; //flip Y axis
+
+            if (newModule.module == Module.COMMAND) {
+                if (commandX != -1) {
+                    return "Error: Multiple command modules";
+                }
+                commandX = newModule.x;
+                commandY = newModule.y;
+            } else {
+                newModuels.add(newModule);
+            }
+        }
+        if (commandX == -1) {
+            return "Error: No command module";
+        }
+
+        //remap hull from col-major to row-major
+        int[] newHull = new int[width * height];
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                newHull[y * width + x] = hullSection[(x + minX) * MAX_SIZE + (height - y - 1 + minY)];
+            }
+        }
+
+        //TODO: consistency check
+
+        return ShipConstructor.construct(width, height, newHull, newModuels, commandX, commandY, name);
+    }
+
+    private void importShip(Ship ship) {
+        //erase existing ship
+        for (int i = 0; i < hullSection.length; i++) {
+            hullSection[i] = Hull.HULL_SPACE;
+        }
+
+        modules.clear();
+
+        //import hull
+        for (int y = 0; y < ship.height; y++) {
+            for (int x = 0; x < ship.width; x++) {
+                hullSection[x * MAX_SIZE + ship.height - y - 1] = ship.hull[y * ship.width + x];
+            }
+        }
+
+        //import modules
+        for (ModuleAtPosition m : ship.modules) {
+            ModuleAtPosition module = m.copy();
+            module.y = ship.height - module.y - module.module.height; //flip Y axis
+            modules.add(module);
+        }
+
+        //command module
+        ModuleAtPosition command = new ModuleAtPosition(ship.commandX, ship.commandY, Module.COMMAND);
+        command.y = ship.height - command.y - command.module.height;
+        modules.add(command);
+
+        //set name
+        nameField.setText(ship.name);
+
+        //and repaint
+        repaint();
     }
 
     private int[] hullToDraw = { Hull.HULL_BLOCK, Hull.HULL_CORNER_LB, Hull.HULL_SPIKE_B };
@@ -152,7 +319,6 @@ public class ShipConstructorPanel extends JPanel {
         @Override
         public void mouseExited(MouseEvent e) {
         }
-
 
     }
 
@@ -214,7 +380,16 @@ public class ShipConstructorPanel extends JPanel {
             if (selectedHull != -1) {
                 ModuleAtPosition pos = tryPlace(Module.LASER);
                 //if(inBounds(pos))
-                g.drawImage(Hull.hullImages[selectedHull], pos.x * zoom, pos.y * zoom, pos.module.width * zoom, pos.module.height * zoom, null);
+                int x = pos.x * zoom;
+                int y = pos.y * zoom;
+                int w = pos.module.width * zoom;
+                int h = pos.module.height * zoom;
+
+                g.setColor(getBackground());
+                g.fillRect(x, y, w, h);
+                g.drawImage(Hull.hullImages[selectedHull], x, y, w, h, null);
+                g.setColor(Color.black);
+                g.drawRect(x, y, w, h);
             }
 
             //selected module
@@ -231,7 +406,6 @@ public class ShipConstructorPanel extends JPanel {
 
             g.translate(posX, posY);
         }
-
 
         /**
          * Computed where the module would be placed,
@@ -403,8 +577,6 @@ public class ShipConstructorPanel extends JPanel {
                 this.repaint();
             }
         }
-
-
 
     }
 }

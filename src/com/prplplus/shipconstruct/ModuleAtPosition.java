@@ -1,4 +1,4 @@
-package com.prplplus;
+package com.prplplus.shipconstruct;
 
 public class ModuleAtPosition {
     public int x;
@@ -25,5 +25,9 @@ public class ModuleAtPosition {
             yCol = true;
 
         return xCol && yCol;
+    }
+
+    public ModuleAtPosition copy() {
+        return new ModuleAtPosition(x, y, module);
     }
 }

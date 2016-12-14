@@ -10,14 +10,17 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 
 public class MainFrame extends JFrame {
     public static final String version = "v0.0.1";
     public static final String title = "PRPL Toolset";
 
     public static void main(String[] args) {
-        MainFrame frame = new MainFrame();
-        frame.setVisible(true);
+        SwingUtilities.invokeLater(() -> {
+            MainFrame frame = new MainFrame();
+            frame.setVisible(true);
+        });
     }
 
     public MainFrame() {
@@ -47,7 +50,6 @@ public class MainFrame extends JFrame {
         JMenu menu;
         JMenuItem item;
 
-
         menu = new JMenu("File");
 
         item = new JMenuItem("Exit");
@@ -55,7 +57,6 @@ public class MainFrame extends JFrame {
         menu.add(item);
 
         bar.add(menu);
-
 
         menu = new JMenu("Help");
 
@@ -65,15 +66,6 @@ public class MainFrame extends JFrame {
 
         bar.add(menu);
 
-
         return bar;
     }
 }
-
-
-
-
-
-
-
-
