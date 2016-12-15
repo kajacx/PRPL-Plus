@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
-import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -16,14 +15,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import com.prplplus.Clipboard;
 import com.prplplus.Settings;
+import com.prplplus.gui.OffsetIterable.Offset;
 import com.prplplus.shipconstruct.Hull;
 import com.prplplus.shipconstruct.Module;
 import com.prplplus.shipconstruct.ModuleAtPosition;
@@ -32,7 +34,7 @@ import com.prplplus.shipconstruct.ShipConstructor.Ship;
 import com.prplplus.shipconstruct.ShipDeconstructor;
 
 public class ShipConstructorPanel extends JPanel {
-    public static final int MAX_SIZE = 32;
+    public static final int MAX_SIZE = 64;
 
     private JTextField nameField;
     private Module selectedModule;
@@ -52,6 +54,9 @@ public class ShipConstructorPanel extends JPanel {
         add(createBottomBar(), BorderLayout.SOUTH);
     }
 
+    private int brushSizeIndex = 0;
+    private int[] brushSizes = { 1, 3, 5, 9 };
+
     private JPanel createTopBar() {
         JPanel topBar = new JPanel(new BorderLayout());
         topBar.setOpaque(false);
@@ -60,13 +65,24 @@ public class ShipConstructorPanel extends JPanel {
         nameBar.setOpaque(false);
         nameBar.add(new JLabel("Name:"));
         nameBar.add(nameField = new JTextField(20));
+        nameField.setText("My Ship");
         topBar.add(nameBar, BorderLayout.WEST);
 
-        //JPanel hullBar = new JPanel(new FlowLayout());
-        //hullBar.setOpaque(false);
-        //hullBar.add(new JLabel("Hull"));
-        //hullBar.add(new JLabel("Section"));
-        topBar.add(new HullSelector(), BorderLayout.EAST);
+        HullSelector hullSelector = new HullSelector();
+        hullSelector.setLayout(new FlowLayout(FlowLayout.RIGHT));
+
+        hullSelector.add(new JLabel("Brush Size:"));
+        ButtonGroup group = new ButtonGroup();
+        for (int i = 0; i < brushSizes.length; i++) {
+            int j = i;
+            JRadioButton radio = new JRadioButton(brushSizes[i] + "", brushSizeIndex == i);
+            radio.addActionListener(e -> brushSizeIndex = j);
+            radio.setOpaque(false);
+            group.add(radio);
+            hullSelector.add(radio);
+        }
+
+        topBar.add(hullSelector, BorderLayout.EAST);
 
         return topBar;
     }
@@ -93,65 +109,44 @@ public class ShipConstructorPanel extends JPanel {
     }
 
     private JPanel createBottomBar() {
-        JPanel bar = new JPanel(new GridLayout(2, 1));
+        JPanel bar = new JPanel(new FlowLayout(FlowLayout.CENTER));
         bar.setOpaque(false);
-        JPanel row;
 
-        //export
-        row = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        row.setOpaque(false);
-
-        JButton export = new JButton("Export to Base64");
+        JButton exportButton = new JButton("Export to Clipboard");
+        JButton importButton = new JButton("Import from Clipboard");
         JTextField area = new JTextField();
-        JButton copy = new JButton("Copy to clipboard");
 
-        export.addActionListener(e -> area.setText(export()));
         area.setColumns(30);
         //area.setEditable(false);
-        copy.addActionListener(e -> {
-            String text = area.getText();
+        exportButton.addActionListener(e -> {
+            String text = export();
             if (!text.startsWith("Error: ")) {
                 Clipboard.copy(text);
+                area.setText("Export successful");
+            } else {
+                area.setText(text);
             }
         });
-
-        row.add(export);
-        row.add(area);
-        row.add(copy);
-        bar.add(row);
-
-        //import
-        row = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        row.setOpaque(false);
-
-        JButton importButton = new JButton("Import from Base64");
-        JTextField importArea = new JTextField();
-        JButton paste = new JButton("Paste from clipboard");
 
         importButton.addActionListener(e -> {
-            try {
-                Ship imported = ShipDeconstructor.deconstruct(importArea.getText());
-                importShip(imported);
-            } catch (RuntimeException ex) {
-                ex.printStackTrace(System.out);
-                importArea.setText("Error on import: " + ex.getMessage());
-            }
-        });
-        importArea.setColumns(30);
-        importArea.setEditable(true);
-        paste.addActionListener(e -> {
             String text = Clipboard.paste();
             if (text == null) {
-                importArea.setText("Error: Cannot paste from clipboard");
+                area.setText("Error: Cannot paste from clipboard");
             } else {
-                importArea.setText(text);
+                try {
+                    Ship imported = ShipDeconstructor.deconstruct(text);
+                    importShip(imported);
+                    area.setText("Import successful");
+                } catch (RuntimeException ex) {
+                    ex.printStackTrace(System.out);
+                    area.setText("Error: Invalid import data");
+                }
             }
         });
 
-        row.add(importButton);
-        row.add(importArea);
-        row.add(paste);
-        bar.add(row);
+        bar.add(exportButton);
+        bar.add(area);
+        bar.add(importButton);
 
         return bar;
     }
@@ -263,11 +258,11 @@ public class ShipConstructorPanel extends JPanel {
         repaint();
     }
 
-    private int[] hullToDraw = { Hull.HULL_BLOCK, Hull.HULL_CORNER_LB, Hull.HULL_SPIKE_B };
+    private int[] hullToDraw = { Hull.HULL_BLOCK, Hull.HULL_CORNER_LB, Hull.HULL_SPIKE_B, Hull.HULL_ARMOR_MASK, Hull.HULL_SPACE };
 
     private class HullSelector extends JPanel implements MouseListener {
         public HullSelector() {
-            setPreferredSize(new Dimension(300, 30));
+            setPreferredSize(new Dimension(350, 30));
             setBackground(new Color(196, 128, 64));
 
             addMouseListener(this);
@@ -281,13 +276,18 @@ public class ShipConstructorPanel extends JPanel {
             for (int i = 0; i < hullToDraw.length; i++) {
                 int x = 8 + i * (14 + 8);
                 int y = 8;
-                g.drawRect(x - 1, y - 1, 14 + 1, 14 + 1);
+                //g.drawRect(x - 1, y - 1, 14 + 1, 14 + 1);
                 g.drawImage(Hull.hullImages[hullToDraw[i]], x, y, null);
+                g.drawRect(x, y, 13, 13);
             }
         }
 
         @Override
         public void mouseClicked(MouseEvent e) {
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
             //System.out.println("Kappa " + e.getPoint());
             if (e.getButton() == MouseEvent.BUTTON1) {
                 for (int i = 0; i < hullToDraw.length; i++) {
@@ -296,16 +296,15 @@ public class ShipConstructorPanel extends JPanel {
 
                     if (e.getX() >= x && e.getX() < x + 14 && e.getY() >= y && e.getY() <= y + 14) {
                         selectedHull = hullToDraw[i];
+                        if (selectedHull == Hull.HULL_SPACE) {
+                            selectedHull = -1;
+                        }
                         selectedModule = null;
                         //System.out.println("Selected " + selectedHull);
                         break;
                     }
                 }
             }
-        }
-
-        @Override
-        public void mousePressed(MouseEvent e) {
         }
 
         @Override
@@ -329,21 +328,30 @@ public class ShipConstructorPanel extends JPanel {
         //private boolean dragging = false;
         private int lastX, lastY; //last position of the mouse
 
+        private Color semiTransparentBackground;
+
         private ShipRenderer() {
             setPreferredSize(new Dimension(512, 512));
 
-            setBackground(Color.lightGray);
+            OffsetIterable.init(brushSizes);
+
+            Color bgColor = new Color(128, 96, 0);
+            setBackground(bgColor);
+            semiTransparentBackground = new Color(bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue(), 128);
 
             addMouseListener(this);
             addMouseMotionListener(this);
             addMouseWheelListener(this);
 
-            for (int i = 2; i < 10; i++) {
-                hullSection[i * MAX_SIZE + i + 2] = Hull.HULL_CORNER_LB;
-                for (int j = i + 3; j < 16; j++) {
+            /*for (int i = 3; i < 8; i++) {
+                for (int j = 3; j < 8; j++) {
                     hullSection[i * MAX_SIZE + j] = Hull.HULL_BLOCK;
                 }
             }
+            
+            modules.add(new ModuleAtPosition(4, 4, Module.COMMAND));*/
+
+            importShip(ShipDeconstructor.deconstruct("CgQAcm9vdAMBAHMGAFNoaXA5OekDAG1wcwIAAAAAAKBAAACAPwAAAEAAABBBAAAAQQAAAEABAgBodw0AAAABAgBoaAcAAAALAgBocFsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABIAAAAAAAAAAAAAABIAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAUAAAAAAAAAAAAAAA4AAAALAAAACwAAAAsAAAALAAAADwAAAAAAAAAAAAAAAAAAAAYAAAABAAAAAQAAAAEAAAABAAAAAQAAAAAAAAAAAAAAAQAAAAEAAAABAAAADwAAAAAAAAAAAAAAAQAAAAEAAAABAAAAAQAAAAEAAAAAAAAAAAAAAAEAAAABAAAAAQAAAAsAAAATAAAACAAAAAEAAAABAAAAAQAAAAEAAAABAAAAAAAAAAAAAAABAAAAAQAAAAEAAAAMAAAAAAAAAAMAAAACAAAAAAAAAAAAAAADAAAAAQAAAAEAAAALAAAAAQAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAAAAAAAAAAAAAQMAY214AwAAAAEDAGNteQIAAAADAgBzbgcATXkgU2hpcAA="));
         }
 
         private Color transparentRed = new Color(255, 0, 0, 64);
@@ -380,16 +388,24 @@ public class ShipConstructorPanel extends JPanel {
             if (selectedHull != -1) {
                 ModuleAtPosition pos = tryPlace(Module.LASER);
                 //if(inBounds(pos))
-                int x = pos.x * zoom;
-                int y = pos.y * zoom;
                 int w = pos.module.width * zoom;
                 int h = pos.module.height * zoom;
 
-                g.setColor(getBackground());
-                g.fillRect(x, y, w, h);
-                g.drawImage(Hull.hullImages[selectedHull], x, y, w, h, null);
-                g.setColor(Color.black);
-                g.drawRect(x, y, w, h);
+                int brushSize = brushSizeIndex;
+                int direction = Hull.getOffsetDirection(selectedHull);
+
+                for (Offset off : OffsetIterable.getFor(brushSize, direction)) {
+                    int x = (pos.x + off.x) * zoom;
+                    int y = (pos.y + off.y) * zoom;
+
+                    //if (selectedHull != Hull.HULL_ARMOR_MASK) {
+                    g.setColor(semiTransparentBackground);
+                    g.fillRect(x, y, w, h);
+                    //}
+                    g.drawImage(Hull.hullImages[selectedHull], x, y, w, h, null);
+                    g.setColor(Color.black);
+                    g.drawRect(x, y, w, h);
+                }
             }
 
             //selected module
@@ -473,22 +489,39 @@ public class ShipConstructorPanel extends JPanel {
             return true;
         }
 
+        private void onHullClick(ModuleAtPosition position, int mouseButton) {
+            ModuleAtPosition pos = position.copy();
+            for (Offset off : OffsetIterable.getFor(brushSizeIndex, Hull.getOffsetDirection(selectedHull))) {
+                pos.x = position.x + off.x;
+                pos.y = position.y + off.y;
+
+                if (canBePlaced(pos, true, false, true)) {
+                    int index = pos.x * MAX_SIZE + pos.y;
+                    if (selectedHull == Hull.HULL_ARMOR_MASK) {
+                        hullSection[index] = Hull.withArmor(hullSection[index], mouseButton == MouseEvent.BUTTON1);
+                    } else if (mouseButton == MouseEvent.BUTTON1) {
+                        hullSection[index] = selectedHull;
+                    } else {
+                        hullSection[index] = Hull.HULL_SPACE;
+                    }
+                }
+            }
+
+        }
+
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (e.getButton() == MouseEvent.BUTTON1) {
+            if (selectedHull != -1) { //hull placement
+                ModuleAtPosition pos = tryPlace(Module.LASER);
+                onHullClick(pos, e.getButton());
+            } else if (e.getButton() == MouseEvent.BUTTON1) {
                 if (selectedModule != null) { //module placement
                     ModuleAtPosition pos = tryPlace(selectedModule);
                     if (canBePlaced(pos)) {
                         modules.add(pos);
                     }
-                } else if (selectedHull != -1) { //hull placement
-                    ModuleAtPosition pos = tryPlace(Module.LASER);
-                    if (canBePlaced(pos, true, false, true)) {
-                        hullSection[pos.x * MAX_SIZE + pos.y] = selectedHull;
-                    }
                 }
-            }
-            if (e.getButton() == MouseEvent.BUTTON3) {
+            } else if (e.getButton() == MouseEvent.BUTTON3) {
                 if (nothingSelected()) {
                     removeModuleAtMouseLocation();
                 }
@@ -505,7 +538,7 @@ public class ShipConstructorPanel extends JPanel {
         @Override
         public void mouseReleased(MouseEvent e) {
             /*if (e.getButton() == MouseEvent.BUTTON1) {
-                dragging = false;
+            dragging = false;
             }*/
         }
 
@@ -538,13 +571,29 @@ public class ShipConstructorPanel extends JPanel {
             this.repaint();
         }
 
+        private void onHullWheel(MouseWheelEvent e) {
+            if (e.isControlDown()) {
+                processZoom(e);
+            } else if (e.isShiftDown()) {
+                //TODO: hull type rotation
+            } else if (e.isAltDown()) {
+                //TODO: hull paint radius rotation
+            } else {
+                int rotation = e.getWheelRotation();
+                if (rotation > 0) {
+                    selectedHull = Hull.rotateCW(selectedHull);
+                } else {
+                    selectedHull = Hull.rotateCCW(selectedHull);
+                }
+            }
+        }
+
         private int zoomIndex = 6;
         private int[] zoomIndexTable = { 4, 6, 8, 11, 15, 21, 29, 42 };
 
         private int zoom = zoomIndexTable[zoomIndex]; //number of pixels per 1 slot
 
-        @Override
-        public void mouseWheelMoved(MouseWheelEvent e) {
+        private void processZoom(MouseWheelEvent e) {
             int prevZoom = zoom;
             zoomIndex -= e.getWheelRotation();
             zoomIndex = Math.max(zoomIndex, 0);
@@ -573,9 +622,18 @@ public class ShipConstructorPanel extends JPanel {
 
                 posX = (int) (newX / zoomRatio);
                 posY = (int) (newY / zoomRatio);
-
-                this.repaint();
             }
+        }
+
+        @Override
+        public void mouseWheelMoved(MouseWheelEvent e) {
+            if (selectedHull != -1) {
+                onHullWheel(e);
+            } else {
+                processZoom(e);
+            }
+
+            this.repaint();
         }
 
     }

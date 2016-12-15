@@ -6,6 +6,8 @@ import java.lang.reflect.Field;
 
 import javax.imageio.ImageIO;
 
+import com.prplplus.gui.OffsetIterable;
+
 public class Hull {
 
     //@formatter:off
@@ -21,6 +23,8 @@ public class Hull {
     public static final int HULL_SPIKE_R         = 0x0007;
     public static final int HULL_SPIKE_T         = 0x0008;
     public static final int HULL_SPIKE_L         = 0x0009;
+    
+    public static final int HULL_ARMOR_MASK      = 0x000A; //don't use this, it's for rendering only
     
     public static final int HULL_ARMOR_BLOCK     = 0x000B;
     public static final int HULL_ARMOR_CORNER_LB = 0x000C;
@@ -53,7 +57,7 @@ public class Hull {
         }
     }
 
-    public static int setArmor(int hull, boolean armor) {
+    public static int withArmor(int hull, boolean armor) {
         if (armor && hull >= HULL_BLOCK && hull <= HULL_SPIKE_L) {
             return hull + HULL_ARMOR_BLOCK - HULL_BLOCK;
         }
@@ -64,18 +68,48 @@ public class Hull {
     }
 
     public static int rotateCCW(int hull) {
-        if (hull <= HULL_BLOCK || hull == HULL_ARMOR_BLOCK)
-            return hull;
-        hull += 2;
-        hull = hull / 4 + (hull + 1) % 4;
-        return hull - 2;
+        //fuck it, this is way easier anyway
+        //@formatter:off
+        switch(hull) {
+        case HULL_CORNER_LB: return HULL_CORNER_RB;
+        case HULL_CORNER_RB: return HULL_CORNER_RT;
+        case HULL_CORNER_RT: return HULL_CORNER_LT;
+        case HULL_CORNER_LT: return HULL_CORNER_LB;
+        case HULL_SPIKE_B: return HULL_SPIKE_R;
+        case HULL_SPIKE_R: return HULL_SPIKE_T;
+        case HULL_SPIKE_T: return HULL_SPIKE_L;
+        case HULL_SPIKE_L: return HULL_SPIKE_B;
+        case HULL_ARMOR_CORNER_LB: return HULL_ARMOR_CORNER_RB;
+        case HULL_ARMOR_CORNER_RB: return HULL_ARMOR_CORNER_RT;
+        case HULL_ARMOR_CORNER_RT: return HULL_ARMOR_CORNER_LT;
+        case HULL_ARMOR_CORNER_LT: return HULL_ARMOR_CORNER_LB;
+        case HULL_ARMOR_SPIKE_B: return HULL_ARMOR_SPIKE_R;
+        case HULL_ARMOR_SPIKE_R: return HULL_ARMOR_SPIKE_T;
+        case HULL_ARMOR_SPIKE_T: return HULL_ARMOR_SPIKE_L;
+        case HULL_ARMOR_SPIKE_L: return HULL_ARMOR_SPIKE_B;
+        default: return hull;
+        }
+        //@formatter:on
     }
 
     public static int rotateCW(int hull) {
-        if (hull <= HULL_BLOCK || hull == HULL_ARMOR_BLOCK)
-            return hull;
-        hull += 2;
-        hull = hull / 4 + (hull - 1) % 4;
-        return hull - 2;
+        //ain't nobody got time for this
+        return rotateCCW(rotateCCW(rotateCCW(hull)));
+    }
+
+    public static int getOffsetDirection(int hull) {
+        //@formatter:off
+        switch(withArmor(hull, false)) {
+        case HULL_CORNER_LB: return OffsetIterable.DIAG_LB;
+        case HULL_CORNER_RB: return OffsetIterable.DIAG_LT;
+        case HULL_CORNER_RT: return OffsetIterable.DIAG_LB;
+        case HULL_CORNER_LT: return OffsetIterable.DIAG_LT;
+        case HULL_SPIKE_B: return OffsetIterable.HORIZONTAL;
+        case HULL_SPIKE_R: return OffsetIterable.VERTICAL;
+        case HULL_SPIKE_T: return OffsetIterable.HORIZONTAL;
+        case HULL_SPIKE_L: return OffsetIterable.VERTICAL;
+        default: return OffsetIterable.FULL;
+        //@formatter:on
+        }
     }
 }
