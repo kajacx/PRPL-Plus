@@ -1,6 +1,9 @@
 package com.prplplus.gui;
 
 import java.awt.BorderLayout;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
+import java.awt.event.KeyEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -38,6 +41,9 @@ public class MainFrame extends JFrame {
         JPanel constPanel = new ShipConstructorPanel();
         tabs.addTab("Ship Construct", constIcon, constPanel, "Build large ships up to size 129x129");
 
+        KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+        manager.addKeyEventDispatcher(new MyDispatcher());
+
         add(tabs, BorderLayout.CENTER);
         pack();
 
@@ -67,5 +73,23 @@ public class MainFrame extends JFrame {
         bar.add(menu);
 
         return bar;
+    }
+
+    private static class MyDispatcher implements KeyEventDispatcher {
+        @Override
+        public boolean dispatchKeyEvent(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_ALT) {
+                e.consume();
+            }
+
+            /*if (e.getID() == KeyEvent.KEY_PRESSED) {
+                System.out.println("tester");
+            } else if (e.getID() == KeyEvent.KEY_RELEASED) {
+                System.out.println("2test2");
+            } else if (e.getID() == KeyEvent.KEY_TYPED) {
+                System.out.println("3test3");
+            }*/
+            return false;
+        }
     }
 }

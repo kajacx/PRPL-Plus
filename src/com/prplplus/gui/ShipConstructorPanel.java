@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -25,6 +27,7 @@ import javax.swing.JTextField;
 
 import com.prplplus.Clipboard;
 import com.prplplus.Settings;
+import com.prplplus.Utils;
 import com.prplplus.gui.OffsetIterable.Offset;
 import com.prplplus.shipconstruct.Hull;
 import com.prplplus.shipconstruct.Module;
@@ -321,7 +324,7 @@ public class ShipConstructorPanel extends JPanel {
 
     }
 
-    private class ShipRenderer extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
+    private class ShipRenderer extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener {
         private int posX = 5; //offset, in pixels
         private int posY = 5; //offset, in pixels
 
@@ -342,6 +345,8 @@ public class ShipConstructorPanel extends JPanel {
             addMouseListener(this);
             addMouseMotionListener(this);
             addMouseWheelListener(this);
+            addKeyListener(this);
+            setFocusable(true);
 
             /*for (int i = 3; i < 8; i++) {
                 for (int j = 3; j < 8; j++) {
@@ -578,6 +583,8 @@ public class ShipConstructorPanel extends JPanel {
                 //TODO: hull type rotation
             } else if (e.isAltDown()) {
                 //TODO: hull paint radius rotation
+                brushSizeIndex -= e.getWheelRotation();
+                brushSizeIndex = Utils.clamp(0, brushSizes.length - 1, brushSizeIndex);
             } else {
                 int rotation = e.getWheelRotation();
                 if (rotation > 0) {
@@ -596,8 +603,7 @@ public class ShipConstructorPanel extends JPanel {
         private void processZoom(MouseWheelEvent e) {
             int prevZoom = zoom;
             zoomIndex -= e.getWheelRotation();
-            zoomIndex = Math.max(zoomIndex, 0);
-            zoomIndex = Math.min(zoomIndex, zoomIndexTable.length - 1);
+            zoomIndex = Utils.clamp(0, zoomIndexTable.length - 1, zoomIndex);
             zoom = zoomIndexTable[zoomIndex];
 
             if (prevZoom != zoom) {
@@ -634,6 +640,24 @@ public class ShipConstructorPanel extends JPanel {
             }
 
             this.repaint();
+        }
+
+        @Override
+        public void keyTyped(KeyEvent e) {
+            System.out.println("Key typed: " + e.getKeyChar());
+            e.consume();
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            System.out.println("Key pressed: " + e.getKeyChar());
+            e.consume();
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+            System.out.println("Key released: " + e.getKeyChar());
+            e.consume();
         }
 
     }
