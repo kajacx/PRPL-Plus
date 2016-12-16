@@ -21,6 +21,7 @@ public class PrplPlusLexer {
 
   /** lexical states */
   public static final int YYINITIAL = 0;
+  public static final int COMMENT = 2;
 
   /**
    * ZZ_LEXSTATE[l] is the state in the DFA for the lexical state l
@@ -29,18 +30,20 @@ public class PrplPlusLexer {
    * l is of the form l = 2*k, k a non negative integer
    */
   private static final int ZZ_LEXSTATE[] = { 
-     0, 0
+     0,  0,  1, 1
   };
 
   /** 
    * Translates characters to character classes
    */
   private static final String ZZ_CMAP_PACKED = 
-    "\11\0\1\20\1\15\1\17\1\17\1\16\22\0\1\20\1\7\1\27"+
-    "\1\14\1\13\1\10\2\0\1\23\1\24\1\12\1\4\1\0\1\11"+
-    "\1\26\1\0\12\2\1\21\1\0\1\3\1\0\1\5\1\6\1\22"+
-    "\32\1\1\25\1\0\1\25\1\0\1\1\1\0\32\1\12\0\1\17"+
-    "\u1fa2\0\1\17\1\17\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\udfe6\0";
+    "\11\0\1\37\1\34\1\36\1\36\1\35\22\0\1\37\1\7\1\50"+
+    "\1\33\1\12\1\13\2\0\1\44\1\45\1\52\1\4\1\0\1\10"+
+    "\1\47\1\51\1\42\11\2\1\40\1\0\1\3\1\0\1\5\1\6"+
+    "\1\41\32\1\1\46\1\0\1\46\1\0\1\1\1\0\1\25\1\23"+
+    "\1\16\1\21\1\22\3\1\1\14\1\1\1\30\1\17\1\1\1\15"+
+    "\1\27\2\1\1\24\1\31\1\32\1\20\2\1\1\43\1\26\1\1"+
+    "\3\0\1\11\6\0\1\36\u1fa2\0\1\36\1\36\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\udfe6\0";
 
   /** 
    * Translates characters to character classes
@@ -53,14 +56,16 @@ public class PrplPlusLexer {
   private static final int [] ZZ_ACTION = zzUnpackAction();
 
   private static final String ZZ_ACTION_PACKED_0 =
-    "\1\0\1\1\2\2\5\1\4\3\1\2\1\1\1\4"+
-    "\1\5\1\2\1\1\12\0\1\6\1\7\1\10\1\0"+
-    "\1\2\1\11\1\12\1\13\1\14\1\15\1\16\1\17"+
-    "\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27"+
-    "\1\30\1\31\1\32";
+    "\2\0\1\1\2\2\6\1\4\3\1\2\1\1\1\2"+
+    "\1\4\1\5\1\2\2\1\1\6\13\0\1\7\3\0"+
+    "\1\10\1\11\2\0\1\12\1\0\1\13\1\2\1\14"+
+    "\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24"+
+    "\1\25\1\26\1\27\1\30\1\31\1\32\1\33\1\34"+
+    "\1\35\1\36\3\0\1\37\15\0\1\40\1\41\2\0"+
+    "\1\42\2\0";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[52];
+    int [] result = new int[90];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -85,16 +90,21 @@ public class PrplPlusLexer {
   private static final int [] ZZ_ROWMAP = zzUnpackRowMap();
 
   private static final String ZZ_ROWMAP_PACKED_0 =
-    "\0\0\0\30\0\60\0\110\0\140\0\170\0\220\0\250"+
-    "\0\300\0\330\0\30\0\360\0\u0108\0\u0120\0\u0138\0\30"+
-    "\0\30\0\30\0\u0150\0\u0168\0\u0180\0\u0198\0\u01b0\0\u01c8"+
-    "\0\u01e0\0\u01f8\0\u0210\0\u0228\0\u0240\0\u0258\0\u0270\0\u0288"+
-    "\0\u0150\0\u0168\0\u02a0\0\30\0\u02b8\0\30\0\u02d0\0\30"+
-    "\0\30\0\u02e8\0\30\0\u0300\0\30\0\u0318\0\30\0\u0330"+
-    "\0\30\0\u0348\0\30\0\30";
+    "\0\0\0\53\0\126\0\201\0\254\0\327\0\u0102\0\u012d"+
+    "\0\u0158\0\u0183\0\u01ae\0\u01d9\0\126\0\u0204\0\u022f\0\u025a"+
+    "\0\u0285\0\u02b0\0\126\0\126\0\126\0\u02db\0\u0306\0\u0331"+
+    "\0\u035c\0\u0387\0\u03b2\0\u03dd\0\u0408\0\u0433\0\u045e\0\u0489"+
+    "\0\u04b4\0\u04df\0\u050a\0\u0535\0\u0560\0\u058b\0\u05b6\0\u05e1"+
+    "\0\u060c\0\u0637\0\u02db\0\126\0\u0662\0\126\0\u0387\0\u068d"+
+    "\0\126\0\u06b8\0\126\0\u06e3\0\126\0\126\0\u070e\0\126"+
+    "\0\u0739\0\126\0\u0764\0\126\0\u078f\0\126\0\u07ba\0\126"+
+    "\0\126\0\126\0\u07e5\0\u0810\0\u083b\0\u0637\0\u0866\0\u0891"+
+    "\0\u08bc\0\u08e7\0\u0912\0\u093d\0\u0968\0\u0993\0\u09be\0\u09e9"+
+    "\0\u0a14\0\u0a3f\0\u0a6a\0\126\0\126\0\u0a95\0\u0ac0\0\126"+
+    "\0\u0aeb\0\u0b16";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[52];
+    int [] result = new int[90];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -117,26 +127,50 @@ public class PrplPlusLexer {
   private static final int [] ZZ_TRANS = zzUnpackTrans();
 
   private static final String ZZ_TRANS_PACKED_0 =
-    "\1\2\1\3\1\4\1\5\1\6\4\2\1\7\1\10"+
-    "\1\11\1\12\1\13\1\14\1\2\1\15\1\16\1\17"+
-    "\1\20\1\21\1\22\1\2\1\23\31\0\2\3\27\0"+
-    "\1\4\23\0\1\24\5\0\1\25\4\0\2\26\21\0"+
-    "\1\27\1\30\1\31\23\0\1\4\2\0\1\32\1\33"+
-    "\2\0\1\34\23\0\1\32\1\33\3\0\1\35\16\0"+
-    "\1\36\26\0\15\12\3\0\10\12\15\0\1\13\32\0"+
-    "\1\15\10\0\1\37\27\0\1\40\26\0\14\41\1\0"+
-    "\12\41\1\22\2\0\1\42\26\0\1\43\5\0\1\44"+
-    "\21\0\1\45\5\0\1\46\21\0\1\47\4\0\1\50"+
-    "\1\0\1\51\20\0\1\52\5\0\1\53\21\0\1\54"+
-    "\5\0\1\55\21\0\1\56\5\0\1\57\21\0\1\60"+
-    "\5\0\1\61\21\0\1\62\4\0\1\63\1\0\1\64"+
-    "\20\0\1\62\4\0\1\63\22\0\2\36\26\0\2\37"+
-    "\26\0\2\40\26\0\2\43\26\0\2\45\26\0\2\47"+
-    "\26\0\2\52\26\0\2\54\26\0\2\56\26\0\2\60"+
-    "\26\0\2\62\25\0";
+    "\1\3\1\4\1\5\1\6\1\7\3\3\1\10\1\11"+
+    "\1\12\1\13\17\4\1\14\1\15\1\16\1\3\1\17"+
+    "\1\20\1\21\1\22\1\4\1\23\1\24\1\25\1\3"+
+    "\1\26\1\27\1\3\34\30\1\15\1\16\14\30\1\31"+
+    "\54\0\2\4\11\0\17\4\7\0\2\4\11\0\1\5"+
+    "\37\0\1\5\4\0\1\32\7\0\1\33\3\0\2\34"+
+    "\45\0\1\35\1\36\1\37\46\0\1\5\2\0\1\40"+
+    "\1\41\1\0\1\42\31\0\1\22\15\0\1\40\1\41"+
+    "\2\0\1\43\42\0\1\44\12\0\17\44\10\0\1\44"+
+    "\23\0\1\45\2\0\1\46\3\0\1\47\27\0\34\14"+
+    "\3\0\14\14\34\0\1\15\55\0\1\17\14\0\1\50"+
+    "\12\0\17\50\10\0\1\50\10\0\1\51\12\0\17\51"+
+    "\10\0\1\51\11\0\1\5\37\0\1\5\1\52\3\0"+
+    "\1\32\3\0\33\53\1\0\14\53\1\25\2\53\52\0"+
+    "\1\54\34\30\2\0\14\30\1\55\34\30\2\0\13\30"+
+    "\1\56\1\30\2\0\1\57\37\0\1\57\11\0\1\60"+
+    "\5\0\1\61\4\0\17\60\10\0\1\60\10\0\1\62"+
+    "\5\0\1\63\4\0\17\62\10\0\1\62\10\0\1\64"+
+    "\4\0\1\65\4\0\1\66\17\64\10\0\1\64\10\0"+
+    "\1\67\5\0\1\70\4\0\17\67\10\0\1\67\10\0"+
+    "\1\71\5\0\1\72\4\0\17\71\10\0\1\71\10\0"+
+    "\1\73\5\0\1\74\4\0\17\73\10\0\1\73\10\0"+
+    "\1\75\5\0\1\76\4\0\17\75\10\0\1\75\10\0"+
+    "\1\77\4\0\1\100\4\0\1\101\17\77\10\0\1\77"+
+    "\10\0\1\77\4\0\1\100\4\0\1\102\17\77\10\0"+
+    "\1\77\10\0\2\44\11\0\17\44\7\0\2\44\24\0"+
+    "\1\103\51\0\1\104\55\0\1\105\34\0\2\50\11\0"+
+    "\17\50\7\0\2\50\10\0\2\51\11\0\17\51\7\0"+
+    "\2\51\11\0\1\106\37\0\1\106\10\0\34\30\2\0"+
+    "\13\30\1\0\1\30\1\0\2\60\11\0\17\60\7\0"+
+    "\2\60\10\0\2\62\11\0\17\62\7\0\2\62\10\0"+
+    "\2\64\11\0\17\64\7\0\2\64\10\0\2\67\11\0"+
+    "\17\67\7\0\2\67\10\0\2\71\11\0\17\71\7\0"+
+    "\2\71\10\0\2\73\11\0\17\73\7\0\2\73\10\0"+
+    "\2\75\11\0\17\75\7\0\2\75\10\0\2\77\11\0"+
+    "\17\77\7\0\2\77\25\0\1\107\57\0\1\110\56\0"+
+    "\1\111\42\0\1\112\57\0\1\113\44\0\1\114\54\0"+
+    "\1\115\57\0\1\116\55\0\1\117\43\0\1\120\55\0"+
+    "\1\121\50\0\1\122\6\0\1\123\43\0\1\124\56\0"+
+    "\1\125\41\0\1\126\67\0\1\127\41\0\1\130\56\0"+
+    "\1\131\51\0\1\132\60\0\1\130\20\0";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[864];
+    int [] result = new int[2881];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -174,13 +208,14 @@ public class PrplPlusLexer {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\1\0\1\11\10\1\1\11\4\1\3\11\1\1\12\0"+
-    "\3\1\1\0\2\1\1\11\1\1\1\11\1\1\2\11"+
-    "\1\1\1\11\1\1\1\11\1\1\1\11\1\1\1\11"+
-    "\1\1\2\11";
+    "\2\0\1\11\11\1\1\11\5\1\3\11\3\1\13\0"+
+    "\1\1\3\0\2\1\2\0\1\11\1\0\1\11\2\1"+
+    "\1\11\1\1\1\11\1\1\2\11\1\1\1\11\1\1"+
+    "\1\11\1\1\1\11\1\1\1\11\1\1\3\11\3\0"+
+    "\1\1\15\0\2\11\2\0\1\11\2\0";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[52];
+    int [] result = new int[90];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -258,13 +293,24 @@ public class PrplPlusLexer {
   /* user code: */
   /* Here goes this code I guess */
   
-  public int getLineNumber() {
-	  return yyline;
-  }
-  
-  public int getColumnNumber() {
-	  return yycolumn;
-  }
+    private String fileName;
+
+    public PrplPlusLexer(java.io.Reader in, String fileName) {
+        this(in);
+        this.fileName = fileName;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public int getLineNumber() {
+         return yyline;
+    }
+
+    public int getColumnNumber() {
+         return yycolumn;
+    }
   
 
 
@@ -288,7 +334,7 @@ public class PrplPlusLexer {
     char [] map = new char[0x110000];
     int i = 0;  /* index in packed string  */
     int j = 0;  /* index in unpacked array */
-    while (i < 120) {
+    while (i < 168) {
       int  count = packed.charAt(i++);
       char value = packed.charAt(i++);
       do map[j++] = value; while (--count > 0);
@@ -645,107 +691,139 @@ public class PrplPlusLexer {
 					ErrorHandler.reportError(ErrorHandler.ErrorType.INVALID_CHARACTER, s);
 					return s;
             }
-          case 27: break;
+          case 35: break;
           case 2: 
             { return new Symbol(this);
             }
-          case 28: break;
+          case 36: break;
           case 3: 
             { return new WhitespaceSymbol(this);
             }
-          case 29: break;
+          case 37: break;
           case 4: 
             { return new ParSymbol(this, ParSymbol.Type.LEFT_PAR);
             }
-          case 30: break;
+          case 38: break;
           case 5: 
             { return new ParSymbol(this, ParSymbol.Type.RIGHT_PAR);
             }
-          case 31: break;
-          case 6: 
-            { return new VarSymbol(this, Operation.WRITE, Scope.ARGUMENT, true);
-            }
-          case 32: break;
-          case 7: 
-            { return new UserFunctionSymbol(this, true);
-            }
-          case 33: break;
-          case 8: 
-            { return new UserFunctionSymbol(this, false);
-            }
-          case 34: break;
-          case 9: 
-            { return new VarSymbol(this, Operation.READ, Scope.LOCAL, false);
-            }
-          case 35: break;
-          case 10: 
-            { return new VarSymbol(this, Operation.READ, Scope.LOCAL, true);
-            }
-          case 36: break;
-          case 11: 
-            { return new VarSymbol(this, Operation.READ, Scope.SEMI_GLOBAL, false);
-            }
-          case 37: break;
-          case 12: 
-            { return new VarSymbol(this, Operation.READ, Scope.SEMI_GLOBAL, true);
-            }
-          case 38: break;
-          case 13: 
-            { return new VarSymbol(this, Operation.DELETE, Scope.LOCAL, false);
-            }
           case 39: break;
-          case 14: 
-            { return new VarSymbol(this, Operation.DELETE, Scope.LOCAL, true);
+          case 6: 
+            { return SpecialSymbol.addComment(this);
             }
           case 40: break;
-          case 15: 
-            { return new SpecialSymbol(this, SpecialSymbol.Type.LOCAL_PREFIX);
+          case 7: 
+            { return new VarSymbol(this, Operation.WRITE, Scope.ARGUMENT, true);
             }
           case 41: break;
-          case 16: 
-            { return new VarSymbol(this, Operation.WRITE, Scope.LOCAL, false);
+          case 8: 
+            { return new UserFunctionSymbol(this, true);
             }
           case 42: break;
-          case 17: 
-            { return new VarSymbol(this, Operation.WRITE, Scope.LOCAL, true);
+          case 9: 
+            { return new UserFunctionSymbol(this, false);
             }
           case 43: break;
-          case 18: 
-            { return new VarSymbol(this, Operation.EXISTS, Scope.LOCAL, false);
+          case 10: 
+            { yybegin(COMMENT); return SpecialSymbol.addComment(this);
             }
           case 44: break;
-          case 19: 
-            { return new VarSymbol(this, Operation.EXISTS, Scope.LOCAL, true);
+          case 11: 
+            { yybegin(YYINITIAL); return SpecialSymbol.addComment(this);
             }
           case 45: break;
-          case 20: 
-            { return new VarSymbol(this, Operation.WRITE, Scope.SEMI_GLOBAL, false);
+          case 12: 
+            { return new VarSymbol(this, Operation.READ, Scope.LOCAL, false);
             }
           case 46: break;
-          case 21: 
-            { return new VarSymbol(this, Operation.WRITE, Scope.SEMI_GLOBAL, true);
+          case 13: 
+            { return new VarSymbol(this, Operation.READ, Scope.LOCAL, true);
             }
           case 47: break;
-          case 22: 
-            { return new VarSymbol(this, Operation.EXISTS, Scope.SEMI_GLOBAL, false);
+          case 14: 
+            { return new VarSymbol(this, Operation.READ, Scope.SEMI_GLOBAL, false);
             }
           case 48: break;
-          case 23: 
-            { return new VarSymbol(this, Operation.EXISTS, Scope.SEMI_GLOBAL, true);
+          case 15: 
+            { return new VarSymbol(this, Operation.READ, Scope.SEMI_GLOBAL, true);
             }
           case 49: break;
-          case 24: 
-            { return new VarSymbol(this, Operation.DELETE, Scope.SEMI_GLOBAL, false);
+          case 16: 
+            { return new VarSymbol(this, Operation.DELETE, Scope.LOCAL, false);
             }
           case 50: break;
-          case 25: 
-            { return new VarSymbol(this, Operation.DELETE, Scope.SEMI_GLOBAL, true);
+          case 17: 
+            { return new VarSymbol(this, Operation.DELETE, Scope.LOCAL, true);
             }
           case 51: break;
-          case 26: 
-            { return new SpecialSymbol(this, SpecialSymbol.Type.SEMI_GLOBAL_PREFIX);
+          case 18: 
+            { return new SpecialSymbol(this, SpecialSymbol.Type.LOCAL_PREFIX);
             }
           case 52: break;
+          case 19: 
+            { return new VarSymbol(this, Operation.WRITE, Scope.LOCAL, false);
+            }
+          case 53: break;
+          case 20: 
+            { return new VarSymbol(this, Operation.WRITE, Scope.LOCAL, true);
+            }
+          case 54: break;
+          case 21: 
+            { return new VarSymbol(this, Operation.EXISTS, Scope.LOCAL, false);
+            }
+          case 55: break;
+          case 22: 
+            { return new VarSymbol(this, Operation.EXISTS, Scope.LOCAL, true);
+            }
+          case 56: break;
+          case 23: 
+            { return new VarSymbol(this, Operation.WRITE, Scope.SEMI_GLOBAL, false);
+            }
+          case 57: break;
+          case 24: 
+            { return new VarSymbol(this, Operation.WRITE, Scope.SEMI_GLOBAL, true);
+            }
+          case 58: break;
+          case 25: 
+            { return new VarSymbol(this, Operation.EXISTS, Scope.SEMI_GLOBAL, false);
+            }
+          case 59: break;
+          case 26: 
+            { return new VarSymbol(this, Operation.EXISTS, Scope.SEMI_GLOBAL, true);
+            }
+          case 60: break;
+          case 27: 
+            { return new VarSymbol(this, Operation.DELETE, Scope.SEMI_GLOBAL, false);
+            }
+          case 61: break;
+          case 28: 
+            { return new VarSymbol(this, Operation.DELETE, Scope.SEMI_GLOBAL, true);
+            }
+          case 62: break;
+          case 29: 
+            { return new SpecialSymbol(this, SpecialSymbol.Type.SEMI_GLOBAL_PREFIX);
+            }
+          case 63: break;
+          case 30: 
+            { return new SpecialSymbol(this, SpecialSymbol.Type.PRPL_PLUS_PREFIX);
+            }
+          case 64: break;
+          case 31: 
+            { return SpecialSymbol.pasreBase16(this);
+            }
+          case 65: break;
+          case 32: 
+            { return new SpecialSymbol(this, SpecialSymbol.Type.INCLUDE);
+            }
+          case 66: break;
+          case 33: 
+            { return new SpecialSymbol(this, SpecialSymbol.Type.LIBRARY);
+            }
+          case 67: break;
+          case 34: 
+            { return new SpecialSymbol(this, SpecialSymbol.Type.BLOCK_FOLD);
+            }
+          case 68: break;
           default:
             zzScanError(ZZ_NO_MATCH);
         }

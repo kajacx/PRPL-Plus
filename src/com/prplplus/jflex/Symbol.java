@@ -1,6 +1,7 @@
 package com.prplplus.jflex;
 
 public class Symbol {
+    public String fileFrom;
     public String text;
     public int line;
     public int column;
@@ -13,6 +14,7 @@ public class Symbol {
         text = lexer.yytext();
         line = lexer.getLineNumber() + 1;
         column = lexer.getColumnNumber() + 1;
+        fileFrom = lexer.getFileName();
     }
 
     /**
@@ -33,5 +35,22 @@ public class Symbol {
 
     public boolean isRightPar() {
         return false;
+    }
+
+    public boolean isFunctionDefinition() {
+        return false;
+    }
+
+    public boolean isEndOFComment() {
+        return text.equals("*/");
+    }
+
+    public boolean isString() {
+        return text.length() > 2 && text.startsWith("\"") && text.endsWith("\"");
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Symbol '%s':%d:%d: '%s'", fileFrom, line, column, text);
     }
 }

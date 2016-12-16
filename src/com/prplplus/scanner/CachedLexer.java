@@ -31,4 +31,16 @@ public class CachedLexer {
 
         return symbolCache.peekLast();
     }
+
+    public String getFilename() {
+        return lexer.getFileName();
+    }
+
+    public void close() {
+        try {
+            lexer.yyclose();
+        } catch (IOException e) {
+            e.printStackTrace(System.out);
+        }
+    }
 }

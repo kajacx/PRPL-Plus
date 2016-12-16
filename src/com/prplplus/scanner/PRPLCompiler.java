@@ -1,29 +1,56 @@
 package com.prplplus.scanner;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Queue;
 
+import com.prplplus.Settings;
 import com.prplplus.errors.ErrorHandler;
 import com.prplplus.errors.ErrorHandler.ErrorType;
+import com.prplplus.jflex.PrplPlusLexer;
 import com.prplplus.jflex.Symbol;
 import com.prplplus.jflex.symbols.SpecialSymbol;
-import com.prplplus.jflex.symbols.SpecialSymbol.Type;
 import com.prplplus.jflex.symbols.UserFunctionSymbol;
 import com.prplplus.jflex.symbols.VarSymbol;
 import com.prplplus.jflex.symbols.VarSymbol.Operation;
 import com.prplplus.jflex.symbols.VarSymbol.Scope;
 
-public class Compiler {
+public class PRPLCompiler {
 
     private PrintWriter writer;
     private NamespaceManager manager = new NamespaceManager();
+    private Queue<CachedLexer> includeQueue = new ArrayDeque<>();
 
-    public Compiler(PrintWriter writer) {
+    public PRPLCompiler(PrintWriter writer) {
         this.writer = writer;
     }
 
-    public void compile(CachedLexer lexer) throws IOException {
+    private void include(String fname, Symbol symbol) {
+
+        try {
+            FileReader reader = new FileReader(Settings.WORK_IN + fname);
+            PrplPlusLexer lexer = new PrplPlusLexer(reader, fname);
+            CachedLexer cached = new CachedLexer(lexer);
+
+            writer.println();
+            writer.println("# -- Start import from '" + fname + "' -- #");
+
+            compile(cached, false);
+
+            writer.println();
+            writer.println("# -- End import from '" + fname + "' -- #");
+
+        } catch (IOException ex) {
+            // TODO Auto-generated catch block
+            ErrorHandler.reportError(ErrorType.IMPORT_FAILED, symbol);
+            ex.printStackTrace(System.out);
+        }
+    }
+
+    public void compile(CachedLexer lexer, boolean isPrimary) throws IOException {
         ArrayList<VarSymbol> varRefParStack = new ArrayList<>();
         varRefParStack.add(null);
         int parDepth = 0;
@@ -33,6 +60,11 @@ public class Compiler {
         String functNamespace = null;
 
         while (true) {
+            if (!isPrimary && lexer.peekNextUseful().isFunctionDefinition()) {
+                includeQueue.add(lexer);
+                return;
+            }
+
             Symbol curSymbol = lexer.getNextSymbol();
 
             //parenthesis
@@ -85,14 +117,48 @@ public class Compiler {
             //a special symbol
             if (curSymbol instanceof SpecialSymbol) {
                 SpecialSymbol specSym = (SpecialSymbol) curSymbol;
-                if (specSym.type == Type.LOCAL_PREFIX) {
+                switch (specSym.type) {
+                case LOCAL_PREFIX:
                     if (functNamespace == null) {
                         ErrorHandler.reportError(ErrorType.NOT_INSIDE_FUNCTION, specSym);
-                        return;
                     }
                     writer.print("\"" + functNamespace + "\"");
-                } else if (specSym.type == Type.SEMI_GLOBAL_PREFIX) {
+                    break;
+                case SEMI_GLOBAL_PREFIX:
                     writer.print("\"" + scriptNamespace + "\"");
+                    break;
+                case PRPL_PLUS_PREFIX:
+                    writer.print("\"" + NamespaceManager.PRPL_PREFIX + "\"");
+                    break;
+                case BLOCK_FOLD:
+                case LIBRARY:
+                    writer.print("#" + curSymbol.text.substring(1));
+                    if (lexer.peekNextUseful().line == curSymbol.line)
+                        writer.println();
+                    break;
+                case INCLUDE:
+                    if (functNamespace != null) {
+                        ErrorHandler.reportError(ErrorType.INCLUDE_INSIDE_FUNCTION, curSymbol);
+                    }
+                    Symbol next = lexer.peekNextUseful();
+                    if (next.isString()) {
+                        if (parDepth != 0) {
+                            ErrorHandler.reportError(ErrorType.UNCLOSED_LEFT_PAR, curSymbol);
+                            parDepth = 0;
+                            varRefParStack.clear();
+                            varRefParStack.add(null);
+                        }
+                        String fname = next.text.substring(1, next.text.length() - 1);
+                        next.text = "";
+                        include(fname, curSymbol);
+                    } else {
+                        ErrorHandler.reportError(ErrorType.INCLUDE_MISSING_FILENAME, curSymbol);
+                    }
+                    break;
+                default:
+                    ErrorHandler.reportError(ErrorType.COMPILER_IN_TROUBLE, curSymbol);
+                    writer.print(curSymbol.text);
+                    break;
                 }
                 continue;
             }
@@ -148,9 +214,22 @@ public class Compiler {
             if (curSymbol.isEOF()) {
                 if (parDepth != 0) {
                     ErrorHandler.reportError(ErrorType.UNCLOSED_LEFT_PAR, curSymbol);
+                    parDepth = 0;
+                    varRefParStack.clear();
+                    varRefParStack.add(null);
                 }
 
-                break;
+                if (isPrimary && !includeQueue.isEmpty()) {
+                    CachedLexer newLexer = includeQueue.poll();
+                    writer.println();
+                    writer.println("# -- Functions from '" + newLexer.getFilename() + "' -- #");
+                    lexer.close();
+                    lexer = newLexer;
+                } else {
+                    //work done
+                    lexer.close();
+                    break;
+                }
             }
 
             writer.print(curSymbol.text); //just print text for now

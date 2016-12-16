@@ -14,4 +14,9 @@ public class UserFunctionSymbol extends Symbol {
         this.isDefinition = isDefinition;
     }
 
+    @Override
+    public boolean isFunctionDefinition() {
+        return isDefinition;
+    }
+
 }
