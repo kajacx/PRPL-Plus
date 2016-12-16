@@ -78,10 +78,10 @@ public class MainFrame extends JFrame {
     private static class MyDispatcher implements KeyEventDispatcher {
         @Override
         public boolean dispatchKeyEvent(KeyEvent e) {
-            if (e.getKeyCode() == KeyEvent.VK_ALT) {
+            if(e.getKeyCode() == KeyEvent.VK_ALT) {
                 e.consume();
             }
-
+            
             /*if (e.getID() == KeyEvent.KEY_PRESSED) {
                 System.out.println("tester");
             } else if (e.getID() == KeyEvent.KEY_RELEASED) {

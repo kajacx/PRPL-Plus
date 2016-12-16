@@ -164,6 +164,39 @@ public class ShipConstructorPanel extends JPanel {
         return new ImageIcon(i);
     }
 
+    private int[] searchHull;
+
+    private boolean isConnected(int commandX, int commandY) {
+        if (searchHull == null || searchHull.length != hullSection.length) {
+            searchHull = new int[hullSection.length];
+        }
+
+        System.arraycopy(hullSection, 0, searchHull, 0, hullSection.length);
+
+        searchConnected(searchHull, commandX, commandY);
+
+        for (int i = 0; i < searchHull.length; i++) {
+            if (searchHull[i] != Hull.HULL_SPACE) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    //true - connected, false - disconnected
+    private void searchConnected(int[] hull, int x, int y) {
+        if (x < 0 || x >= MAX_SIZE || y < 0 || y >= MAX_SIZE)
+            return;
+        if (hull[x * MAX_SIZE + y] == Hull.HULL_SPACE)
+            return;
+        hull[x * MAX_SIZE + y] = Hull.HULL_SPACE;
+        searchConnected(hull, x + 1, y);
+        searchConnected(hull, x, y + 1);
+        searchConnected(hull, x - 1, y);
+        searchConnected(hull, x, y - 1);
+    }
+
     private String export() {
         String name = nameField.getText();
         if (name.length() == 0) {
@@ -222,7 +255,10 @@ public class ShipConstructorPanel extends JPanel {
             }
         }
 
-        //TODO: consistency check
+        //check for hull consistency
+        if (!isConnected(commandX + minX, commandY + minY)) {
+            return "Error: Hull is not connected";
+        }
 
         return ShipConstructor.construct(width, height, newHull, newModuels, commandX, commandY, name);
     }
