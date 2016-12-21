@@ -1,0 +1,23 @@
+Import ships from PF editor to this editor:
+ - Open the default PF editor and click the "PRPL Data to Clipboard" button
+ - Click the "Import from Clipboard" button in this editor
+
+Export ships from this editor to PF (directly):
+ - After creating your ship, click the "Save as" button to save your ship
+ - This will also create a ".dat" file, move that file to "c:\Users\[YourName]\Documents\My Games\particlefleet\ships\"
+ - Currently only works on windows, contact me if you are a Linux/Mac user
+ - Once exported this way, you can see the ship editor, add it you fleet or ship pickup, even if larger than 35x25
+
+Export ships from this editor to PF (via AddCustomShipToInventory):
+ - Click the "Export to Clipboard" button to save the ship to a base-64 encoded string
+ - Paste this string to PRPL and call the "AddCustomShipToInventory" function on it
+
+Save your ship:
+ - Hitting the "Save as" button will save your ship to a target file as a base-64 encoded string
+ - It will also create a ".dat" file for the ship in the same directory
+ - Or you can "Export to Clipboard" to save your ships manually
+
+Load your ship:
+ - Hitting the "Load from" button will load your previously saved ship
+ - Make sure you select the base-64 encoded one, not the ".dat" file
+ - Or you can "Import from Clipboard" to load your ships manually

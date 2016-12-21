@@ -19,8 +19,11 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
 public class MainFrame extends JFrame {
+    private static final long serialVersionUID = -3729420411039341803L;
+
     public static final String version = "v0.0.3";
     public static final String title = "PRPL Toolset";
+    public static final String contact = "kajacx@gmail.com";
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -55,21 +58,28 @@ public class MainFrame extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
-    private String getShipConstructControls() {
+    private String getFileContents(String fileName, String orElse) {
+        BufferedReader reader = null;
         try {
-            String fileName = "ship_edit_controls.txt";
-            BufferedReader reader = new BufferedReader(new FileReader(fileName));
+            reader = new BufferedReader(new FileReader(fileName));
             StringBuffer buffer = new StringBuffer();
             String line;
             while ((line = reader.readLine()) != null) {
                 buffer.append(line);
                 buffer.append(System.lineSeparator());
             }
-            reader.close();
             return buffer.toString();
         } catch (IOException ex) {
             ex.printStackTrace(System.out);
-            return "Unable to load controls file, try restarting your program.";
+            return orElse;
+        } finally {
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace(System.out);
+            }
         }
     }
 
@@ -89,12 +99,18 @@ public class MainFrame extends JFrame {
         menu = new JMenu("Help");
 
         item = new JMenuItem("About");
-        item.addActionListener(e -> JOptionPane.showMessageDialog(this, title + "\nCreated by kajacx\nVersion: " + version));
+        String about = title + "\nCreated by kajacx\nContact: " + contact + "\nVersion: " + version;
+        item.addActionListener(e -> JOptionPane.showMessageDialog(this, about));
         menu.add(item);
 
         item = new JMenuItem("Ship Construct Controls");
-        String controls = getShipConstructControls();
+        String controls = getFileContents("ship_edit_controls.txt", "Unable to load controls file, try restarting your program.");
         item.addActionListener(e -> JOptionPane.showMessageDialog(this, controls));
+        menu.add(item);
+
+        item = new JMenuItem("How to import ships");
+        String howto = getFileContents("ship_how_to_import.txt", "Unable to load ship import tutorial, try restarting your program.");
+        item.addActionListener(e -> JOptionPane.showMessageDialog(this, howto));
         menu.add(item);
 
         bar.add(menu);
