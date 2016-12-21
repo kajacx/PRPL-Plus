@@ -49,6 +49,10 @@ public class Symbol {
         return text.length() > 2 && text.startsWith("\"") && text.endsWith("\"");
     }
 
+    public boolean isLibrary() {
+        return false;
+    }
+
     @Override
     public String toString() {
         return String.format("Symbol '%s':%d:%d: '%s'", fileFrom, line, column, text);

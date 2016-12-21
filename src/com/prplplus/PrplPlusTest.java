@@ -30,7 +30,7 @@ public class PrplPlusTest {
         PrplPlusLexer lexer = new PrplPlusLexer(reader, fineName);
         CachedLexer cached = new CachedLexer(lexer);
 
-        PRPLCompiler compiler = new PRPLCompiler(writer);
+        PRPLCompiler compiler = new PRPLCompiler(writer, Settings.WORK_IN + fineName);
 
         compiler.compile(cached, true);
 

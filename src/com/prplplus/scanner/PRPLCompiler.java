@@ -1,10 +1,12 @@
 package com.prplplus.scanner;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Queue;
 
 import com.prplplus.Settings;
@@ -24,16 +26,39 @@ public class PRPLCompiler {
     private NamespaceManager manager = new NamespaceManager();
     private Queue<CachedLexer> includeQueue = new ArrayDeque<>();
 
-    public PRPLCompiler(PrintWriter writer) {
+    private HashSet<String> importedScripts = new HashSet<>(); //import done or functions pending; full path
+    private HashSet<String> openedScripts = new HashSet<>(); //import in progress; full path
+
+    public PRPLCompiler(PrintWriter writer, String primaryFile) {
         this.writer = writer;
+        openedScripts.add(new File(primaryFile).getAbsolutePath());
     }
 
     private void include(String fname, Symbol symbol) {
 
         try {
-            FileReader reader = new FileReader(Settings.WORK_IN + fname);
+            File importFile = new File(Settings.WORK_IN + fname);
+            if (!importFile.exists()) {
+                ErrorHandler.reportError(ErrorType.INCLUDE_FILE_NOT_FOUND, symbol);
+                return;
+            }
+
+            String absPath = importFile.getAbsolutePath();
+            if (importedScripts.contains(absPath)) {
+                //already imported, do nothing
+                return;
+            }
+            if (openedScripts.contains(absPath)) {
+                //import loop
+                ErrorHandler.reportError(ErrorType.INCLUDE_CYCLE_DETECTED, symbol);
+                return;
+            }
+
+            FileReader reader = new FileReader(importFile);
             PrplPlusLexer lexer = new PrplPlusLexer(reader, fname);
             CachedLexer cached = new CachedLexer(lexer);
+
+            openedScripts.add(absPath);
 
             writer.println();
             writer.println("# -- Start import from '" + fname + "' -- #");
@@ -43,9 +68,12 @@ public class PRPLCompiler {
             writer.println();
             writer.println("# -- End import from '" + fname + "' -- #");
 
+            openedScripts.remove(absPath);
+            importedScripts.add(absPath);
+
         } catch (IOException ex) {
             // TODO Auto-generated catch block
-            ErrorHandler.reportError(ErrorType.IMPORT_FAILED, symbol);
+            ErrorHandler.reportError(ErrorType.INCLUDE_FAILED, symbol);
             ex.printStackTrace(System.out);
         }
     }
@@ -225,6 +253,7 @@ public class PRPLCompiler {
                     writer.println("# -- Functions from '" + newLexer.getFilename() + "' -- #");
                     lexer.close();
                     lexer = newLexer;
+                    continue;
                 } else {
                     //work done
                     lexer.close();
@@ -232,7 +261,7 @@ public class PRPLCompiler {
                 }
             }
 
-            writer.print(curSymbol.text); //just print text for now
+            writer.print(curSymbol.text); //just print text for everything else
         }
     }
 

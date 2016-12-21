@@ -18,6 +18,11 @@ public class SpecialSymbol extends Symbol {
         this.type = type;
     }
 
+    @Override
+    public boolean isLibrary() {
+        return type == Type.LIBRARY;
+    }
+
     public static Symbol pasreBase16(PrplPlusLexer lexer) {
         Symbol result = new Symbol(lexer);
 
