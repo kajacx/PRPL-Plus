@@ -19,7 +19,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
 public class MainFrame extends JFrame {
-    public static final String version = "v0.0.2";
+    public static final String version = "v0.0.3";
     public static final String title = "PRPL Toolset";
 
     public static void main(String[] args) {

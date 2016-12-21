@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -13,13 +14,18 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -37,16 +43,23 @@ import com.prplplus.shipconstruct.ShipConstructor.Ship;
 import com.prplplus.shipconstruct.ShipDeconstructor;
 
 public class ShipConstructorPanel extends JPanel {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7436127974014599287L;
+
     public static final int MAX_SIZE = 128;
 
     private JTextField nameField;
+    private JTextField statusArea;
+
     private Module selectedModule;
     private int selectedHull = -1;
+
     private int[] hullSection = new int[MAX_SIZE * MAX_SIZE];
+    private List<ModuleAtPosition> modules = new ArrayList<>();
 
     private ShipRenderer shipRenderer;
-
-    private List<ModuleAtPosition> modules = new ArrayList<>();
 
     public ShipConstructorPanel() {
         setLayout(new BorderLayout());
@@ -66,6 +79,12 @@ public class ShipConstructorPanel extends JPanel {
     private JPanel createTopBar() {
         JPanel topBar = new JPanel(new BorderLayout());
         topBar.setOpaque(false);
+
+        JLabel warning = new JLabel("Warning! Particle fleet was probably not designed to support uber large ships, " +
+                "they just happen to work. Beware of potencial lag issues.", JLabel.CENTER);
+        warning.setBackground(new Color(255, 196, 0));
+        warning.setOpaque(true);
+        topBar.add(warning, BorderLayout.NORTH);
 
         JPanel nameBar = new JPanel(new FlowLayout());
         nameBar.setOpaque(false);
@@ -94,9 +113,11 @@ public class ShipConstructorPanel extends JPanel {
     }
 
     private JPanel createLeftBar() {
-        JPanel leftBar = new JPanel();
-        leftBar.setLayout(new BoxLayout(leftBar, BoxLayout.Y_AXIS));
-        leftBar.setBackground(new Color(255, 226, 196));
+        JPanel wrapper = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        wrapper.setBackground(new Color(255, 226, 196));
+
+        JPanel leftBar = new JPanel(new GridLayout(10, 1));
+        leftBar.setOpaque(false);
 
         JButton moveUp = new JButton("Move Up");
         moveUp.addActionListener(e -> shipRenderer.shiftUp());
@@ -114,7 +135,21 @@ public class ShipConstructorPanel extends JPanel {
         moveDown.addActionListener(e -> shipRenderer.shiftDown());
         leftBar.add(moveDown);
 
-        return leftBar;
+        JPanel space = new JPanel();
+        space.setPreferredSize(new Dimension(30, 30));
+        space.setOpaque(false);
+        leftBar.add(space);
+
+        JButton saveAs = new JButton("Save as");
+        saveAs.addActionListener(e -> saveAs());
+        leftBar.add(saveAs);
+
+        JButton loadFrom = new JButton("Load from");
+        loadFrom.addActionListener(e -> loadFrom());
+        leftBar.add(loadFrom);
+
+        wrapper.add(leftBar);
+        return wrapper;
     }
 
     private JPanel createModulesPanel() {
@@ -144,38 +179,38 @@ public class ShipConstructorPanel extends JPanel {
 
         JButton exportButton = new JButton("Export to Clipboard");
         JButton importButton = new JButton("Import from Clipboard");
-        JTextField area = new JTextField();
+        statusArea = new JTextField();
 
-        area.setColumns(30);
+        statusArea.setColumns(30);
         //area.setEditable(false);
         exportButton.addActionListener(e -> {
             String text = export();
             if (!text.startsWith("Error: ")) {
                 Clipboard.copy(text);
-                area.setText("Export successful");
+                statusArea.setText("Export successful");
             } else {
-                area.setText(text);
+                statusArea.setText(text);
             }
         });
 
         importButton.addActionListener(e -> {
             String text = Clipboard.paste().trim();
             if (text == null) {
-                area.setText("Error: Cannot paste from clipboard");
+                statusArea.setText("Error: Cannot paste from clipboard");
             } else {
                 try {
                     Ship imported = ShipDeconstructor.deconstruct(text);
                     importShip(imported);
-                    area.setText("Import successful");
+                    statusArea.setText("Import successful");
                 } catch (RuntimeException ex) {
                     ex.printStackTrace(System.out);
-                    area.setText("Error: Invalid import data");
+                    statusArea.setText("Error: Invalid import data");
                 }
             }
         });
 
         bar.add(exportButton);
-        bar.add(area);
+        bar.add(statusArea);
         bar.add(importButton);
 
         return bar;
@@ -324,9 +359,96 @@ public class ShipConstructorPanel extends JPanel {
         repaint();
     }
 
+    private JFileChooser fileChooser = new JFileChooser();
+
+    private void saveAs() {
+        //check if export is legit
+        String exportData = export();
+        if (exportData.startsWith("Error")) {
+            statusArea.setText(exportData);
+            return;
+        }
+
+        //select file
+        int result = fileChooser.showSaveDialog(this);
+        if (result != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+
+        //save file
+        File file;
+        try {
+            file = fileChooser.getSelectedFile();
+            PrintWriter writer = new PrintWriter(file);
+            writer.write(exportData);
+            writer.close();
+        } catch (IOException ex) {
+            ex.printStackTrace(System.out);
+            statusArea.setText("Cannot save to file");
+            return;
+        }
+
+        //onvert to .dat
+        try {
+            String datFile = file.getParentFile().getAbsolutePath() + "/" + nameField.getText() + ".dat";
+            //System.out.println("Saving to:" + datFile);
+
+            ProcessBuilder builder = new ProcessBuilder("PRPLDatGZip.exe", file.getAbsolutePath(), datFile, "-b64");
+            builder.redirectErrorStream(true);
+            Process process = builder.start();
+
+            Scanner scan = new Scanner(process.getInputStream());
+            statusArea.setText("Save successful");
+            while (scan.hasNextLine()) {
+                String line = scan.nextLine();
+                if (!line.isEmpty()) {
+                    System.out.println("Error in .dat conversion: " + line);
+                    statusArea.setText("Error in .dat conversion: " + line);
+                }
+            }
+            scan.close();
+            process.waitFor();
+        } catch (Exception ex) {
+            ex.printStackTrace(System.out);
+            statusArea.setText("Cannot convert to .dat file");
+            return;
+        }
+    }
+
+    private void loadFrom() {
+        //select file
+        int result = fileChooser.showOpenDialog(this);
+        if (result != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+
+        Scanner scan = null;
+        try {
+            scan = new Scanner(fileChooser.getSelectedFile());
+            try {
+                String data = scan.nextLine();
+                Ship ship = ShipDeconstructor.deconstruct(data);
+                importShip(ship);
+                statusArea.setText("Load successful");
+            } catch (RuntimeException ex) {
+                ex.printStackTrace(System.out);
+                statusArea.setText("Load failed. Make sure it's the base64-encoded variant");
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace(System.out);
+            statusArea.setText("Cannot read ship from file");
+        } finally {
+            if (scan != null) {
+                scan.close();
+            }
+        }
+    }
+
     private int[] hullToDraw = { Hull.HULL_BLOCK, Hull.HULL_CORNER_LB, Hull.HULL_SPIKE_B, Hull.HULL_ARMOR_MASK, Hull.HULL_SPACE };
 
     private class HullSelector extends JPanel implements MouseListener {
+        private static final long serialVersionUID = 5928644466757778196L;
+
         public HullSelector() {
             setPreferredSize(new Dimension(350, 30));
             setBackground(new Color(196, 128, 64));
@@ -388,6 +510,10 @@ public class ShipConstructorPanel extends JPanel {
     }
 
     private class ShipRenderer extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -3801512788255149378L;
         private int posX = 5; //offset, in pixels
         private int posY = 5; //offset, in pixels
 
@@ -772,7 +898,6 @@ public class ShipConstructorPanel extends JPanel {
             } else if (e.isShiftDown()) {
                 //TODO: hull type rotation
             } else if (e.isAltDown()) {
-                //TODO: hull paint radius rotation
                 brushSizeIndex -= e.getWheelRotation();
                 brushSizeIndex = Utils.clamp(0, brushSizes.length - 1, brushSizeIndex);
             } else {
