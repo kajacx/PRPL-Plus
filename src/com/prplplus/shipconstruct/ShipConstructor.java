@@ -115,6 +115,14 @@ public class ShipConstructor {
 
         byte[] result = buffer.toByteArray();
 
+        //System.out.println("Width: " + width + ", height: " + height);
+        //result = Base64.getDecoder().decode("CgQAcm9vdAMBAHMGAFNoaXA5OekDAG1wcwIAAAAAAABAAAAAAAAAAEAAAABAAACAQAAAAEABAgBodwUAAAABAgBoaAUAAAALAgBocBkAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQMAY214AQAAAAEDAGNteQEAAAADAgBzbgoARXhwb3J0VGVzdAA=");
+        /*int[] result1 = new int[result.length];
+        for (int i = 0; i < result1.length; i++) {
+            result1[i] = result[i] >= 0 ? result[i] : result[i] + 256;
+        }
+        System.out.println(Arrays.toString(result1));*/
+
         return Base64.getEncoder().encodeToString(result);
     }
 

@@ -44,6 +44,8 @@ public class ShipConstructorPanel extends JPanel {
     private int selectedHull = -1;
     private int[] hullSection = new int[MAX_SIZE * MAX_SIZE];
 
+    private ShipRenderer shipRenderer;
+
     private List<ModuleAtPosition> modules = new ArrayList<>();
 
     public ShipConstructorPanel() {
@@ -52,7 +54,8 @@ public class ShipConstructorPanel extends JPanel {
         setBackground(new Color(255, 255, 196));
 
         add(createTopBar(), BorderLayout.NORTH);
-        add(new ShipRenderer(), BorderLayout.CENTER);
+        add(createLeftBar(), BorderLayout.WEST);
+        add(shipRenderer = new ShipRenderer(), BorderLayout.CENTER);
         add(createModulesPanel(), BorderLayout.EAST);
         add(createBottomBar(), BorderLayout.SOUTH);
     }
@@ -88,6 +91,30 @@ public class ShipConstructorPanel extends JPanel {
         topBar.add(hullSelector, BorderLayout.EAST);
 
         return topBar;
+    }
+
+    private JPanel createLeftBar() {
+        JPanel leftBar = new JPanel();
+        leftBar.setLayout(new BoxLayout(leftBar, BoxLayout.Y_AXIS));
+        leftBar.setBackground(new Color(255, 226, 196));
+
+        JButton moveUp = new JButton("Move Up");
+        moveUp.addActionListener(e -> shipRenderer.shiftUp());
+        leftBar.add(moveUp);
+
+        JButton moveLeft = new JButton("Move Left");
+        moveLeft.addActionListener(e -> shipRenderer.shiftLeft());
+        leftBar.add(moveLeft);
+
+        JButton moveRight = new JButton("Move Right");
+        moveRight.addActionListener(e -> shipRenderer.shiftRight());
+        leftBar.add(moveRight);
+
+        JButton moveDown = new JButton("Move Down");
+        moveDown.addActionListener(e -> shipRenderer.shiftDown());
+        leftBar.add(moveDown);
+
+        return leftBar;
     }
 
     private JPanel createModulesPanel() {
@@ -132,7 +159,7 @@ public class ShipConstructorPanel extends JPanel {
         });
 
         importButton.addActionListener(e -> {
-            String text = Clipboard.paste();
+            String text = Clipboard.paste().trim();
             if (text == null) {
                 area.setText("Error: Cannot paste from clipboard");
             } else {
@@ -530,6 +557,130 @@ public class ShipConstructorPanel extends JPanel {
                         return false;
                 }
 
+            return true;
+        }
+
+        private boolean shiftLeft() {
+            //check hull
+            int x = 0;
+            for (int y = 0; y < MAX_SIZE; y++) {
+                if (hullSection[x * MAX_SIZE + y] != Hull.HULL_SPACE) {
+                    return false;
+                }
+            }
+
+            //move hull
+            for (int i = 0; i < MAX_SIZE - 1; i++) {
+                for (int j = 0; j < MAX_SIZE; j++) {
+                    hullSection[i * MAX_SIZE + j] = hullSection[(i + 1) * MAX_SIZE + j];
+                }
+            }
+
+            //move modules
+            for (ModuleAtPosition module : modules) {
+                module.x -= 1;
+            }
+
+            //clear hull
+            x = MAX_SIZE - 1;
+            for (int y = 0; y < MAX_SIZE; y++) {
+                hullSection[x * MAX_SIZE + y] = Hull.HULL_SPACE;
+            }
+
+            repaint();
+            return true;
+        }
+
+        private boolean shiftRight() {
+            //check hull
+            int x = MAX_SIZE - 1;
+            for (int y = 0; y < MAX_SIZE; y++) {
+                if (hullSection[x * MAX_SIZE + y] != Hull.HULL_SPACE) {
+                    return false;
+                }
+            }
+
+            //move hull
+            for (int i = MAX_SIZE - 1; i >= 1; i--) {
+                for (int j = 0; j < MAX_SIZE; j++) {
+                    hullSection[i * MAX_SIZE + j] = hullSection[(i - 1) * MAX_SIZE + j];
+                }
+            }
+
+            //move modules
+            for (ModuleAtPosition module : modules) {
+                module.x += 1;
+            }
+
+            //clear hull
+            x = 0;
+            for (int y = 0; y < MAX_SIZE; y++) {
+                hullSection[x * MAX_SIZE + y] = Hull.HULL_SPACE;
+            }
+
+            repaint();
+            return true;
+        }
+
+        private boolean shiftUp() {
+            //check hull
+            int y = 0;
+            for (int x = 0; x < MAX_SIZE; x++) {
+                if (hullSection[x * MAX_SIZE + y] != Hull.HULL_SPACE) {
+                    return false;
+                }
+            }
+
+            //move hull
+            for (int i = 0; i < MAX_SIZE; i++) {
+                for (int j = 0; j < MAX_SIZE - 1; j++) {
+                    hullSection[i * MAX_SIZE + j] = hullSection[i * MAX_SIZE + (j + 1)];
+                }
+            }
+
+            //move modules
+            for (ModuleAtPosition module : modules) {
+                module.y -= 1;
+            }
+
+            //clear hull
+            y = MAX_SIZE - 1;
+            for (int x = 0; x < MAX_SIZE; x++) {
+                hullSection[x * MAX_SIZE + y] = Hull.HULL_SPACE;
+            }
+
+            repaint();
+            return true;
+        }
+
+        private boolean shiftDown() {
+            //check hull
+            int y = MAX_SIZE - 1;
+            for (int x = 0; x < MAX_SIZE; x++) {
+                if (hullSection[x * MAX_SIZE + y] != Hull.HULL_SPACE) {
+                    return false;
+                }
+            }
+
+            //move hull
+            for (int i = 0; i < MAX_SIZE; i++) {
+                for (int j = MAX_SIZE - 1; j >= 1; j--) {
+                    hullSection[i * MAX_SIZE + j] = hullSection[i * MAX_SIZE + (j - 1)];
+                }
+            }
+
+            //move modules
+            for (ModuleAtPosition module : modules) {
+                module.y += 1;
+            }
+
+            //clear hull
+            y = 0;
+            for (int x = 0; x < MAX_SIZE; x++) {
+                hullSection[x * MAX_SIZE + y] = Hull.HULL_SPACE;
+            }
+
+            repaint();
             return true;
         }
 
