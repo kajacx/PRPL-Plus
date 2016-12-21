@@ -15,9 +15,9 @@ Export ships from this editor to PF (via AddCustomShipToInventory):
 Save your ship:
  - Hitting the "Save as" button will save your ship to a target file as a base-64 encoded string
  - It will also create a ".dat" file for the ship in the same directory
- - Or you can "Export to Clipboard" to save your ships manually
+ - Or you can "Export to Clipboard" to save your ships manually (doesn't save custom modules)
 
 Load your ship:
  - Hitting the "Load from" button will load your previously saved ship
  - Make sure you select the base-64 encoded one, not the ".dat" file
- - Or you can "Import from Clipboard" to load your ships manually
+ - Or you can "Import from Clipboard" to load your ships manually (doesn't save custom modules)

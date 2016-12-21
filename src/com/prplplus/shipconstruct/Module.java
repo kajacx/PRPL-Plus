@@ -70,8 +70,8 @@ public class Module {
         Image i;
         try {
             i = ImageIO.read(new File("img/customModules/" + imgName));
-        } catch (IOException e) {
-            e.printStackTrace(System.out);
+        } catch (IOException ex) {
+            ex.printStackTrace(System.out);
             i = null;
         }
         image = i;
@@ -86,10 +86,11 @@ public class Module {
             try {
                 if (f.getName().endsWith(".txt")) {
                     scan = new Scanner(f);
-                    String name = scan.next();
+                    String name = scan.nextLine();
                     int width = scan.nextInt();
                     int height = scan.nextInt();
-                    String imgName = scan.next();
+                    scan.nextLine(); //skip the rest of the line
+                    String imgName = scan.nextLine();
                     customModules.add(new Module(width, height, name, imgName));
                 }
             } catch (Exception ex) {

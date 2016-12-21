@@ -39,9 +39,9 @@ import com.prplplus.gui.OffsetIterable.Offset;
 import com.prplplus.shipconstruct.Hull;
 import com.prplplus.shipconstruct.Module;
 import com.prplplus.shipconstruct.ModuleAtPosition;
-import com.prplplus.shipconstruct.ShipConstructor;
 import com.prplplus.shipconstruct.ShipConstructor.Ship;
 import com.prplplus.shipconstruct.ShipDeconstructor;
+import com.prplplus.shipconstruct.ShipExporter;
 
 public class ShipConstructorPanel extends JPanel {
     /**
@@ -210,7 +210,7 @@ public class ShipConstructorPanel extends JPanel {
         statusArea.setColumns(30);
         //area.setEditable(false);
         exportButton.addActionListener(e -> {
-            String text = export();
+            String text = new ShipExporter(hullSection, modules).exportToBase64(nameField.getText());
             if (!text.startsWith("Error: ")) {
                 Clipboard.copy(text);
                 statusArea.setText("Export successful");
@@ -252,165 +252,7 @@ public class ShipConstructorPanel extends JPanel {
         return new ImageIcon(i);
     }
 
-    private int[] searchHull;
-
-    private boolean isConnected() {
-        //ensire correct temp hull size
-        if (searchHull == null || searchHull.length != hullSection.length) {
-            searchHull = new int[hullSection.length];
-        }
-        System.arraycopy(hullSection, 0, searchHull, 0, hullSection.length);
-
-        //find where to search from
-        int startX = 0, startY = 0;
-        for (int i = 0; i < searchHull.length; i++) {
-            if (searchHull[i] != Hull.HULL_SPACE) {
-                startX = i / MAX_SIZE;
-                startY = i % MAX_SIZE;
-            }
-        }
-
-        //do the search
-        searchConnected(searchHull, startX, startY);
-
-        //test is all blocks have been found
-        for (int i = 0; i < searchHull.length; i++) {
-            if (searchHull[i] != Hull.HULL_SPACE) {
-                //System.out.format("Point %d %d not reached.%n", i / MAX_SIZE, i % MAX_SIZE);
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    //true - connected, false - disconnected
-    private void searchConnected(int[] hull, int x, int y) {
-        if (x < 0 || x >= MAX_SIZE || y < 0 || y >= MAX_SIZE)
-            return;
-        if (hull[x * MAX_SIZE + y] == Hull.HULL_SPACE)
-            return;
-        hull[x * MAX_SIZE + y] = Hull.HULL_SPACE;
-        searchConnected(hull, x + 1, y);
-        searchConnected(hull, x, y + 1);
-        searchConnected(hull, x - 1, y);
-        searchConnected(hull, x, y - 1);
-    }
-
-    //exports to base 64, doesn't export custom modules
-    private String export() {
-        String name = nameField.getText();
-        if (name.length() == 0) {
-            return "Error: Empty name";
-        }
-
-        //get bounds
-        int minX = Integer.MAX_VALUE;
-        int minY = Integer.MAX_VALUE;
-        int maxX = Integer.MIN_VALUE;
-        int maxY = Integer.MIN_VALUE;
-
-        for (int x = 0; x < MAX_SIZE; x++) {
-            for (int y = 0; y < MAX_SIZE; y++) {
-                if (hullSection[x * MAX_SIZE + y] != Hull.HULL_SPACE) {
-                    minX = Math.min(minX, x);
-                    minY = Math.min(minY, y);
-                    maxX = Math.max(maxX, x);
-                    maxY = Math.max(maxY, y);
-                }
-            }
-        }
-
-        int width = maxX - minX + 1;
-        int height = maxY - minY + 1;
-
-        //remap modules
-        List<ModuleAtPosition> newModuels = new ArrayList<>();
-        int commandX = -1;
-        int commandY = -1;
-        for (ModuleAtPosition module : modules) {
-            if (module.module.isCustom()) {
-                //export custom modules separately
-                continue;
-            }
-
-            ModuleAtPosition newModule = module.copy();
-            newModule.x = newModule.x - minX; //relative remap
-            newModule.y = newModule.y - minY; //relative remap
-            newModule.y = height - newModule.y - newModule.module.height; //flip Y axis
-
-            if (newModule.module == Module.COMMAND) {
-                if (commandX != -1) {
-                    return "Error: Multiple command modules";
-                }
-                commandX = newModule.x;
-                commandY = newModule.y;
-            } else {
-                newModuels.add(newModule);
-            }
-        }
-        if (commandX == -1) {
-            return "Error: No command module";
-        }
-
-        //remap hull from col-major to row-major
-        int[] newHull = new int[width * height];
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                newHull[y * width + x] = hullSection[(x + minX) * MAX_SIZE + (height - y - 1 + minY)];
-            }
-        }
-
-        //check for hull consistency
-        if (!isConnected()) {
-            return "Error: Hull is not connected";
-        }
-
-        return ShipConstructor.construct(width, height, newHull, newModuels, commandX, commandY, name);
-    }
-
-    //exports custom modules
-    private String exportCustom() {
-        List<ModuleAtPosition> customModules = new ArrayList<>();
-        ModuleAtPosition command = null;
-
-        //search for custom modules and command module
-        for (ModuleAtPosition module : modules) {
-            if (module.module.isCommand()) {
-                command = module.copy();
-            }
-            if (module.module.isCustom()) {
-                customModules.add(module.copy());
-            }
-        }
-
-        //flip Y values - we care about relative placement only
-        command.y = -command.y - command.module.height;
-        for (ModuleAtPosition module : customModules) {
-            module.y = -module.y - module.module.height;
-        }
-
-        //set command x,y to center
-        command.x++;
-        command.y++;
-
-        //and finally, remap the modules
-        for (ModuleAtPosition module : customModules) {
-            module.x -= command.x;
-            module.y -= command.y;
-        }
-
-        //now just feed it into a string buffer
-        StringBuffer buffer = new StringBuffer();
-        for (ModuleAtPosition module : customModules) {
-            buffer.append(module.module.name).append(',');
-            buffer.append(module.x).append(',');
-            buffer.append(module.y).append(';');
-        }
-
-        return buffer.toString();
-    }
-
+    //import everything except custom modules
     private void importShip(Ship ship) {
         //erase existing ship
         for (int i = 0; i < hullSection.length; i++) {
@@ -445,11 +287,41 @@ public class ShipConstructorPanel extends JPanel {
         repaint();
     }
 
+    //imports custom modules, return true on success
+    private boolean importCustomModules(Ship ship, String modules) {
+
+        try {
+            for (String moduleData : modules.split(";")) {
+                if (moduleData.isEmpty())
+                    continue;
+
+                //read data
+                String[] parts = moduleData.split(",");
+                Module module = Module.getCustomByName(parts[0]);
+                int posX = Integer.parseInt(parts[1]);
+                int posY = Integer.parseInt(parts[2]);
+
+                //flip Y axis
+                posY = ship.height - posY - module.height;
+
+                //and done
+                this.modules.add(new ModuleAtPosition(posX, posY, module));
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace(System.out);
+            return false;
+        }
+
+        return true;
+    }
+
     private JFileChooser fileChooser = new JFileChooser();
 
     private void saveAs() {
+        ShipExporter exporter = new ShipExporter(hullSection, modules);
+
         //check if export is legit
-        String exportData = export();
+        String exportData = exporter.exportToBase64(nameField.getText());
         if (exportData.startsWith("Error")) {
             statusArea.setText(exportData);
             return;
@@ -467,7 +339,8 @@ public class ShipConstructorPanel extends JPanel {
             file = fileChooser.getSelectedFile();
             PrintWriter writer = new PrintWriter(file);
             writer.println(exportData);
-            writer.println(exportCustom());
+            writer.println(exporter.exportCustomModules());
+            writer.println(exporter.exportCommandLocation());
             writer.close();
         } catch (IOException ex) {
             ex.printStackTrace(System.out);
@@ -517,6 +390,11 @@ public class ShipConstructorPanel extends JPanel {
                 Ship ship = ShipDeconstructor.deconstruct(data);
                 importShip(ship);
                 statusArea.setText("Load successful");
+                if (scan.hasNextLine()) {
+                    if (!importCustomModules(ship, scan.nextLine())) {
+                        statusArea.setText("Could not load custom modules");
+                    }
+                }
             } catch (RuntimeException ex) {
                 ex.printStackTrace(System.out);
                 statusArea.setText("Load failed. Make sure it's the base64-encoded variant");
