@@ -29,6 +29,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
 import com.prplplus.Clipboard;
@@ -157,9 +158,13 @@ public class ShipConstructorPanel extends JPanel {
         modulesPanel.setLayout(new BoxLayout(modulesPanel, BoxLayout.Y_AXIS));
         modulesPanel.setBackground(new Color(255, 226, 196));
 
-        modulesPanel.add(new JLabel("Modules"));
+        modulesPanel.add(new JLabel("Modules", JLabel.CENTER));
 
-        for (Module m : Module.values()) {
+        JTabbedPane tabs = new JTabbedPane();
+
+        JPanel defaultModules = new JPanel();
+        defaultModules.setLayout(new BoxLayout(defaultModules, BoxLayout.Y_AXIS));
+        for (Module m : Module.standardModules) {
             JButton button = new JButton(m.name);
             button.setIcon(getImageForModule(m));
             button.addActionListener(e -> {
@@ -167,7 +172,28 @@ public class ShipConstructorPanel extends JPanel {
                 selectedHull = -1;
             });
 
-            modulesPanel.add(button);
+            defaultModules.add(button);
+        }
+
+        if (Module.customModules.isEmpty()) {
+            modulesPanel.add(defaultModules);
+        } else {
+            JPanel customModules = new JPanel();
+            customModules.setLayout(new BoxLayout(customModules, BoxLayout.Y_AXIS));
+            for (Module m : Module.customModules) {
+                JButton button = new JButton(m.name);
+                button.setIcon(getImageForModule(m));
+                button.addActionListener(e -> {
+                    selectedModule = m;
+                    selectedHull = -1;
+                });
+
+                customModules.add(button);
+            }
+
+            tabs.addTab("Default", defaultModules);
+            tabs.addTab("Custom", customModules);
+            modulesPanel.add(tabs);
         }
 
         return modulesPanel;
@@ -228,17 +254,29 @@ public class ShipConstructorPanel extends JPanel {
 
     private int[] searchHull;
 
-    private boolean isConnected(int commandX, int commandY) {
+    private boolean isConnected() {
+        //ensire correct temp hull size
         if (searchHull == null || searchHull.length != hullSection.length) {
             searchHull = new int[hullSection.length];
         }
-
         System.arraycopy(hullSection, 0, searchHull, 0, hullSection.length);
 
-        searchConnected(searchHull, commandX, commandY);
-
+        //find where to search from
+        int startX = 0, startY = 0;
         for (int i = 0; i < searchHull.length; i++) {
             if (searchHull[i] != Hull.HULL_SPACE) {
+                startX = i / MAX_SIZE;
+                startY = i % MAX_SIZE;
+            }
+        }
+
+        //do the search
+        searchConnected(searchHull, startX, startY);
+
+        //test is all blocks have been found
+        for (int i = 0; i < searchHull.length; i++) {
+            if (searchHull[i] != Hull.HULL_SPACE) {
+                //System.out.format("Point %d %d not reached.%n", i / MAX_SIZE, i % MAX_SIZE);
                 return false;
             }
         }
@@ -259,6 +297,7 @@ public class ShipConstructorPanel extends JPanel {
         searchConnected(hull, x, y - 1);
     }
 
+    //exports to base 64, doesn't export custom modules
     private String export() {
         String name = nameField.getText();
         if (name.length() == 0) {
@@ -290,6 +329,11 @@ public class ShipConstructorPanel extends JPanel {
         int commandX = -1;
         int commandY = -1;
         for (ModuleAtPosition module : modules) {
+            if (module.module.isCustom()) {
+                //export custom modules separately
+                continue;
+            }
+
             ModuleAtPosition newModule = module.copy();
             newModule.x = newModule.x - minX; //relative remap
             newModule.y = newModule.y - minY; //relative remap
@@ -318,11 +362,53 @@ public class ShipConstructorPanel extends JPanel {
         }
 
         //check for hull consistency
-        if (!isConnected(commandX + minX, commandY + minY)) {
+        if (!isConnected()) {
             return "Error: Hull is not connected";
         }
 
         return ShipConstructor.construct(width, height, newHull, newModuels, commandX, commandY, name);
+    }
+
+    //exports custom modules
+    private String exportCustom() {
+        List<ModuleAtPosition> customModules = new ArrayList<>();
+        ModuleAtPosition command = null;
+
+        //search for custom modules and command module
+        for (ModuleAtPosition module : modules) {
+            if (module.module.isCommand()) {
+                command = module.copy();
+            }
+            if (module.module.isCustom()) {
+                customModules.add(module.copy());
+            }
+        }
+
+        //flip Y values - we care about relative placement only
+        command.y = -command.y - command.module.height;
+        for (ModuleAtPosition module : customModules) {
+            module.y = -module.y - module.module.height;
+        }
+
+        //set command x,y to center
+        command.x++;
+        command.y++;
+
+        //and finally, remap the modules
+        for (ModuleAtPosition module : customModules) {
+            module.x -= command.x;
+            module.y -= command.y;
+        }
+
+        //now just feed it into a string buffer
+        StringBuffer buffer = new StringBuffer();
+        for (ModuleAtPosition module : customModules) {
+            buffer.append(module.module.name).append(',');
+            buffer.append(module.x).append(',');
+            buffer.append(module.y).append(';');
+        }
+
+        return buffer.toString();
     }
 
     private void importShip(Ship ship) {
@@ -380,7 +466,8 @@ public class ShipConstructorPanel extends JPanel {
         try {
             file = fileChooser.getSelectedFile();
             PrintWriter writer = new PrintWriter(file);
-            writer.write(exportData);
+            writer.println(exportData);
+            writer.println(exportCustom());
             writer.close();
         } catch (IOException ex) {
             ex.printStackTrace(System.out);
@@ -537,8 +624,8 @@ public class ShipConstructorPanel extends JPanel {
             addKeyListener(this);
             setFocusable(true);
 
-            int startX = 12;
-            int startY = 12;
+            int startX = 10;
+            int startY = 10;
 
             for (int i = startX; i < startX + 5; i++) {
                 for (int j = startY; j < startY + 5; j++) {

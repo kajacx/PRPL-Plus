@@ -34,7 +34,7 @@ namespace PRPLDatGZip
             byte[] data;
             if(useBase64)
             {
-                string text = File.ReadAllText(fileFrom);
+                string text = File.ReadAllLines(fileFrom)[0];
                 data = Convert.FromBase64String(text);
             } else
             {

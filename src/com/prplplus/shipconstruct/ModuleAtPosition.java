@@ -30,4 +30,5 @@ public class ModuleAtPosition {
     public ModuleAtPosition copy() {
         return new ModuleAtPosition(x, y, module);
     }
+
 }

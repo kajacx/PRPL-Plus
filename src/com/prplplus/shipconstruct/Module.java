@@ -3,34 +3,47 @@ package com.prplplus.shipconstruct;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 
-public enum Module {
+public class Module {
+    public static final int COMMAND_CODE = -1;
+    public static final int CUSTOM_CODE = -2;
+
     //@formatter:off
-    COMMAND        (3, 3,     -1, "Command"),
-    ENGINE         (2, 3, 0x40A0, "Engine"),
-    LATHE          (3, 3, 0x4110, "Lathe"),
-    LASER          (1, 1, 0x4000, "Laser"),
-    CANNON         (2, 2, 0x3F80, "Cannon"),
-    MISSLE_LAUNCHER(2, 2, 0x4040, "MissleLauncher"),
-    PARTICLE_BEAM  (1, 1, 0x4080, "ParticleBeam"),
-    DISCHARGE      (3, 3, 0x4190, "Discharge"),
-    ENERGY_TANK    (3, 3, 0x40C0, "EnergyTank"),
-    PORT           (3, 3, 0x4100, "Port"),
-    GUPPY          (3, 3, 0x40E0, "Guppy"),
-    SHIELD         (3, 3, 0x4140, "Shield"),
-    REACTOR        (3, 3, 0x4160, "Reactor"),
-    FIGHTER_BASE  (15, 3, 0x4120, "FighterBase"),
-    GRABBER        (3, 3, 0x4180, "Grabber"),
-    MK7            (5, 5, 0x4188, "MK7");
+    public static final Module UNKNOWN         = new Module( 1, 1,     -2, "Unknown"); //an unknown custom module
+    public static final Module COMMAND         = new Module( 3, 3,     -1, "Command");
+    public static final Module ENGINE          = new Module( 2, 3, 0x40A0, "Engine");
+    public static final Module LATHE           = new Module( 3, 3, 0x4110, "Lathe");
+    public static final Module LASER           = new Module( 1, 1, 0x4000, "Laser");
+    public static final Module CANNON          = new Module( 2, 2, 0x3F80, "Cannon");
+    public static final Module MISSLE_LAUNCHER = new Module( 2, 2, 0x4040, "MissleLauncher");
+    public static final Module PARTICLE_BEAM   = new Module( 1, 1, 0x4080, "ParticleBeam");
+    public static final Module DISCHARGE       = new Module( 3, 3, 0x4190, "Discharge");
+    public static final Module ENERGY_TANK     = new Module( 3, 3, 0x40C0, "EnergyTank");
+    public static final Module PORT            = new Module( 3, 3, 0x4100, "Port");
+    public static final Module GUPPY           = new Module( 3, 3, 0x40E0, "Guppy");
+    public static final Module SHIELD          = new Module( 3, 3, 0x4140, "Shield");
+    public static final Module REACTOR         = new Module( 3, 3, 0x4160, "Reactor");
+    public static final Module FIGHTER_BASE    = new Module(15, 3, 0x4120, "FighterBase");
+    public static final Module GRABBER         = new Module( 3, 3, 0x4180, "Grabber");
+    public static final Module MK7             = new Module( 5, 5, 0x4188, "MK7");
     //@formatter:on
 
+    public static final Module[] standardModules = { COMMAND, ENGINE, LATHE, LASER, CANNON, MISSLE_LAUNCHER, PARTICLE_BEAM, DISCHARGE,
+            ENERGY_TANK, PORT, GUPPY, SHIELD, REACTOR, FIGHTER_BASE, GRABBER, MK7 };
+
+    public static final List<Module> customModules = new ArrayList<>();
+
     public final int width, height;
-    public final int code;
+    public final int code; //-1: command, -2: custom
     public final String name;
     public final Image image;
 
+    //create a standart module
     private Module(int width, int height, int code, String name) {
         this.width = width;
         this.height = height;
@@ -45,6 +58,50 @@ public enum Module {
             i = null;
         }
         image = i;
+    }
+
+    //create a custom module
+    private Module(int width, int height, String name, String imgName) {
+        this.width = width;
+        this.height = height;
+        this.code = CUSTOM_CODE;
+        this.name = name;
+
+        Image i;
+        try {
+            i = ImageIO.read(new File("img/customModules/" + imgName));
+        } catch (IOException e) {
+            e.printStackTrace(System.out);
+            i = null;
+        }
+        image = i;
+    }
+
+    static {
+        //load custom modules here
+        File customModulesFolder = new File("customModules");
+        Scanner scan = null;
+
+        for (File f : customModulesFolder.listFiles()) {
+            try {
+                if (f.getName().endsWith(".txt")) {
+                    scan = new Scanner(f);
+                    String name = scan.next();
+                    int width = scan.nextInt();
+                    int height = scan.nextInt();
+                    String imgName = scan.next();
+                    customModules.add(new Module(width, height, name, imgName));
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace(System.out);
+            } finally {
+                if (scan != null) {
+                    scan.close();
+                }
+            }
+        }
+
+
     }
 
     public static final int[] indexToPos = {
@@ -189,12 +246,30 @@ public enum Module {
     }
 
     public static Module getById(int id) {
-        for (Module m : Module.values()) {
+        for (Module m : Module.standardModules) {
             if (m.code == id) {
                 return m;
             }
         }
         System.out.format("Module with id 0x%04X not found (%05d).%n", id, id);
         return null;
+    }
+
+    public static Module getCustomByName(String name) {
+        for (Module m : Module.customModules) {
+            if (m.name.equals(name)) {
+                return m;
+            }
+        }
+        System.out.format("Custom module with name '%s' not found.%n", name);
+        return UNKNOWN;
+    }
+
+    public boolean isCustom() {
+        return code == CUSTOM_CODE;
+    }
+
+    public boolean isCommand() {
+        return code == COMMAND_CODE;
     }
 }
