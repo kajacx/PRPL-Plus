@@ -1,0 +1,7 @@
+C:\kajacx\programming\C#\PRPLDatGZip\PRPLDatGZip\bin\Debug\PRPLDatGZip.exe.config
+C:\kajacx\programming\C#\PRPLDatGZip\PRPLDatGZip\bin\Debug\PRPLDatGZip.exe
+C:\kajacx\programming\C#\PRPLDatGZip\PRPLDatGZip\bin\Debug\PRPLDatGZip.pdb
+C:\kajacx\programming\C#\PRPLDatGZip\PRPLDatGZip\bin\Debug\SharpZipLib.dll
+C:\kajacx\programming\C#\PRPLDatGZip\PRPLDatGZip\obj\Debug\PRPLDatGZip.csprojResolveAssemblyReference.cache
+C:\kajacx\programming\C#\PRPLDatGZip\PRPLDatGZip\obj\Debug\PRPLDatGZip.exe
+C:\kajacx\programming\C#\PRPLDatGZip\PRPLDatGZip\obj\Debug\PRPLDatGZip.pdb

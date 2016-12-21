@@ -4,6 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -16,8 +19,11 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
 public class MainFrame extends JFrame {
-    public static final String version = "v0.0.1";
+    private static final long serialVersionUID = -3729420411039341803L;
+
+    public static final String version = "v0.0.3";
     public static final String title = "PRPL Toolset";
+    public static final String contact = "kajacx@gmail.com";
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -39,7 +45,8 @@ public class MainFrame extends JFrame {
 
         ImageIcon constIcon = new ImageIcon("img/icons/ship_constr.png");
         JPanel constPanel = new ShipConstructorPanel();
-        tabs.addTab("Ship Construct", constIcon, constPanel, "Build large ships up to size 129x129");
+        tabs.addTab("Ship Construct", constIcon, constPanel, "Build large ships up to size "
+                + ShipConstructorPanel.MAX_SIZE + "x" + ShipConstructorPanel.MAX_SIZE);
 
         KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
         manager.addKeyEventDispatcher(new MyDispatcher());
@@ -49,6 +56,31 @@ public class MainFrame extends JFrame {
 
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+    }
+
+    private String getFileContents(String fileName, String orElse) {
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(fileName));
+            StringBuffer buffer = new StringBuffer();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                buffer.append(line);
+                buffer.append(System.lineSeparator());
+            }
+            return buffer.toString();
+        } catch (IOException ex) {
+            ex.printStackTrace(System.out);
+            return orElse;
+        } finally {
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace(System.out);
+            }
+        }
     }
 
     private JMenuBar createMenu() {
@@ -67,7 +99,18 @@ public class MainFrame extends JFrame {
         menu = new JMenu("Help");
 
         item = new JMenuItem("About");
-        item.addActionListener(e -> JOptionPane.showMessageDialog(this, title + "\nCreated by kajacx\nVersion: " + version));
+        String about = title + "\nCreated by kajacx\nContact: " + contact + "\nVersion: " + version;
+        item.addActionListener(e -> JOptionPane.showMessageDialog(this, about));
+        menu.add(item);
+
+        item = new JMenuItem("Ship Construct Controls");
+        String controls = getFileContents("ship_edit_controls.txt", "Unable to load controls file, try restarting your program.");
+        item.addActionListener(e -> JOptionPane.showMessageDialog(this, controls));
+        menu.add(item);
+
+        item = new JMenuItem("How to import ships");
+        String howto = getFileContents("ship_how_to_import.txt", "Unable to load ship import tutorial, try restarting your program.");
+        item.addActionListener(e -> JOptionPane.showMessageDialog(this, howto));
         menu.add(item);
 
         bar.add(menu);
@@ -78,10 +121,10 @@ public class MainFrame extends JFrame {
     private static class MyDispatcher implements KeyEventDispatcher {
         @Override
         public boolean dispatchKeyEvent(KeyEvent e) {
-            if(e.getKeyCode() == KeyEvent.VK_ALT) {
+            if (e.getKeyCode() == KeyEvent.VK_ALT) {
                 e.consume();
             }
-            
+
             /*if (e.getID() == KeyEvent.KEY_PRESSED) {
                 System.out.println("tester");
             } else if (e.getID() == KeyEvent.KEY_RELEASED) {

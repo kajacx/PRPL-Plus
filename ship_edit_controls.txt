@@ -1,0 +1,15 @@
+General:
+ - Mouse wheel to zoom in/out
+ - Mouse drag to move camera
+ - Right click to remove module
+
+When module is selected:
+ - Left click to place module
+ - Right click to disselect
+
+When hull is selected:
+ - Left click to place hull/armor
+ - Right click to remove hull/armor
+ - Mouse wheel to rotate module
+ - Ctrl + mouse wheel to zoom in/out
+ - Alt + mouse wheel to change brush size
