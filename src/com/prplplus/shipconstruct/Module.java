@@ -2,9 +2,11 @@ package com.prplplus.shipconstruct;
 
 import java.awt.Image;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Scanner;
 
 import javax.imageio.ImageIO;
@@ -12,6 +14,8 @@ import javax.imageio.ImageIO;
 public class Module {
     public static final int COMMAND_CODE = -1;
     public static final int CUSTOM_CODE = -2;
+
+    public static final int DEFAULT_BUILD_COST = 50;
 
     //@formatter:off
     public static final Module UNKNOWN         = new Module( 1, 1,     -2, "Unknown"); //an unknown custom module
@@ -42,6 +46,8 @@ public class Module {
     public final int code; //-1: command, -2: custom
     public final String name;
     public final Image image;
+    public final int buildCost;
+    public final String scriptName;
 
     //create a standart module
     private Module(int width, int height, int code, String name) {
@@ -49,6 +55,8 @@ public class Module {
         this.height = height;
         this.code = code;
         this.name = name;
+        buildCost = DEFAULT_BUILD_COST;
+        scriptName = null;
 
         Image i;
         try {
@@ -61,11 +69,13 @@ public class Module {
     }
 
     //create a custom module
-    private Module(int width, int height, String name, String imgName) {
+    private Module(int width, int height, String name, String imgName, int buildCost, String scriptName) {
         this.width = width;
         this.height = height;
         this.code = CUSTOM_CODE;
         this.name = name;
+        this.buildCost = buildCost;
+        this.scriptName = scriptName;
 
         Image i;
         try {
@@ -77,6 +87,17 @@ public class Module {
         image = i;
     }
 
+    //create an unknow custom module with this name
+    private Module(String name) {
+        this.width = UNKNOWN.width;
+        this.height = UNKNOWN.height;
+        this.code = UNKNOWN.code;
+        this.image = UNKNOWN.image;
+        this.name = name;
+        this.buildCost = UNKNOWN.buildCost;
+        this.scriptName = UNKNOWN.scriptName;
+    }
+
     static {
         //load custom modules here
         File customModulesFolder = new File("customModules");
@@ -85,13 +106,20 @@ public class Module {
         for (File f : customModulesFolder.listFiles()) {
             try {
                 if (f.getName().endsWith(".txt")) {
-                    scan = new Scanner(f);
-                    String name = scan.nextLine();
-                    int width = scan.nextInt();
-                    int height = scan.nextInt();
-                    scan.nextLine(); //skip the rest of the line
-                    String imgName = scan.nextLine();
-                    customModules.add(new Module(width, height, name, imgName));
+                    Properties moduleProps = new Properties();
+
+                    FileInputStream in = new FileInputStream(f);
+                    moduleProps.load(in);
+                    in.close();
+
+                    String name = moduleProps.getProperty("name");
+                    int width = Integer.parseInt(moduleProps.getProperty("width"));
+                    int height = Integer.parseInt(moduleProps.getProperty("height"));
+                    String imgName = moduleProps.getProperty("imgName");
+                    int buildCost = Integer.parseInt(moduleProps.getProperty("buildCost", "50"));
+                    String scriptName = moduleProps.getProperty("scriptName");
+
+                    customModules.add(new Module(width, height, name, imgName, buildCost, scriptName));
                 }
             } catch (Exception ex) {
                 ex.printStackTrace(System.out);
@@ -263,7 +291,8 @@ public class Module {
             }
         }
         System.out.format("Custom module with name '%s' not found.%n", name);
-        return UNKNOWN;
+
+        return new Module(name);
     }
 
     public boolean isCustom() {

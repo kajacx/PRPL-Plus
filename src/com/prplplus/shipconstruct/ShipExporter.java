@@ -1,7 +1,8 @@
 package com.prplplus.shipconstruct;
 
-import static com.prplplus.gui.ShipConstructorPanel.MAX_SIZE;
+import static com.prplplus.Settings.MAX_SIZE;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +12,9 @@ public class ShipExporter {
     private int[] hull;
     private List<ModuleAtPosition> modules;
     private ShipConstructor.Ship ship;
+
+    private int minX, minY;
+    List<ModuleAtPosition> customModules = new ArrayList<>(); //with re-computed coordinates
 
     public ShipExporter(int[] hull, List<ModuleAtPosition> modules) {
         this.hull = hull;
@@ -38,6 +42,9 @@ public class ShipExporter {
                 }
             }
         }
+
+        this.minX = minX;
+        this.minY = minY;
 
         int width = maxX - minX + 1;
         int height = maxY - minY + 1;
@@ -90,12 +97,15 @@ public class ShipExporter {
     }
 
     public String exportCustomModules() {
-        List<ModuleAtPosition> customModules = new ArrayList<>();
+        customModules.clear();
 
         //search for custom modules and command module
         for (ModuleAtPosition module : modules) {
             if (module.module.isCustom()) {
-                customModules.add(module.copy());
+                ModuleAtPosition newModule = module.copy();
+                newModule.x -= minX;
+                newModule.y -= minY;
+                customModules.add(newModule);
             }
         }
 
@@ -118,6 +128,57 @@ public class ShipExporter {
     public String exportCommandLocation() {
         return String.format("CommandCenter:%d,%d", ship.commandX + 1, ship.commandY + 1);
     }
+
+    //returns true on success, closes the printsream after done
+    public boolean writeModuleAdder(PrintStream printer) {
+        //try {
+        printer.println("24 0 do");
+        printer.println("\tI GetShipNameFromSlot ->shipName");
+        printer.println("\t<-shipName \"" + ship.name + "\" eq if");
+        printer.println("\t\tI GetShipFromSlot ->uid");
+        printer.println("\t\t<-uid.ShipIsDestroyed eq0 if");
+        printer.println("\t\t\t<-uid <-! eq0 if");
+        printer.println("\t\t\t\t1 <-uid ->!");
+        printer.println("\t\t\t\t");
+
+        for (ModuleAtPosition module : customModules) {
+            if (module.module.scriptName == null) {
+                printer.println("\t\t\t\t# Module \"" + module.module.name + "\" skipped because it doesn't have a script name attached");
+                continue;
+            }
+
+            printer.println("\t\t\t\t\"PRPLCORE\" 0 0 CreateUnit ->module");
+            printer.println("\t\t\t\t<-module \"ShipModule.prpl\" AddScriptToUnit");
+            printer.println("\t\t\t\t<-module \"ShipModule.prpl\" \"width\" " + module.module.width + " SetScriptVar");
+            printer.println("\t\t\t\t<-module \"ShipModule.prpl\" \"height\" " + module.module.height + " SetScriptVar");
+            printer.println("\t\t\t\t<-module \"ShipModule.prpl\" \"hullX\" " + module.x + " SetScriptVar");
+            printer.println("\t\t\t\t<-module \"ShipModule.prpl\" \"hullY\" " + module.y + " SetScriptVar");
+            printer.println("\t\t\t\t<-module \"ShipModule.prpl\" \"CommandX\" " + (ship.commandX + 1) + " SetScriptVar");
+            printer.println("\t\t\t\t<-module \"ShipModule.prpl\" \"CommandY\" " + (ship.commandY + 1) + " SetScriptVar");
+            printer.println("\t\t\t\t<-module \"ShipModule.prpl\" \"BuildCost\" " + module.module.buildCost + " SetScriptVar");
+            printer.println("\t\t\t\t<-module \"ShipModule.prpl\" \"Ship\" <-uid SetScriptVar");
+            printer.println("\t\t\t\t<-module \"" + module.module.scriptName + "\" AddScriptToUnit");
+            printer.println("\t\t\t\t");
+        }
+
+        printer.println("\t\t\tendif");
+        printer.println("\t\tendif");
+        printer.println("\tendif");
+        printer.println("loop");
+
+        printer.close();
+
+        return true;
+        /*} catch (IOException ex) {
+            ex.printStackTrace(System.out);
+            return false;
+        }*/
+    }
+
+    public boolean hasCustomModules() {
+        return !customModules.isEmpty();
+    }
+
 
     private int[] searchHull;
 

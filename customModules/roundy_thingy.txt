@@ -1,4 +1,4 @@
-Roundy Thingy
-3
-3
-roundy_thingy.png
+name:Roundy Thingy
+width:3
+height:3
+imgName:roundy_thingy.png

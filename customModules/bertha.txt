@@ -1,4 +1,6 @@
-Bertha
-9
-9
-bertha.png
+name:Bertha
+width:9
+height:9
+imgName:bertha.png
+buildCost:150
+scriptName:Bertha.prpl

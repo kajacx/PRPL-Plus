@@ -18,10 +18,12 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
+import com.prplplus.Settings;
+
 public class MainFrame extends JFrame {
     private static final long serialVersionUID = -3729420411039341803L;
 
-    public static final String version = "v0.0.4";
+    public static final String version = "v0.0.5";
     public static final String title = "PRPL Toolset";
     public static final String contact = "kajacx@gmail.com";
 
@@ -46,7 +48,7 @@ public class MainFrame extends JFrame {
         ImageIcon constIcon = new ImageIcon("img/icons/ship_constr.png");
         JPanel constPanel = new ShipConstructorPanel();
         tabs.addTab("Ship Construct", constIcon, constPanel, "Build large ships up to size "
-                + ShipConstructorPanel.MAX_SIZE + "x" + ShipConstructorPanel.MAX_SIZE);
+                + Settings.MAX_SIZE + "x" + Settings.MAX_SIZE);
 
         KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
         manager.addKeyEventDispatcher(new MyDispatcher());
@@ -56,6 +58,46 @@ public class MainFrame extends JFrame {
 
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+    }
+
+    private JMenuBar createMenu() {
+        JMenuBar bar = new JMenuBar();
+        JMenu menu;
+        JMenuItem item;
+
+        menu = new JMenu("File");
+
+        item = new JMenuItem("Exit");
+        item.addActionListener(e -> this.dispose());
+        menu.add(item);
+
+        bar.add(menu);
+
+        menu = new JMenu("Help");
+
+        item = new JMenuItem("About");
+        String about = title + "\nCreated by kajacx\nContact: " + contact + "\nVersion: " + version;
+        item.addActionListener(e -> JOptionPane.showMessageDialog(this, about));
+        menu.add(item);
+
+        item = new JMenuItem("Ship Construct Controls");
+        String controls = getFileContents("tutorials/ship_edit_controls.txt", "Unable to load controls file.");
+        item.addActionListener(e -> JOptionPane.showMessageDialog(this, controls));
+        menu.add(item);
+
+        item = new JMenuItem("How to Import Ships");
+        String howto = getFileContents("tutorials/ship_how_to_import.txt", "Unable to load ship import tutorial.");
+        item.addActionListener(e -> JOptionPane.showMessageDialog(this, howto));
+        menu.add(item);
+
+        item = new JMenuItem("How to use Custom Modules");
+        String howto2 = getFileContents("tutorials/how_to_custom_modules.txt", "Unable to load custom module tutorial.");
+        item.addActionListener(e -> JOptionPane.showMessageDialog(this, howto2));
+        menu.add(item);
+
+        bar.add(menu);
+
+        return bar;
     }
 
     private String getFileContents(String fileName, String orElse) {
@@ -81,46 +123,6 @@ public class MainFrame extends JFrame {
                 ex.printStackTrace(System.out);
             }
         }
-    }
-
-    private JMenuBar createMenu() {
-        JMenuBar bar = new JMenuBar();
-        JMenu menu;
-        JMenuItem item;
-
-        menu = new JMenu("File");
-
-        item = new JMenuItem("Exit");
-        item.addActionListener(e -> this.dispose());
-        menu.add(item);
-
-        bar.add(menu);
-
-        menu = new JMenu("Help");
-
-        item = new JMenuItem("About");
-        String about = title + "\nCreated by kajacx\nContact: " + contact + "\nVersion: " + version;
-        item.addActionListener(e -> JOptionPane.showMessageDialog(this, about));
-        menu.add(item);
-
-        item = new JMenuItem("Ship Construct Controls");
-        String controls = getFileContents("ship_edit_controls.txt", "Unable to load controls file.");
-        item.addActionListener(e -> JOptionPane.showMessageDialog(this, controls));
-        menu.add(item);
-
-        item = new JMenuItem("How to Import Ships");
-        String howto = getFileContents("ship_how_to_import.txt", "Unable to load ship import tutorial.");
-        item.addActionListener(e -> JOptionPane.showMessageDialog(this, howto));
-        menu.add(item);
-
-        item = new JMenuItem("How to use Custom Modules");
-        String howto2 = getFileContents("how_to_custom_modules.txt", "Unable to load custom module tutorial.");
-        item.addActionListener(e -> JOptionPane.showMessageDialog(this, howto2));
-        menu.add(item);
-
-        bar.add(menu);
-
-        return bar;
     }
 
     private static class MyDispatcher implements KeyEventDispatcher {

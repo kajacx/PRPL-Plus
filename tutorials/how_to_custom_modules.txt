@@ -3,14 +3,14 @@ How to use:
  - Custom modules are not exported to base-64 nor to the ".dat" file
  - However, when you "Save as", you will get the list of your custom modules,
     as well as the center point of the command module.
- - This is exactly what you need if you are using planetfall's custom module script
+ - Also you will get a "ModuleAdder.prpl" script in the same folder,
+    which serves as the "Master.prpl" script from planetfall's custom module solution
  - Custom modules are loaded correctly when you "Load from" a file
  - Unknown modules are displayed as a 1x1 question mark (when loading from a file)
 
 To add your own custom module:
  - create a new file in the "customModules" directory with a ".txt" extension
- - first line is the name of your modules
- - second line is width, third line is height
- - fourth line is the name of your texture file
+ - look at example modules to see how to set name, size and image name
+ - build cost and script name are optinal, they are used when creating the adder script
  - lastly, place your texture file in the "img/customModules" directory
  - you need to restart the program to see changes

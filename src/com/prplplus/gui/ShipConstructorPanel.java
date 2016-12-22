@@ -1,5 +1,7 @@
 package com.prplplus.gui;
 
+import static com.prplplus.Settings.MAX_SIZE;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -15,7 +17,9 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +53,6 @@ public class ShipConstructorPanel extends JPanel {
      */
     private static final long serialVersionUID = -7436127974014599287L;
 
-    public static final int MAX_SIZE = 128;
 
     private JTextField nameField;
     private JTextField statusArea;
@@ -333,6 +336,9 @@ public class ShipConstructorPanel extends JPanel {
             return;
         }
 
+        //set text to success, replace with something else on error
+        statusArea.setText("Save successful");
+
         //save file
         File file;
         try {
@@ -348,17 +354,28 @@ public class ShipConstructorPanel extends JPanel {
             return;
         }
 
-        //onvert to .dat
+        //export custom modules maker
+        if (exporter.hasCustomModules()) {
+            String adder = file.getParentFile().getAbsolutePath() + "/" + nameField.getText().replaceAll("\\s+", "") + "Adder.prpl";
+            try {
+                PrintStream stream = new PrintStream(new FileOutputStream(adder));
+                exporter.writeModuleAdder(stream);
+            } catch (IOException e) {
+                e.printStackTrace(System.out);
+                statusArea.setText("Cannot create PRPL custom module adder");
+            }
+        }
+
+        //convert to .dat
         try {
             String datFile = file.getParentFile().getAbsolutePath() + "/" + nameField.getText() + ".dat";
             //System.out.println("Saving to:" + datFile);
 
-            ProcessBuilder builder = new ProcessBuilder("PRPLDatGZip.exe", file.getAbsolutePath(), datFile, "-b64");
+            ProcessBuilder builder = new ProcessBuilder("GZipExporter/PRPLDatGZip.exe", file.getAbsolutePath(), datFile, "-b64");
             builder.redirectErrorStream(true);
             Process process = builder.start();
 
             Scanner scan = new Scanner(process.getInputStream());
-            statusArea.setText("Save successful");
             while (scan.hasNextLine()) {
                 String line = scan.nextLine();
                 if (!line.isEmpty()) {
@@ -523,12 +540,18 @@ public class ShipConstructorPanel extends JPanel {
             super.paintComponent(g);
             g.translate(-posX, -posY);
 
-            //lines
+            //grid
             g.setColor(Color.BLACK);
 
             for (int i = 0; i <= MAX_SIZE; i++) {
                 g.drawLine(i * zoom, 0, i * zoom, MAX_SIZE * zoom);
                 g.drawLine(0, i * zoom, MAX_SIZE * zoom, i * zoom);
+            }
+
+            //35x25 original size
+            if (Settings.OUTLINE_35_25_BOX) {
+                g.setColor(new Color(64, 128, 255));
+                g.drawRect(0, 0, 35 * zoom, 25 * zoom);
             }
 
             //hull

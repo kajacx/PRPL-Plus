@@ -1,0 +1,6 @@
+name:Mortar
+width:3
+height:3
+imgName:mortar.png
+buildCost:20
+scriptName:Mortar.prpl
