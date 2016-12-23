@@ -1,10 +1,21 @@
 package com.prplplus.errors;
 
+import java.awt.Color;
+
+import com.prplplus.gui.CompilerPanel;
 import com.prplplus.jflex.Symbol;
 
 public class ErrorHandler {
     public static enum ErrorLevel {
-        IGNORE, WARNING, ERROR;
+        IGNORE("Ignored warning", Color.gray), WARNING("Warning", new Color(255, 128, 0)), ERROR("Error", Color.red);
+
+        public String text;
+        public Color color; //bad design FTW
+
+        private ErrorLevel(String text, Color color) {
+            this.text = text;
+            this.color = color;
+        }
     }
 
     public static enum ErrorType {
@@ -20,7 +31,8 @@ public class ErrorHandler {
         INCLUDE_MISSING_FILENAME(ErrorLevel.ERROR),
         INCLUDE_FILE_NOT_FOUND(ErrorLevel.ERROR),
         INCLUDE_CYCLE_DETECTED(ErrorLevel.WARNING),
-        COMPILATION_FAILED(ErrorLevel.ERROR);
+        COMPILATION_FAILED(ErrorLevel.ERROR),
+        TOO_MANY_FILES_SCANNED(ErrorLevel.ERROR);
         // @formatter:on
 
         public ErrorLevel level;
@@ -30,12 +42,31 @@ public class ErrorHandler {
         }
     }
 
+    public static CompilerPanel errorSink;
+
     public static void reportError(ErrorType type, Symbol symbol) {
-        System.out.format("Error %s on line %d at column %d with symbol '%s' in file '%s'%n",
-                type, symbol.line, symbol.column, symbol.text, symbol.fileFrom);
+        String msg = String.format("%s %s on line %d at symbol '%s' in file '%s'",
+                type.level.text, type, symbol.line, symbol.originalText, symbol.fileFrom);
+        System.out.println(msg);
+        if (errorSink != null) {
+            errorSink.onError(type.level, msg);
+        }
+    }
+
+    public static void reportError(ErrorType type, Symbol symbol, String addMsg) {
+        String msg = String.format("%s %s on line %d at symbol '%s' in file '%s' (%s)",
+                type.level.text, type, symbol.line, symbol.originalText, symbol.fileFrom, addMsg);
+        System.out.println(msg);
+        if (errorSink != null) {
+            errorSink.onError(type.level, msg);
+        }
     }
 
     public static void reportError(ErrorType type, String message) {
-        System.out.format("Error %s: '%s'%n", type, message);
+        String msg = String.format("%s %s: '%s'", type.level.text, type, message);
+        System.out.println(msg);
+        if (errorSink != null) {
+            errorSink.onError(type.level, msg);
+        }
     }
 }

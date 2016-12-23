@@ -52,4 +52,10 @@ public class SpecialSymbol extends Symbol {
         return result;
     }
 
+    public static Symbol withText(PrplPlusLexer lexer, String text) {
+        Symbol result = new Symbol(lexer);
+        result.text = text;
+        return result;
+    }
+
 }

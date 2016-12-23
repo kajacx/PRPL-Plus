@@ -43,9 +43,9 @@ import com.prplplus.gui.OffsetIterable.Offset;
 import com.prplplus.shipconstruct.Hull;
 import com.prplplus.shipconstruct.Module;
 import com.prplplus.shipconstruct.ModuleAtPosition;
-import com.prplplus.shipconstruct.ShipConstructor.Ship;
 import com.prplplus.shipconstruct.ShipDeconstructor;
 import com.prplplus.shipconstruct.ShipExporter;
+import com.prplplus.shipconstruct.ShipConstructor.Ship;
 
 public class ShipConstructorPanel extends JPanel {
     /**

@@ -14,7 +14,7 @@ public class Settings {
      */
     public static boolean OUTLINE_35_25_BOX = true;
 
-    public static String WORK_IN = "c:/Users/Karel/Documents/My Games/particlefleet/editor/";
+    public static String WORK_IN = "c:/Users/Karel/Documents/My Games/particlefleet/";
 
     public static int MAX_SIZE = 128;
 
@@ -26,6 +26,7 @@ public class Settings {
             OUTLINE_35_25_BOX = props.getProperty("displayMaxSizeOutline", "true").equals("true");
             MAX_SIZE = Integer.parseInt(props.getProperty("maxSize", "128"));
             MAX_SIZE = Math.min(Math.max(35, MAX_SIZE), 128);
+            WORK_IN = props.getProperty("PFDirectory");
         } catch (Exception ex) {
             ex.printStackTrace(System.out);
         }

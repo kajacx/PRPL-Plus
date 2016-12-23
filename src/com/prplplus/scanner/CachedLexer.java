@@ -9,6 +9,7 @@ import com.prplplus.jflex.Symbol;
 public class CachedLexer {
     private PrplPlusLexer lexer;
     private ArrayDeque<Symbol> symbolCache = new ArrayDeque<>();
+    private String scriptNamespace; //wow, what a horrible design
 
     public CachedLexer(PrplPlusLexer lexer) {
         this.lexer = lexer;
@@ -42,5 +43,13 @@ public class CachedLexer {
         } catch (IOException e) {
             e.printStackTrace(System.out);
         }
+    }
+
+    public String getScriptNamespace() {
+        return scriptNamespace;
+    }
+
+    public void setScriptNamespace(String scriptNamespace) {
+        this.scriptNamespace = scriptNamespace;
     }
 }

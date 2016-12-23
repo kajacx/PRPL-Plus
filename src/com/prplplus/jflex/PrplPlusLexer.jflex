@@ -60,41 +60,32 @@ Identifier = [a-zA-Z_][0-9a-zA-Z_]*
 "+>!"				{ return new VarSymbol(this, Operation.WRITE, Scope.LOCAL, true); }
 "+?!"				{ return new VarSymbol(this, Operation.EXISTS, Scope.LOCAL, true); }
 "++?"				{ return new VarSymbol(this, Operation.DELETE, Scope.LOCAL, true); }
+"++!"				{ return new VarSymbol(this, Operation.DELETE, Scope.LOCAL, true); } //for the OCD folk out there
 
 /* Semi-global variables */
-\<\-{Identifier}	{ return new VarSymbol(this, Operation.READ, Scope.SEMI_GLOBAL, false); }
-\-\>{Identifier}	{ return new VarSymbol(this, Operation.WRITE, Scope.SEMI_GLOBAL, false); }
-\-\?{Identifier}	{ return new VarSymbol(this, Operation.EXISTS, Scope.SEMI_GLOBAL, false); }
-\-\-{Identifier}	{ return new VarSymbol(this, Operation.DELETE, Scope.SEMI_GLOBAL, false); }
-
-/* Semi-global variables with reference */
-"<-!"				{ return new VarSymbol(this, Operation.READ, Scope.SEMI_GLOBAL, true); }
-"->!"				{ return new VarSymbol(this, Operation.WRITE, Scope.SEMI_GLOBAL, true); }
-"-?!"				{ return new VarSymbol(this, Operation.EXISTS, Scope.SEMI_GLOBAL, true); }
-"--?"				{ return new VarSymbol(this, Operation.DELETE, Scope.SEMI_GLOBAL, true); }
-
-/* Global variables */
 \<\~{Identifier}	{ return new VarSymbol(this, Operation.READ, Scope.SEMI_GLOBAL, false); }
 \~\>{Identifier}	{ return new VarSymbol(this, Operation.WRITE, Scope.SEMI_GLOBAL, false); }
 \~\?{Identifier}	{ return new VarSymbol(this, Operation.EXISTS, Scope.SEMI_GLOBAL, false); }
 \~\~{Identifier}	{ return new VarSymbol(this, Operation.DELETE, Scope.SEMI_GLOBAL, false); }
 
-/* Global variables with reference */
+/* Semi-global variables with reference */
 "<~!"				{ return new VarSymbol(this, Operation.READ, Scope.SEMI_GLOBAL, true); }
 "~>!"				{ return new VarSymbol(this, Operation.WRITE, Scope.SEMI_GLOBAL, true); }
 "~?!"				{ return new VarSymbol(this, Operation.EXISTS, Scope.SEMI_GLOBAL, true); }
 "~~?"				{ return new VarSymbol(this, Operation.DELETE, Scope.SEMI_GLOBAL, true); }
+"~~!"				{ return new VarSymbol(this, Operation.DELETE, Scope.SEMI_GLOBAL, true); } //for the OCD folk out there
 
+/* Global variables */
+\<\-{Identifier}	{ return new VarSymbol(this, Operation.READ, Scope.GLOBAL, false); }
+\-\>{Identifier}	{ return new VarSymbol(this, Operation.WRITE, Scope.GLOBAL, false); }
+\-\?{Identifier}	{ return new VarSymbol(this, Operation.EXISTS, Scope.GLOBAL, false); }
+\-\-{Identifier}	{ return new VarSymbol(this, Operation.DELETE, Scope.GLOBAL, false); }
 
-/* Global argument variables */
-\${Identifier}  	{ return new VarSymbol(this, Operation.WRITE, Scope.ARGUMENT, true); }
-
-
-
-/*  ----  SPECIAL SYMBOLS  ----  */
-"++%"				{ return new SpecialSymbol(this, SpecialSymbol.Type.LOCAL_PREFIX); }
-"--%"				{ return new SpecialSymbol(this, SpecialSymbol.Type.SEMI_GLOBAL_PREFIX); }
-"~~%"				{ return new SpecialSymbol(this, SpecialSymbol.Type.PRPL_PLUS_PREFIX); }
+/* Global variables with reference */
+"<-!"				{ return new VarSymbol(this, Operation.READ, Scope.GLOBAL, true); }
+"+>PREFIX); }
+"~~%"				{ return new SpecialSymbol(this, SpecialSymbol.Type.SEMI_GLOBAL_PREFIX); }
+"--%"				{ return new SpecialSymbol(this, SpecialSymbol.Type.PRPL_PLUS_PREFIX); }
 
 "%include"          { return new SpecialSymbol(this, SpecialSymbol.Type.INCLUDE); }
 "%library"          { return new SpecialSymbol(this, SpecialSymbol.Type.LIBRARY); }
@@ -115,7 +106,6 @@ Identifier = [a-zA-Z_][0-9a-zA-Z_]*
 
 
 
-
 /*  ---- RANDOM STUFF  ----  */
 -?0x[0-9]+          { return SpecialSymbol.pasreBase16(this); } //hexadecimal constant
 "("					{ return new ParSymbol(this, ParSymbol.Type.LEFT_PAR); } // Left (
@@ -123,10 +113,9 @@ Identifier = [a-zA-Z_][0-9a-zA-Z_]*
 
 
 
-
 /*  ----  COPY PASTA ----  */
-{Identifier}		{ return new Symbol(this); } /* Build-in function */
-[\[\]\:]			{ return new Symbol(this); } /* List indexers and stuff */
+{Identifier}		{ return new Symbol(this); } /* Build-in function/operator/whatever */
+[\[\]\:\.]	    	{ return new Symbol(this); } /* List indexers and stuff */
 -?[0-9]+(\.[0-9]+)?	{ return new Symbol(this); } /* Number constant */
 \"[^\"\#]*\"		{ return new Symbol(this); } /* String constant */
 
@@ -153,4 +142,7 @@ Identifier = [a-zA-Z_][0-9a-zA-Z_]*
 					ErrorHandler.reportError(ErrorHandler.ErrorType.INVALID_CHARACTER, s);
 					return s;
 					}
-                                                        
+
+
+
+                    

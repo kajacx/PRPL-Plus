@@ -37,9 +37,9 @@ public class PRPLCompiler {
     private void include(String fname, Symbol symbol) {
 
         try {
-            File importFile = new File(Settings.WORK_IN + fname);
+            File importFile = new File(Settings.WORK_IN + "/editor/" + fname);
             if (!importFile.exists()) {
-                ErrorHandler.reportError(ErrorType.INCLUDE_FILE_NOT_FOUND, symbol);
+                ErrorHandler.reportError(ErrorType.INCLUDE_FILE_NOT_FOUND, symbol, importFile.getAbsolutePath());
                 return;
             }
 
@@ -86,6 +86,8 @@ public class PRPLCompiler {
 
         String scriptNamespace = manager.getPrefixFor("main");
         String functNamespace = null;
+
+        lexer.setScriptNamespace(scriptNamespace);
 
         while (true) {
             if (!isPrimary && lexer.peekNextUseful().isFunctionDefinition()) {
@@ -253,6 +255,7 @@ public class PRPLCompiler {
                     writer.println("# -- Functions from '" + newLexer.getFilename() + "' -- #");
                     lexer.close();
                     lexer = newLexer;
+                    scriptNamespace = newLexer.getScriptNamespace();
                     continue;
                 } else {
                     //work done

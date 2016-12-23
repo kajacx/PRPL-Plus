@@ -126,6 +126,12 @@ public class ShipConstructor {
         return Base64.getEncoder().encodeToString(result);
     }
 
+    //A test/debug method for building a 3x3 shi with just the command module
+    public static String constructDummy() {
+        int[] hull = { HULL_BLOCK, HULL_BLOCK, HULL_BLOCK, HULL_BLOCK, HULL_BLOCK, HULL_BLOCK, HULL_BLOCK, HULL_BLOCK, HULL_BLOCK };
+        return construct(3, 3, hull, new ArrayList<>(), 0, 0, "DUMMY");
+    }
+
     // A test/showcase method for building a Lathe
     public static String constructLathe() {
         int width = 12;

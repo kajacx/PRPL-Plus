@@ -3,6 +3,7 @@ package com.prplplus.jflex;
 public class Symbol {
     public String fileFrom;
     public String text;
+    public final String originalText;
     public int line;
     public int column;
 
@@ -11,7 +12,7 @@ public class Symbol {
      * @param lexer
      */
     public Symbol(PrplPlusLexer lexer) {
-        text = lexer.yytext();
+        originalText = text = lexer.yytext();
         line = lexer.getLineNumber() + 1;
         column = lexer.getColumnNumber() + 1;
         fileFrom = lexer.getFileName();
