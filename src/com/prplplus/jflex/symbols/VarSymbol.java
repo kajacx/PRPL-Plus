@@ -6,7 +6,7 @@ import com.prplplus.jflex.Symbol;
 public class VarSymbol extends Symbol {
 
     public static enum Operation {
-        READ("<-", "<-!"), WRITE("->", "->!"), EXISTS("-?", "-?!"), DELETE("--", "--?");
+        READ("<-", "<-!"), WRITE("->", "->!"), EXISTS("-?", "-?!"), DELETE("--", "--!");
 
         public String opInstr;
         public String refInstr;

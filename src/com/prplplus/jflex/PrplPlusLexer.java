@@ -37,13 +37,13 @@ public class PrplPlusLexer {
    * Translates characters to character classes
    */
   private static final String ZZ_CMAP_PACKED = 
-    "\11\0\1\40\1\35\1\37\1\37\1\36\22\0\1\40\1\7\1\51"+
-    "\1\34\1\12\1\14\2\0\1\45\1\46\1\13\1\4\1\0\1\11"+
-    "\1\50\1\52\1\43\11\2\1\41\1\0\1\3\1\0\1\5\1\6"+
-    "\1\42\32\1\1\47\1\0\1\47\1\0\1\1\1\0\1\26\1\24"+
-    "\1\17\1\22\1\23\3\1\1\15\1\1\1\31\1\20\1\1\1\16"+
-    "\1\30\2\1\1\25\1\32\1\33\1\21\2\1\1\44\1\27\1\1"+
-    "\3\0\1\10\6\0\1\37\u1fa2\0\1\37\1\37\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\udfe6\0";
+    "\11\0\1\36\1\33\1\35\1\35\1\34\22\0\1\36\1\7\1\47"+
+    "\1\32\1\0\1\12\2\0\1\43\1\44\1\51\1\4\1\0\1\11"+
+    "\1\46\1\50\1\41\11\2\1\37\1\0\1\3\1\0\1\5\1\6"+
+    "\1\40\32\1\1\45\1\0\1\45\1\0\1\1\1\0\1\24\1\22"+
+    "\1\15\1\20\1\21\3\1\1\13\1\1\1\27\1\16\1\1\1\14"+
+    "\1\26\2\1\1\23\1\30\1\31\1\17\2\1\1\42\1\25\1\1"+
+    "\3\0\1\10\6\0\1\35\u1fa2\0\1\35\1\35\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\udfe6\0";
 
   /** 
    * Translates characters to character classes
@@ -56,17 +56,16 @@ public class PrplPlusLexer {
   private static final int [] ZZ_ACTION = zzUnpackAction();
 
   private static final String ZZ_ACTION_PACKED_0 =
-    "\2\0\1\1\2\2\6\1\4\3\1\2\1\1\1\2"+
-    "\1\4\1\5\1\2\2\1\1\6\16\0\1\7\3\0"+
-    "\1\10\1\11\2\0\1\12\1\0\1\13\1\2\1\14"+
-    "\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24"+
-    "\1\25\1\26\1\27\1\30\1\31\1\32\1\33\1\34"+
-    "\1\35\1\36\1\37\1\40\1\41\1\42\1\43\1\44"+
-    "\2\45\1\46\3\0\1\47\1\50\15\0\1\51\1\52"+
-    "\2\0\1\53\2\0";
+    "\2\0\1\1\2\2\5\1\4\3\1\2\1\1\1\2"+
+    "\1\4\1\5\1\2\2\1\1\6\21\0\1\7\1\10"+
+    "\2\0\1\11\1\0\1\12\1\2\1\13\1\14\1\15"+
+    "\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25"+
+    "\1\26\1\27\1\30\1\31\1\32\1\33\1\34\1\35"+
+    "\1\36\1\37\1\40\1\41\1\42\3\0\1\43\15\0"+
+    "\1\44\1\45\2\0\1\46\2\0";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[103];
+    int [] result = new int[96];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -91,22 +90,21 @@ public class PrplPlusLexer {
   private static final int [] ZZ_ROWMAP = zzUnpackRowMap();
 
   private static final String ZZ_ROWMAP_PACKED_0 =
-    "\0\0\0\53\0\126\0\201\0\254\0\327\0\u0102\0\u012d"+
-    "\0\u0158\0\u0183\0\u01ae\0\u01d9\0\126\0\u0204\0\u022f\0\u025a"+
-    "\0\u0285\0\u02b0\0\126\0\126\0\126\0\u02db\0\u0306\0\u0331"+
-    "\0\u035c\0\u0387\0\u03b2\0\u03dd\0\u0408\0\u0433\0\u045e\0\u0489"+
-    "\0\u04b4\0\u04df\0\u050a\0\u0535\0\u0560\0\u058b\0\u05b6\0\u05e1"+
-    "\0\u060c\0\u0637\0\u0662\0\u068d\0\u06b8\0\u02db\0\126\0\u06e3"+
-    "\0\126\0\u0387\0\u070e\0\126\0\u0739\0\126\0\u0764\0\u078f"+
-    "\0\u07ba\0\126\0\126\0\u07e5\0\126\0\u0810\0\126\0\u083b"+
-    "\0\126\0\u0866\0\126\0\u0891\0\126\0\126\0\u08bc\0\u078f"+
-    "\0\u08e7\0\u078f\0\u0912\0\u078f\0\u093d\0\126\0\u0968\0\u0993"+
-    "\0\u09be\0\u06b8\0\126\0\u09e9\0\u0a14\0\u0a3f\0\u0a6a\0\u0a95"+
-    "\0\u0ac0\0\u0aeb\0\u0b16\0\u0b41\0\u0b6c\0\u0b97\0\u0bc2\0\u0bed"+
-    "\0\126\0\126\0\u0c18\0\u0c43\0\126\0\u0c6e\0\u0c99";
+    "\0\0\0\52\0\124\0\176\0\250\0\322\0\374\0\u0126"+
+    "\0\u0150\0\u017a\0\u01a4\0\124\0\u01ce\0\u01f8\0\u0222\0\u024c"+
+    "\0\u0276\0\124\0\124\0\124\0\u02a0\0\u02ca\0\u02f4\0\u031e"+
+    "\0\u0348\0\u0372\0\u039c\0\u03c6\0\u03f0\0\u041a\0\u0444\0\u046e"+
+    "\0\u0498\0\u04c2\0\u04ec\0\u0516\0\u0540\0\u056a\0\u0594\0\u05be"+
+    "\0\u05e8\0\u0612\0\u063c\0\u02a0\0\124\0\u0666\0\124\0\u0348"+
+    "\0\u0690\0\124\0\u06ba\0\124\0\u06e4\0\124\0\u070e\0\124"+
+    "\0\124\0\u0738\0\124\0\u0762\0\124\0\u078c\0\124\0\u07b6"+
+    "\0\124\0\u07e0\0\124\0\124\0\u080a\0\u0834\0\u085e\0\124"+
+    "\0\u0888\0\u08b2\0\u08dc\0\u063c\0\u0906\0\u0930\0\u095a\0\u0984"+
+    "\0\u09ae\0\u09d8\0\u0a02\0\u0a2c\0\u0a56\0\u0a80\0\u0aaa\0\u0ad4"+
+    "\0\u0afe\0\124\0\124\0\u0b28\0\u0b52\0\124\0\u0b7c\0\u0ba6";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[103];
+    int [] result = new int[96];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -130,57 +128,53 @@ public class PrplPlusLexer {
 
   private static final String ZZ_TRANS_PACKED_0 =
     "\1\3\1\4\1\5\1\6\1\7\3\3\1\10\1\11"+
-    "\1\12\1\3\1\13\17\4\1\14\1\15\1\16\1\3"+
-    "\1\17\1\20\1\21\1\22\1\4\1\23\1\24\2\25"+
-    "\1\26\1\27\13\30\1\31\21\30\1\15\1\16\14\30"+
-    "\54\0\2\4\12\0\17\4\7\0\2\4\10\0\1\5"+
-    "\40\0\1\5\4\0\1\32\6\0\1\33\3\0\1\34"+
-    "\1\35\45\0\1\36\1\37\1\40\51\0\1\41\1\42"+
-    "\1\0\1\43\44\0\1\5\2\0\1\44\1\45\2\0"+
-    "\1\46\31\0\1\22\10\0\1\47\13\0\17\47\10\0"+
-    "\1\47\23\0\1\50\2\0\1\51\3\0\1\52\26\0"+
-    "\35\14\3\0\13\14\35\0\1\15\55\0\1\17\13\0"+
-    "\1\53\13\0\17\53\10\0\1\53\7\0\1\54\13\0"+
-    "\17\54\10\0\1\54\10\0\1\5\40\0\1\5\1\55"+
-    "\3\0\1\32\2\0\34\56\1\0\14\56\1\25\1\56"+
-    "\13\0\1\57\37\0\13\30\1\60\21\30\2\0\51\30"+
-    "\2\0\13\30\1\61\2\0\1\62\40\0\1\62\10\0"+
-    "\1\63\5\0\1\64\5\0\17\63\10\0\1\63\7\0"+
-    "\1\65\5\0\1\66\5\0\17\65\10\0\1\65\7\0"+
-    "\1\67\5\0\1\70\3\0\1\25\1\0\17\67\10\0"+
-    "\1\67\7\0\1\71\4\0\2\72\4\0\1\73\17\71"+
-    "\10\0\1\71\7\0\1\74\5\0\1\75\5\0\17\74"+
-    "\10\0\1\74\7\0\1\76\5\0\1\77\5\0\17\76"+
-    "\10\0\1\76\7\0\1\100\5\0\1\101\5\0\17\100"+
-    "\10\0\1\100\7\0\1\102\5\0\1\103\5\0\17\102"+
-    "\10\0\1\102\7\0\1\104\4\0\2\105\4\0\1\106"+
-    "\17\104\10\0\1\104\7\0\1\107\5\0\1\110\3\0"+
-    "\1\25\1\0\17\107\10\0\1\107\7\0\1\111\5\0"+
-    "\1\112\3\0\1\25\1\0\17\111\10\0\1\111\7\0"+
-    "\1\113\4\0\1\114\1\115\3\0\1\25\1\116\17\113"+
-    "\10\0\1\113\7\0\2\47\12\0\17\47\7\0\2\47"+
-    "\24\0\1\117\51\0\1\120\55\0\1\121\33\0\2\53"+
-    "\12\0\17\53\7\0\2\53\7\0\2\54\12\0\17\54"+
-    "\7\0\2\54\10\0\1\122\40\0\1\122\7\0\35\30"+
-    "\2\0\13\30\2\0\2\63\12\0\17\63\7\0\2\63"+
-    "\7\0\2\65\12\0\17\65\7\0\2\65\7\0\2\67"+
-    "\12\0\17\67\7\0\2\67\21\0\1\25\40\0\2\71"+
-    "\12\0\17\71\7\0\2\71\7\0\2\74\12\0\17\74"+
-    "\7\0\2\74\7\0\2\76\12\0\17\76\7\0\2\76"+
-    "\7\0\2\100\12\0\17\100\7\0\2\100\7\0\2\102"+
-    "\12\0\17\102\7\0\2\102\7\0\2\104\12\0\17\104"+
-    "\7\0\2\104\7\0\2\107\12\0\17\107\7\0\2\107"+
-    "\7\0\2\111\12\0\17\111\7\0\2\111\7\0\2\113"+
-    "\12\0\17\113\7\0\2\113\21\0\1\123\56\0\1\124"+
-    "\57\0\1\125\56\0\1\126\42\0\1\127\57\0\1\130"+
-    "\44\0\1\131\54\0\1\132\57\0\1\133\55\0\1\134"+
-    "\43\0\1\135\55\0\1\136\50\0\1\137\6\0\1\140"+
-    "\43\0\1\141\56\0\1\142\41\0\1\143\67\0\1\144"+
-    "\41\0\1\145\56\0\1\146\51\0\1\147\60\0\1\145"+
-    "\17\0";
+    "\1\12\17\4\1\13\1\14\1\15\1\3\1\16\1\17"+
+    "\1\20\1\21\1\4\1\22\1\23\2\24\1\25\1\26"+
+    "\1\3\33\27\1\14\1\15\14\27\1\30\53\0\2\4"+
+    "\10\0\17\4\7\0\2\4\11\0\1\5\36\0\1\5"+
+    "\4\0\1\31\7\0\1\32\3\0\1\33\1\34\44\0"+
+    "\1\35\1\36\1\37\50\0\1\40\1\41\1\0\1\42"+
+    "\43\0\1\5\2\0\1\43\1\44\2\0\1\45\27\0"+
+    "\1\21\23\0\1\46\2\0\1\47\3\0\1\50\27\0"+
+    "\33\13\3\0\14\13\33\0\1\14\54\0\1\16\14\0"+
+    "\1\51\11\0\17\51\10\0\1\51\10\0\1\52\11\0"+
+    "\17\52\10\0\1\52\11\0\1\5\36\0\1\5\1\53"+
+    "\3\0\1\31\3\0\32\54\1\0\14\54\1\24\2\54"+
+    "\51\0\1\55\33\27\2\0\14\27\1\56\33\27\2\0"+
+    "\13\27\1\57\1\27\2\0\1\60\36\0\1\60\11\0"+
+    "\1\61\5\0\1\62\3\0\17\61\10\0\1\61\10\0"+
+    "\1\63\5\0\1\64\3\0\17\63\10\0\1\63\10\0"+
+    "\1\65\5\0\1\66\3\0\17\65\10\0\1\65\10\0"+
+    "\1\67\4\0\2\70\2\0\1\71\17\67\10\0\1\67"+
+    "\10\0\1\72\5\0\1\73\3\0\17\72\10\0\1\72"+
+    "\10\0\1\74\5\0\1\75\3\0\17\74\10\0\1\74"+
+    "\10\0\1\76\5\0\1\77\3\0\17\76\10\0\1\76"+
+    "\10\0\1\100\5\0\1\101\3\0\17\100\10\0\1\100"+
+    "\10\0\1\102\4\0\2\103\2\0\1\104\17\102\10\0"+
+    "\1\102\10\0\1\105\11\0\17\105\10\0\1\105\10\0"+
+    "\1\106\11\0\17\106\10\0\1\106\10\0\1\107\10\0"+
+    "\1\110\17\107\10\0\1\107\23\0\1\111\50\0\1\112"+
+    "\54\0\1\113\34\0\2\51\10\0\17\51\7\0\2\51"+
+    "\10\0\2\52\10\0\17\52\7\0\2\52\11\0\1\114"+
+    "\36\0\1\114\10\0\33\27\2\0\13\27\1\0\1\27"+
+    "\1\0\2\61\10\0\17\61\7\0\2\61\10\0\2\63"+
+    "\10\0\17\63\7\0\2\63\10\0\2\65\10\0\17\65"+
+    "\7\0\2\65\10\0\2\67\10\0\17\67\7\0\2\67"+
+    "\10\0\2\72\10\0\17\72\7\0\2\72\10\0\2\74"+
+    "\10\0\17\74\7\0\2\74\10\0\2\76\10\0\17\76"+
+    "\7\0\2\76\10\0\2\100\10\0\17\100\7\0\2\100"+
+    "\10\0\2\102\10\0\17\102\7\0\2\102\10\0\2\105"+
+    "\10\0\17\105\7\0\2\105\10\0\2\106\10\0\17\106"+
+    "\7\0\2\106\10\0\2\107\10\0\17\107\7\0\2\107"+
+    "\24\0\1\115\56\0\1\116\55\0\1\117\41\0\1\120"+
+    "\56\0\1\121\43\0\1\122\53\0\1\123\56\0\1\124"+
+    "\54\0\1\125\42\0\1\126\54\0\1\127\47\0\1\130"+
+    "\6\0\1\131\42\0\1\132\55\0\1\133\40\0\1\134"+
+    "\66\0\1\135\40\0\1\136\55\0\1\137\50\0\1\140"+
+    "\57\0\1\136\20\0";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[3268];
+    int [] result = new int[3024];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -218,15 +212,14 @@ public class PrplPlusLexer {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\2\0\1\11\11\1\1\11\5\1\3\11\3\1\16\0"+
-    "\1\1\3\0\2\1\2\0\1\11\1\0\1\11\2\1"+
-    "\1\11\1\1\1\11\3\1\2\11\1\1\1\11\1\1"+
-    "\1\11\1\1\1\11\1\1\1\11\1\1\2\11\7\1"+
-    "\1\11\3\0\1\1\1\11\15\0\2\11\2\0\1\11"+
-    "\2\0";
+    "\2\0\1\11\10\1\1\11\5\1\3\11\3\1\21\0"+
+    "\2\1\2\0\1\11\1\0\1\11\2\1\1\11\1\1"+
+    "\1\11\1\1\1\11\1\1\2\11\1\1\1\11\1\1"+
+    "\1\11\1\1\1\11\1\1\1\11\1\1\2\11\3\1"+
+    "\1\11\3\0\1\1\15\0\2\11\2\0\1\11\2\0";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[103];
+    int [] result = new int[96];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -702,175 +695,155 @@ public class PrplPlusLexer {
 					ErrorHandler.reportError(ErrorHandler.ErrorType.INVALID_CHARACTER, s);
 					return s;
             }
-          case 44: break;
+          case 39: break;
           case 2: 
             { return new Symbol(this);
             }
-          case 45: break;
+          case 40: break;
           case 3: 
             { return new WhitespaceSymbol(this);
             }
-          case 46: break;
+          case 41: break;
           case 4: 
             { return new ParSymbol(this, ParSymbol.Type.LEFT_PAR);
             }
-          case 47: break;
+          case 42: break;
           case 5: 
             { return new ParSymbol(this, ParSymbol.Type.RIGHT_PAR);
             }
-          case 48: break;
+          case 43: break;
           case 6: 
             { return SpecialSymbol.addComment(this);
             }
-          case 49: break;
+          case 44: break;
           case 7: 
-            { return new VarSymbol(this, Operation.WRITE, Scope.ARGUMENT, true);
-            }
-          case 50: break;
-          case 8: 
             { return new UserFunctionSymbol(this, true);
             }
-          case 51: break;
-          case 9: 
+          case 45: break;
+          case 8: 
             { return new UserFunctionSymbol(this, false);
             }
-          case 52: break;
-          case 10: 
+          case 46: break;
+          case 9: 
             { yybegin(COMMENT); return SpecialSymbol.addComment(this);
             }
-          case 53: break;
-          case 11: 
+          case 47: break;
+          case 10: 
             { yybegin(YYINITIAL); return SpecialSymbol.addComment(this);
             }
-          case 54: break;
-          case 12: 
+          case 48: break;
+          case 11: 
             { return new VarSymbol(this, Operation.READ, Scope.LOCAL, false);
             }
-          case 55: break;
-          case 13: 
+          case 49: break;
+          case 12: 
             { return new VarSymbol(this, Operation.READ, Scope.LOCAL, true);
             }
-          case 56: break;
-          case 14: 
+          case 50: break;
+          case 13: 
             { return new VarSymbol(this, Operation.READ, Scope.SEMI_GLOBAL, false);
             }
-          case 57: break;
-          case 15: 
+          case 51: break;
+          case 14: 
             { return new VarSymbol(this, Operation.READ, Scope.SEMI_GLOBAL, true);
             }
-          case 58: break;
-          case 16: 
+          case 52: break;
+          case 15: 
             { return new VarSymbol(this, Operation.READ, Scope.GLOBAL, false);
             }
-          case 59: break;
-          case 17: 
+          case 53: break;
+          case 16: 
             { return new VarSymbol(this, Operation.READ, Scope.GLOBAL, true);
             }
-          case 60: break;
-          case 18: 
+          case 54: break;
+          case 17: 
             { return new VarSymbol(this, Operation.DELETE, Scope.LOCAL, false);
             }
-          case 61: break;
-          case 19: 
+          case 55: break;
+          case 18: 
             { return new VarSymbol(this, Operation.DELETE, Scope.LOCAL, true);
             }
-          case 62: break;
-          case 20: 
+          case 56: break;
+          case 19: 
             { return new SpecialSymbol(this, SpecialSymbol.Type.LOCAL_PREFIX);
             }
-          case 63: break;
-          case 21: 
+          case 57: break;
+          case 20: 
             { return new VarSymbol(this, Operation.WRITE, Scope.LOCAL, false);
             }
-          case 64: break;
-          case 22: 
+          case 58: break;
+          case 21: 
             { return new VarSymbol(this, Operation.WRITE, Scope.LOCAL, true);
             }
-          case 65: break;
-          case 23: 
+          case 59: break;
+          case 22: 
             { return new VarSymbol(this, Operation.EXISTS, Scope.LOCAL, false);
             }
-          case 66: break;
-          case 24: 
+          case 60: break;
+          case 23: 
             { return new VarSymbol(this, Operation.EXISTS, Scope.LOCAL, true);
             }
-          case 67: break;
-          case 25: 
+          case 61: break;
+          case 24: 
             { return new VarSymbol(this, Operation.WRITE, Scope.SEMI_GLOBAL, false);
             }
-          case 68: break;
-          case 26: 
+          case 62: break;
+          case 25: 
             { return new VarSymbol(this, Operation.WRITE, Scope.SEMI_GLOBAL, true);
             }
-          case 69: break;
-          case 27: 
+          case 63: break;
+          case 26: 
             { return new VarSymbol(this, Operation.EXISTS, Scope.SEMI_GLOBAL, false);
             }
-          case 70: break;
-          case 28: 
+          case 64: break;
+          case 27: 
             { return new VarSymbol(this, Operation.EXISTS, Scope.SEMI_GLOBAL, true);
             }
-          case 71: break;
-          case 29: 
+          case 65: break;
+          case 28: 
             { return new VarSymbol(this, Operation.DELETE, Scope.SEMI_GLOBAL, false);
             }
-          case 72: break;
-          case 30: 
+          case 66: break;
+          case 29: 
             { return new VarSymbol(this, Operation.DELETE, Scope.SEMI_GLOBAL, true);
             }
-          case 73: break;
-          case 31: 
+          case 67: break;
+          case 30: 
             { return new SpecialSymbol(this, SpecialSymbol.Type.SEMI_GLOBAL_PREFIX);
             }
-          case 74: break;
-          case 32: 
+          case 68: break;
+          case 31: 
             { return new VarSymbol(this, Operation.WRITE, Scope.GLOBAL, false);
             }
-          case 75: break;
-          case 33: 
-            { return new VarSymbol(this, Operation.WRITE, Scope.GLOBAL, true);
-            }
-          case 76: break;
-          case 34: 
+          case 69: break;
+          case 32: 
             { return new VarSymbol(this, Operation.EXISTS, Scope.GLOBAL, false);
             }
-          case 77: break;
-          case 35: 
-            { return new VarSymbol(this, Operation.EXISTS, Scope.GLOBAL, true);
-            }
-          case 78: break;
-          case 36: 
+          case 70: break;
+          case 33: 
             { return new VarSymbol(this, Operation.DELETE, Scope.GLOBAL, false);
             }
-          case 79: break;
-          case 37: 
-            { return new VarSymbol(this, Operation.DELETE, Scope.GLOBAL, true);
-            }
-          case 80: break;
-          case 38: 
+          case 71: break;
+          case 34: 
             { return new SpecialSymbol(this, SpecialSymbol.Type.PRPL_PLUS_PREFIX);
             }
-          case 81: break;
-          case 39: 
+          case 72: break;
+          case 35: 
             { return SpecialSymbol.pasreBase16(this);
             }
-          case 82: break;
-          case 40: 
-            { return SpecialSymbol.withText(this, "--?*");
-            }
-          case 83: break;
-          case 41: 
+          case 73: break;
+          case 36: 
             { return new SpecialSymbol(this, SpecialSymbol.Type.INCLUDE);
             }
-          case 84: break;
-          case 42: 
+          case 74: break;
+          case 37: 
             { return new SpecialSymbol(this, SpecialSymbol.Type.LIBRARY);
             }
-          case 85: break;
-          case 43: 
+          case 75: break;
+          case 38: 
             { return new SpecialSymbol(this, SpecialSymbol.Type.BLOCK_FOLD);
             }
-          case 86: break;
+          case 76: break;
           default:
             zzScanError(ZZ_NO_MATCH);
         }

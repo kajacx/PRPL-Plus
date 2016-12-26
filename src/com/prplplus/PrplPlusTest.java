@@ -8,11 +8,12 @@ import com.prplplus.shipconstruct.ShipConstructor;
 public class PrplPlusTest {
     public static void main(String[] args) throws IOException {
 
-        String dummy64 = ShipConstructor.constructDummy();
+        String ship64 = ShipConstructor.constructDummy();
+        //String ship64 = ShipConstructor.constructLathe();
 
-        System.out.println(dummy64);
+        System.out.println(ship64);
 
-        byte[] data = Base64.getDecoder().decode(dummy64);
+        byte[] data = Base64.getDecoder().decode(ship64);
 
         for (int i = 0; i < data.length; i++) {
             int val = data[i];
@@ -41,3 +42,4 @@ public class PrplPlusTest {
         } //*/
     }
 }
+

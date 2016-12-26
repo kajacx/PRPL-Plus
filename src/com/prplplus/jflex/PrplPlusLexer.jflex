@@ -83,7 +83,7 @@ Identifier = [a-zA-Z_][0-9a-zA-Z_]*
 
 /* Global variables with reference */
 "<-!"				{ return new VarSymbol(this, Operation.READ, Scope.GLOBAL, true); }
-"+>PREFIX); }
+"++%"				{ return new SpecialSymbol(this, SpecialSymbol.Type.LOCAL_PREFIX); }
 "~~%"				{ return new SpecialSymbol(this, SpecialSymbol.Type.SEMI_GLOBAL_PREFIX); }
 "--%"				{ return new SpecialSymbol(this, SpecialSymbol.Type.PRPL_PLUS_PREFIX); }
 

@@ -7,10 +7,10 @@ public class NamespaceManager {
     //without underscore
     private HashSet<String> usedPrefixes = new HashSet<>();
 
-    public static final String PRPL_PREFIX = "prpl_plus_";
+    public static final String PRPL_PREFIX = "prpl_plus__";
 
     {
-        usedPrefixes.add(PRPL_PREFIX.substring(0, PRPL_PREFIX.length() - 1));
+        usedPrefixes.add(PRPL_PREFIX.substring(0, PRPL_PREFIX.length() - 2));
     }
 
     //returns unique prefix with underscore
@@ -19,7 +19,7 @@ public class NamespaceManager {
 
         if (!usedPrefixes.contains(prefix)) {
             usedPrefixes.add(prefix);
-            return prefix + "_";
+            return prefix + "__";
         }
 
         int i = 0;
@@ -29,6 +29,6 @@ public class NamespaceManager {
 
         usedPrefixes.add(prefix + i);
 
-        return prefix + i + "_";
+        return prefix + i + "__";
     }
 }

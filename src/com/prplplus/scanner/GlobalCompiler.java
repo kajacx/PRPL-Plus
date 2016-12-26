@@ -11,14 +11,26 @@ import com.prplplus.errors.ErrorHandler.ErrorType;
 import com.prplplus.jflex.PrplPlusLexer;
 
 public class GlobalCompiler {
-    public static String[] extensions = { ".prpl+", ".prpl.lib", "prpl+lib" };
+    public static String[] extensions = { ".prpl+" };
+    //public static String[] libraryExtensions = { ".prpl", ".prpl+" };
 
     public int compileAll(File file) {
+        scanned = 0;
+        boolean changed = changeSinceLastCompile(file);
+        if (scanned >= limit) {
+            ErrorHandler.reportError(ErrorType.TOO_MANY_FILES_SCANNED,
+                    "Maximum file limit (" + limit + ") reached. Make sure you have the correct PF directory selected.");
+        }
+
+        if (!changed) {
+            return 0;
+        }
+
         scanned = 0;
         int compiled = compileAllIn(file);
         if (scanned >= limit) {
             ErrorHandler.reportError(ErrorType.TOO_MANY_FILES_SCANNED,
-                    "Maximum file limit (" + limit + ") reached. Make sure you have the correct PF directory slelected.");
+                    "Maximum file limit (" + limit + ") reached. Make sure you have the correct PF directory selected.");
         }
         return compiled;
     }
@@ -27,6 +39,39 @@ public class GlobalCompiler {
     private int limit = 10000;
 
     private HashMap<String, Long> lastCompiled = new HashMap<>(); //full name to milis
+
+    private boolean changeSinceLastCompile(File file) {
+        if (scanned >= limit) {
+            return false;
+        }
+        scanned++;
+
+        if (file.isDirectory()) {
+            for (File f : file.listFiles()) {
+                if (changeSinceLastCompile(f))
+                    return true;
+            }
+        }
+
+        int extension = -1;
+        for (int i = 0; i < extensions.length; i++) {
+            if (file.getName().toLowerCase().endsWith(extensions[i])) {
+                extension = i;
+            }
+        }
+
+        if (extension == -1) {
+            return false;
+        }
+
+        //check if already compiled
+        String fullName = file.getAbsolutePath();
+        if (!lastCompiled.containsKey(fullName) || lastCompiled.get(fullName) < file.lastModified()) {
+            return true;
+        }
+
+        return false;
+    }
 
     private int compileAllIn(File file) {
         if (scanned >= limit) {
@@ -54,12 +99,6 @@ public class GlobalCompiler {
             return 0;
         }
 
-        //check if already compiled
-        String fullName = file.getAbsolutePath();
-        if (lastCompiled.containsKey(fullName) && lastCompiled.get(fullName) >= file.lastModified()) {
-            return 0;
-        }
-
         CachedLexer cached = null;
         PrintWriter writer = null;
         try {
@@ -69,8 +108,7 @@ public class GlobalCompiler {
             cached = new CachedLexer(lexer);
 
             if (cached.peekNextUseful().isLibrary()) {
-                //dont compile library code
-                cached.close();
+                lastCompiled.put(file.getAbsolutePath(), file.lastModified());
                 return 0;
             }
 
@@ -86,7 +124,7 @@ public class GlobalCompiler {
             reader.close();
             writer.close();
 
-            lastCompiled.put(fullName, file.lastModified());
+            lastCompiled.put(file.getAbsolutePath(), file.lastModified());
             return 1;
         } catch (IOException ex) {
             ErrorHandler.reportError(ErrorType.COMPILATION_FAILED, ex.toString());
@@ -103,3 +141,6 @@ public class GlobalCompiler {
         }
     }
 }
+
+
+
