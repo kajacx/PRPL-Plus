@@ -59,8 +59,8 @@ Identifier = [a-zA-Z_][0-9a-zA-Z_]*
 "<+!"				{ return new VarSymbol(this, Operation.READ, Scope.LOCAL, true); }
 "+>!"				{ return new VarSymbol(this, Operation.WRITE, Scope.LOCAL, true); }
 "+?!"				{ return new VarSymbol(this, Operation.EXISTS, Scope.LOCAL, true); }
+"++!"				{ return new VarSymbol(this, Operation.DELETE, Scope.LOCAL, true); }
 "++?"				{ return new VarSymbol(this, Operation.DELETE, Scope.LOCAL, true); }
-"++!"				{ return new VarSymbol(this, Operation.DELETE, Scope.LOCAL, true); } //for the OCD folk out there
 
 /* Semi-global variables */
 \<\~{Identifier}	{ return new VarSymbol(this, Operation.READ, Scope.SEMI_GLOBAL, false); }
@@ -72,8 +72,8 @@ Identifier = [a-zA-Z_][0-9a-zA-Z_]*
 "<~!"				{ return new VarSymbol(this, Operation.READ, Scope.SEMI_GLOBAL, true); }
 "~>!"				{ return new VarSymbol(this, Operation.WRITE, Scope.SEMI_GLOBAL, true); }
 "~?!"				{ return new VarSymbol(this, Operation.EXISTS, Scope.SEMI_GLOBAL, true); }
+"~~!"				{ return new VarSymbol(this, Operation.DELETE, Scope.SEMI_GLOBAL, true); }
 "~~?"				{ return new VarSymbol(this, Operation.DELETE, Scope.SEMI_GLOBAL, true); }
-"~~!"				{ return new VarSymbol(this, Operation.DELETE, Scope.SEMI_GLOBAL, true); } //for the OCD folk out there
 
 /* Global variables */
 \<\-{Identifier}	{ return new VarSymbol(this, Operation.READ, Scope.GLOBAL, false); }
@@ -83,6 +83,30 @@ Identifier = [a-zA-Z_][0-9a-zA-Z_]*
 
 /* Global variables with reference */
 "<-!"				{ return new VarSymbol(this, Operation.READ, Scope.GLOBAL, true); }
+"->!"				{ return new VarSymbol(this, Operation.WRITE, Scope.GLOBAL, true); }
+"-?!"				{ return new VarSymbol(this, Operation.EXISTS, Scope.GLOBAL, true); }
+"--!"				{ return new VarSymbol(this, Operation.DELETE, Scope.GLOBAL, true); }
+"--?"				{ return new VarSymbol(this, Operation.DELETE, Scope.GLOBAL, true); }
+
+/* Global argument variables */
+\${Identifier}  	{ return new VarSymbol(this, Operation.WRITE, Scope.ARGUMENT, true); }
+
+/* Super global varaibles */
+"<-*"               { return new Symbol(this); }
+"->*"               { return new Symbol(this); }
+"-?*"               { return new Symbol(this); }
+"--*"               { return new Symbol(this); }
+
+"<-!*"               { return new Symbol(this); }
+"->!*"               { return new Symbol(this); }
+"-?!*"               { return new Symbol(this); }
+"--!*"               { return new Symbol(this); }
+"--?*"               { return SpecialSymbol.withText(this, "--!*"); }
+
+
+
+/*  ----  SPECIAL SYMBOLS  ----  */
+
 "++%"				{ return new SpecialSymbol(this, SpecialSymbol.Type.LOCAL_PREFIX); }
 "~~%"				{ return new SpecialSymbol(this, SpecialSymbol.Type.SEMI_GLOBAL_PREFIX); }
 "--%"				{ return new SpecialSymbol(this, SpecialSymbol.Type.PRPL_PLUS_PREFIX); }
@@ -91,6 +115,7 @@ Identifier = [a-zA-Z_][0-9a-zA-Z_]*
 "%library"          { return new SpecialSymbol(this, SpecialSymbol.Type.LIBRARY); }
 "%blockstart"       { return new SpecialSymbol(this, SpecialSymbol.Type.BLOCK_FOLD); }
 "%blockend"         { return new SpecialSymbol(this, SpecialSymbol.Type.BLOCK_FOLD); }
+
 
 
 /*  ----  WHITESPACE  ----  */
