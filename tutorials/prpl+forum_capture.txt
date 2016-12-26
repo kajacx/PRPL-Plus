@@ -1,0 +1,84 @@
+I have been missing a lot of features in the PRPL programming language, so I created a new language with those features added. Needless to say, it compiles to PRPL, and has a nice property that any PRPL will be compiled without change, so only new symbols have special meaning.
+
+Local variables
+[spoiler]
+The idea is simple. Instead of worring if you will get a variable name collision somewhere, or putting prefixes everywhere, just use "<+varname" to read from and "+>varname" to write to a local variable, and the prefixes will be generated automaticly.
+
+This isn't a true local variable, in the sense that it will not be auto-destroyed when you leave the function, and it will not work if you call your function recursively. It merely automaticly adds a unique prefix before your variable name, which is same inside one function.
+
+You can also use "<~varname" to read from and "~>varname" to write to a script-local variable. PRPL+ supports script including, you can put multiple PRPL+ scripts together to create one PRPL script. In such scenario, you might consider using these script-local variables, as they are local variables to one PRPL+ script. They get compile with a unique prefix as well, however the prefix is unique to one PRPL+ script, and not to one function.
+
+Table of all variable-related operators supported by PRPL+, with explanation:
+[spoiler]
+[img]http://image.prntscr.com/image/73ebf35ff1f64a9892a0fe1b432bebbe.png[/img]
+(Don't mind the space in "< -", Open office Writer kept replacing it with a wierd arrow)
+
+All the global-scoped operators are compiled without change, except "--?" that gets compiled to "--!" (I was using the old CRPL wiki that used "--?") and "--%" that gets compiled to the string constant "prpl_plus__", i'll get to what that is used for later.
+
+The script-local operands are compiled exactly as the local operands, except with different prefix, so I will not cover them. The non-ref local operands ("<+", "+>", "+?" and "++") are compiled by simply adding a prefix to the variable name. For example "+>a" becomes "->foo__a" or something like that.
+
+Finally, things start to get interesting when we get to the reference local operands ("<+!", "+>!", "+?!" and "++!"). If we want to remove a local variable "a" by reference, [ "a" ++! ] needs to be compiled as [ 'a' ->prpl_plus__varname "foo__" <-prpl_plus__varname Concat --! ]. You can think it over why such workaround is nessesary.
+
+This will also work if the ref operand is followed by an opening parenthesis. In such case, the compiler will find the matching closing parenthesis, and put the concat workaround there, even if multiple parenthesies are stacked in-between. Example: [ ++! ( Concat ( "a" "b" ) ) ] gets compiled into [ --! ( Concat ( "a" "b" ) ->prpl_plus__varname "foo__" <-prpl_plus__varname Concat ) ]. This is acctually generated from the compiler, and as you can see, the prefix-adding work-around is inserted at the right location.
+
+Next, "++?" gets compiled exactly as "++!", it's just there because I was following the [url=https://knucklecracker.com/wiki/doku.php?id=crpl:docs:refdelete]CRPL wiki[/url]. Finally, the "++%" operand compiles into the local prefix string constant, so "foo__" for example. This is useful when you need to pass variable name somewhere, for example to a function that swaps 2 variables or something. The "--%" compiles to "prpl_plus__" string constant. It's there just so I can have a nice table.
+[/spoiler]
+
+One note on how the local variables are prefixed: for each scope (function or PRPL+ script), a unique name is generated. After that name is then inserter 2 underscores. This is so that even if you use underscores in variable names (for example in ALL_CAPS), you have a guarantee that there will not be a variable name collision.
+
+Disscussion with Good Morning about local variables
+[spoiler]
+Good Morning has spoke againts local variables in the past when I said I wanted to implement them, and for a good reason. It can lead to lazy naming conventions (I'm also to blame here, in one function, I have 2 variables for lists, named "list1" and "list2") that simply wouldn't be possible without local variables, since you would get a name collision. This would force you to use unique and descriptive variable names (for example: "origModulesList" and "movedModulesList") instead, making the code more readable.
+
+However, I have a different ideology: encapsulation. When I think about a function I want to make, I:
+[list type=decimal]
+[li]Decide what the header should look like (name + input parameters + output parameters)[/li]
+[li]Write the header[/li]
+[li]Write the body[/li]
+[li]Forget the body[/li]
+[li]Remember just the header[/li]
+[/list]
+This frees space in my mind for ther things, for example, I don't have to remember if I used a while-repeat loop or do-loop one. This would be needed to remembered without local variables, and now I don't have to. I guess I just prefer the "set it and forget it" attitue, maybe because I'm lazy, maybe because it would be impossible to keep track of every single variable in a 1000+ lines code.
+
+However, you don't have to use local variables, there is plenty of other stuff that PRPL+ offers.
+[/spoiler]
+[/spoiler]
+
+Script including
+[spoiler]
+You can include a PRPL+ script into another PRPL+ script using the "%include" keyword. The keyword has to be followed by a string constant, containing the path to the included script, relative from the PFDirectory directory (see [How to install]). If the file exists, the content of that script (except functions) will be inserted at the place where the "%include" keyword was. The functions will be imported later, after the functions from your current script.
+
+If you include an already included script, nothing will happen. However, if a cycle is detected when including scripts (for example A includes B, B includes C, and C includes A), you will receive a warning, because the order of the includes cannot be guaranteed.
+
+Also, if the first non-comment symbol is "%library", that sript will not be compiled, unless it was included from elsewhere. This serves both as comment for programmers that this script is meant to be included elsewhere as a library and prevent useless ".prpl" files from being generated and polluting the "add script" select box in level editor.
+
+You can also include a vanilla ".prpl" script, but I wouldn't recommend it, here's why: currently, the program only compiles the scripts if it detects a change in any of the ".prpl+" scripts. So, if you include "b.prpl" from "a.prpl+" and then change "b.prpl", "a.prpl+" will not get re-compiled and therefore will not register the change. Solution: rename "b.prpl" to "b.prpl+", any valid PRPL code will remain unchanged when compiled. Then just import the orignal "b.prpl+", and not the compiled "b.prpl".
+[/spoiler]
+
+Other stuff (multi-line comments, ...)
+[spoiler]
+This some random stuff that I added because why not.
+[list]
+[li]Multi-line comments: "/*" to start and "*/" to end a multi-line comment.[/li]
+[li]Block folding: write "%blockstart" and "%blockend" around a block to make it foldable in Notepad++ with prpl+syntaxer.[/li]
+[li]Hexadecimal constants: write 0x before a number to write a hexadecimal constant.[/li]
+[/list]
+[/spoiler]
+
+How to install & run
+[spoiler]
+Download the PRPL Toolset zip and extract it anywhere. Then, go to settings.properties and set PFDirectory to your particle fleet documents directory (just replace my username with yours). This will replace every ".prpl+" file with the compiled ".prpl" file inside the "editor" subfolder. If you don't want to compile directly insode your PF folder, just set PFDirectory to any folder that has a sub-folder named "editor" and place your scripts there. However, then you will have to manually move your comiled ".prpl" scripts back to the PF folder.
+
+Once you have done that, open the ".jar" program or open the "start_with_console.bat" program to show console - you can see a more detailed error logs in the console. Make sure you have Java 8 installed. Next, just check the "Compile every 2 seconds" checkbox and you are good to go.
+
+You can click the "Show status display" to display a small window with compile status - it will show how many errors/warning did you have on last compilation, if any.
+[/spoiler]
+
+Example of usage
+[spoiler]
+You can download the example map that I was testing this on. It's about merging ships together. To merge ships, just move 5 ships you want to merge and hit "Compile" in level editor. The merged ship will appear in your ship inventory.
+
+The code is split into multiple PRPL+ scripts, the libraries (except ship_merge) work as stand-alone, that means you can use them in your code as well without worry. The main script, "ship_spawn.prpl+", is implemented as a library as well, this is so that you can easily reuse the same script inside multiple maps, without moving the script from file to file - just include it with one line each time you want to use it. Clever, huh?
+[/spoiler]
+
+Happy coding and merry chrismas! 

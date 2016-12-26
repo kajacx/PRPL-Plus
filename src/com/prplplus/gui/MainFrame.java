@@ -1,12 +1,14 @@
 package com.prplplus.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Desktop;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URI;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -78,6 +80,16 @@ public class MainFrame extends JFrame {
         item = new JMenuItem("About");
         String about = title + "\nCreated by kajacx\nContact: " + contact + "\nVersion: " + version;
         item.addActionListener(e -> JOptionPane.showMessageDialog(this, about));
+        menu.add(item);
+
+        item = new JMenuItem("PRPL+ forum post");
+        item.addActionListener(e -> {
+            try {
+                Desktop.getDesktop().browse(new URI("https://knucklecracker.com/forums/index.php?topic=22809.0"));
+            } catch (Exception e1) {
+                JOptionPane.showMessageDialog(this, "Cannot open the forum link. Please read the offline capture instead.");
+            }
+        });
         menu.add(item);
 
         item = new JMenuItem("Ship Construct Controls");
