@@ -23,7 +23,7 @@ public class ErrorHandler {
         INVALID_CHARACTER(ErrorLevel.WARNING),
         UNEXPECTED_RIGHT_PAR(ErrorLevel.ERROR),
         UNCLOSED_LEFT_PAR(ErrorLevel.ERROR),
-        NOT_INSIDE_FUNCTION(ErrorLevel.WARNING),
+        //NOT_INSIDE_FUNCTION(ErrorLevel.WARNING),
         HEXA_CONST_TOO_LARGE(ErrorLevel.ERROR),
         COMPILER_IN_TROUBLE(ErrorLevel.ERROR),
         INCLUDE_FAILED(ErrorLevel.ERROR),
@@ -32,7 +32,9 @@ public class ErrorHandler {
         INCLUDE_FILE_NOT_FOUND(ErrorLevel.ERROR),
         INCLUDE_CYCLE_DETECTED(ErrorLevel.WARNING),
         COMPILATION_FAILED(ErrorLevel.ERROR),
-        TOO_MANY_FILES_SCANNED(ErrorLevel.ERROR);
+        TOO_MANY_FILES_SCANNED(ErrorLevel.ERROR),
+        VARIABLE_NEVER_READ_FROM(ErrorLevel.IGNORE),
+        VARIABLE_NEVER_WRITTEN_TO(ErrorLevel.IGNORE);
         // @formatter:on
 
         public ErrorLevel level;

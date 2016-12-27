@@ -89,7 +89,7 @@ Identifier = [a-zA-Z_][0-9a-zA-Z_]*
 "--?"				{ return new VarSymbol(this, Operation.DELETE, Scope.GLOBAL, true); }
 
 /* Global argument variables */
-\${Identifier}  	{ return new VarSymbol(this, Operation.WRITE, Scope.ARGUMENT, true); }
+\${Identifier}  	{ return new VarSymbol(this, Operation.WRITE, Scope.ARGUMENT, false); }
 
 /* Super global varaibles */
 "<-*"               { return new Symbol(this); }

@@ -10,6 +10,7 @@ public class CachedLexer {
     private PrplPlusLexer lexer;
     private ArrayDeque<Symbol> symbolCache = new ArrayDeque<>();
     private String scriptNamespace; //wow, what a horrible design
+    private String mainNamespace; //well never mind, at least it works
 
     public CachedLexer(PrplPlusLexer lexer) {
         this.lexer = lexer;
@@ -51,5 +52,13 @@ public class CachedLexer {
 
     public void setScriptNamespace(String scriptNamespace) {
         this.scriptNamespace = scriptNamespace;
+    }
+
+    public String getMainNamespace() {
+        return mainNamespace;
+    }
+
+    public void setMainNamespace(String mainNamespace) {
+        this.mainNamespace = mainNamespace;
     }
 }

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Queue;
 
@@ -28,6 +29,8 @@ public class PRPLCompiler {
 
     private HashSet<String> importedScripts = new HashSet<>(); //import done or functions pending; full path
     private HashSet<String> openedScripts = new HashSet<>(); //import in progress; full path
+
+    private HashMap<String, Variable> varaibleUsage = new HashMap<>();
 
     public PRPLCompiler(PrintWriter writer, String primaryFile) {
         this.writer = writer;
@@ -72,7 +75,6 @@ public class PRPLCompiler {
             importedScripts.add(absPath);
 
         } catch (IOException ex) {
-            // TODO Auto-generated catch block
             ErrorHandler.reportError(ErrorType.INCLUDE_FAILED, symbol);
             ex.printStackTrace(System.out);
         }
@@ -84,8 +86,9 @@ public class PRPLCompiler {
         int parDepth = 0;
         boolean ignoreNextLPar = false;
 
-        String scriptNamespace = manager.getPrefixFor("main");
-        String functNamespace = null;
+        String scriptNamespace = manager.getPrefixFor("script");
+        String functNamespace = manager.getPrefixFor("main");
+        boolean isInFunction = false;
 
         lexer.setScriptNamespace(scriptNamespace);
 
@@ -138,6 +141,7 @@ public class PRPLCompiler {
                         varRefParStack.add(null);
                     }
 
+                    isInFunction = true;
                     functNamespace = manager.getPrefixFor(funcSym.functionName);
                 }
                 writer.print(curSymbol.text);
@@ -149,9 +153,6 @@ public class PRPLCompiler {
                 SpecialSymbol specSym = (SpecialSymbol) curSymbol;
                 switch (specSym.type) {
                 case LOCAL_PREFIX:
-                    if (functNamespace == null) {
-                        ErrorHandler.reportError(ErrorType.NOT_INSIDE_FUNCTION, specSym);
-                    }
                     writer.print("\"" + functNamespace + "\"");
                     break;
                 case SEMI_GLOBAL_PREFIX:
@@ -167,7 +168,7 @@ public class PRPLCompiler {
                         writer.println();
                     break;
                 case INCLUDE:
-                    if (functNamespace != null) {
+                    if (isInFunction) {
                         ErrorHandler.reportError(ErrorType.INCLUDE_INSIDE_FUNCTION, curSymbol);
                     }
                     Symbol next = lexer.peekNextUseful();
@@ -196,6 +197,9 @@ public class PRPLCompiler {
             //a variable
             if (curSymbol instanceof VarSymbol) {
                 VarSymbol varSym = (VarSymbol) curSymbol;
+
+                //add usage
+                addVaraibleUsage(varaibleUsage, varSym, scriptNamespace, functNamespace);
 
                 if (varSym.scope == Scope.ARGUMENT) {
                     writer.print(varSym.text);
@@ -227,9 +231,6 @@ public class PRPLCompiler {
                     //we can always prefix in-place
                     writer.print(varSym.op.opInstr);
                     if (varSym.scope == Scope.LOCAL) {
-                        if (functNamespace == null) {
-                            ErrorHandler.reportError(ErrorType.NOT_INSIDE_FUNCTION, varSym);
-                        }
                         writer.print(functNamespace);
                     } else {
                         writer.print(scriptNamespace);
@@ -256,10 +257,12 @@ public class PRPLCompiler {
                     lexer.close();
                     lexer = newLexer;
                     scriptNamespace = newLexer.getScriptNamespace();
+                    //don't bother with function namespace, first symbol is function definition anyway
                     continue;
                 } else {
                     //work done
                     lexer.close();
+                    checkVariableUsage();
                     break;
                 }
             }
@@ -274,18 +277,13 @@ public class PRPLCompiler {
         if (!var.isRef)
             throw new IllegalArgumentException("Var must be reference");
 
-        String prefix;
+        String prefix = null;
         if (var.scope == Scope.LOCAL) {
-            if (functionNamespace == null) {
-                ErrorHandler.reportError(ErrorType.NOT_INSIDE_FUNCTION, var);
-                writer.print(var.op.refInstr);
-                return;
-            }
             prefix = functionNamespace;
         } else if (var.scope == Scope.SEMI_GLOBAL) {
             prefix = scriptNamespace;
         } else {
-            throw new IllegalArgumentException("Var has wrong visibility");
+            ErrorHandler.reportError(ErrorType.COMPILER_IN_TROUBLE, var, "Wrong variable visibility");
         }
 
         if (var.op == Operation.WRITE) {
@@ -300,6 +298,42 @@ public class PRPLCompiler {
             writer.print("\"" + prefix + "\" ");
             writer.print("<-" + NamespaceManager.PRPL_PREFIX + "varname ");
             writer.print("Concat ");
+        }
+    }
+
+    private void addVaraibleUsage(HashMap<String, Variable> usageMap, VarSymbol var, String scriptNamespace, String functNamespace) {
+        if (var.isRef) {
+            return;
+        }
+
+        String name = var.varName;
+        if (var.scope == Scope.LOCAL) {
+            name = functNamespace + name;
+        } else if (var.scope == Scope.SEMI_GLOBAL) {
+            name = scriptNamespace + name;
+        }
+
+        Variable v = usageMap.get(name);
+        if (v == null) {
+            v = new Variable(var);
+            usageMap.put(name, v);
+        }
+
+        if (var.op == Operation.READ) {
+            v.readFrom = true;
+        } else if (var.op == Operation.WRITE) {
+            v.writtenTo = true;
+        }
+    }
+
+    private void checkVariableUsage() {
+        for (Variable v : varaibleUsage.values()) {
+            if (!v.readFrom && (v.symbol.scope == Scope.LOCAL || v.symbol.scope == Scope.SEMI_GLOBAL)) {
+                ErrorHandler.reportError(ErrorType.VARIABLE_NEVER_READ_FROM, v.symbol);
+            }
+            if (!v.writtenTo) {
+                ErrorHandler.reportError(ErrorType.VARIABLE_NEVER_WRITTEN_TO, v.symbol);
+            }
         }
     }
 }

@@ -724,7 +724,7 @@ public class PrplPlusLexer {
             }
           case 49: break;
           case 7: 
-            { return new VarSymbol(this, Operation.WRITE, Scope.ARGUMENT, true);
+            { return new VarSymbol(this, Operation.WRITE, Scope.ARGUMENT, false);
             }
           case 50: break;
           case 8: 
