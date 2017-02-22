@@ -34,6 +34,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import com.prplplus.Clipboard;
@@ -43,9 +44,9 @@ import com.prplplus.gui.OffsetIterable.Offset;
 import com.prplplus.shipconstruct.Hull;
 import com.prplplus.shipconstruct.Module;
 import com.prplplus.shipconstruct.ModuleAtPosition;
+import com.prplplus.shipconstruct.ShipConstructor.Ship;
 import com.prplplus.shipconstruct.ShipDeconstructor;
 import com.prplplus.shipconstruct.ShipExporter;
-import com.prplplus.shipconstruct.ShipConstructor.Ship;
 
 public class ShipConstructorPanel extends JPanel {
     /**
@@ -53,8 +54,10 @@ public class ShipConstructorPanel extends JPanel {
      */
     private static final long serialVersionUID = -7436127974014599287L;
 
-
     private JTextField nameField;
+    private JTextField designerField;
+    private JTextArea descriptionField;
+    private JTextField citgField;
     private JTextField statusArea;
 
     private Module selectedModule;
@@ -80,6 +83,17 @@ public class ShipConstructorPanel extends JPanel {
     private int brushSizeIndex = 0;
     private int[] brushSizes = { 1, 3, 5, 9 };
 
+    /*private static GridBagConstraints createConstraints(int posX, int posY, int width, int height) {
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridx = posX;
+        c.gridy = posY;
+        c.gridwidth = width;
+        c.gridheight = height;
+        //c.weightx = c.weighty = 1;
+        //c.anchor = GridBagConstraints.CENTER;
+        return c;
+    }*/
+
     private JPanel createTopBar() {
         JPanel topBar = new JPanel(new BorderLayout());
         topBar.setOpaque(false);
@@ -90,12 +104,36 @@ public class ShipConstructorPanel extends JPanel {
         warning.setOpaque(true);
         topBar.add(warning, BorderLayout.NORTH);
 
-        JPanel nameBar = new JPanel(new FlowLayout());
-        nameBar.setOpaque(false);
-        nameBar.add(new JLabel("Name:"));
-        nameBar.add(nameField = new JTextField(20));
-        nameField.setText("My Ship");
-        topBar.add(nameBar, BorderLayout.WEST);
+        JPanel row1 = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        row1.setOpaque(false);
+
+        row1.add(new JLabel("Name:"));
+        row1.add(nameField = new JTextField("My Ship", 15));
+
+        row1.add(new JLabel("Designer:"));
+        row1.add(designerField = new JTextField(15));
+
+        row1.add(new JLabel("CITG:"));
+        row1.add(citgField = new JTextField(20));
+
+        JButton pasteCitg = new JButton("Paste");
+        pasteCitg.addActionListener(e -> {
+            try {
+                String shipinfo = Clipboard.paste();
+                Ship ship = ShipDeconstructor.deconstruct(shipinfo);
+                citgField.setText(ship.CITG_ID);
+            } catch (RuntimeException ex) {
+                ex.printStackTrace(System.out);
+                statusArea.setText("Cannot read CITG: " + ex);
+            }
+        });
+        row1.add(pasteCitg);
+
+        JPanel row2 = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        row2.setOpaque(false);
+
+        row2.add(new JLabel("Description:"));
+        row2.add(descriptionField = new JTextArea(2, 40));
 
         HullSelector hullSelector = new HullSelector();
         hullSelector.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -111,7 +149,10 @@ public class ShipConstructorPanel extends JPanel {
             hullSelector.add(radio);
         }
 
-        topBar.add(hullSelector, BorderLayout.EAST);
+        row2.add(hullSelector);
+
+        topBar.add(row1, BorderLayout.CENTER);
+        topBar.add(row2, BorderLayout.SOUTH);
 
         return topBar;
     }
@@ -213,7 +254,8 @@ public class ShipConstructorPanel extends JPanel {
         statusArea.setColumns(30);
         //area.setEditable(false);
         exportButton.addActionListener(e -> {
-            String text = new ShipExporter(hullSection, modules).exportToBase64(nameField.getText());
+            String text = new ShipExporter(hullSection, modules).exportToBase64(
+                    nameField.getText(), designerField.getText(), descriptionField.getText(), citgField.getText());
             if (!text.startsWith("Error: ")) {
                 Clipboard.copy(text);
                 statusArea.setText("Export successful");
@@ -286,6 +328,11 @@ public class ShipConstructorPanel extends JPanel {
         //set name
         nameField.setText(ship.name);
 
+        //set description
+        designerField.setText(ship.designer);
+        descriptionField.setText(ship.description);
+        citgField.setText(ship.CITG_ID);
+
         //and repaint
         repaint();
     }
@@ -324,7 +371,8 @@ public class ShipConstructorPanel extends JPanel {
         ShipExporter exporter = new ShipExporter(hullSection, modules);
 
         //check if export is legit
-        String exportData = exporter.exportToBase64(nameField.getText());
+        String exportData = exporter.exportToBase64(
+                nameField.getText(), designerField.getText(), descriptionField.getText(), citgField.getText());
         if (exportData.startsWith("Error")) {
             statusArea.setText(exportData);
             return;
@@ -505,7 +553,7 @@ public class ShipConstructorPanel extends JPanel {
         private Color semiTransparentBackground;
 
         private ShipRenderer() {
-            setPreferredSize(new Dimension(512, 512));
+            setPreferredSize(new Dimension(640, 480));
 
             OffsetIterable.init(brushSizes);
 

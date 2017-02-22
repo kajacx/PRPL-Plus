@@ -40,23 +40,48 @@ public class ShipConstructor {
         pushIntLE(buffer, val, 4);
     }
 
-    public static String construct(Ship ship) {
-        return construct(ship.width, ship.height, ship.hull, ship.modules, ship.commandX, ship.commandY, ship.name);
+    private static void pushStringWithLength(ByteArrayOutputStream buffer, String string) {
+        pushIntLE(buffer, string.length(), 2); //only 2 byte in the name length
+
+        //the name itself
+        try {
+            buffer.write(string.getBytes("UTF-8"));
+        } catch (Exception e) {
+            e.printStackTrace(System.out);
+        }
     }
 
-    public static String construct(int width, int height, int[] hull, List<ModuleAtPosition> modules, int centerX, int centerY, String name) {
+    public static String construct(Ship ship) {
+        return construct(ship.width, ship.height, ship.hull, ship.modules, ship.commandX, ship.commandY, ship.name, ship.designer, ship.description, ship.CITG_ID);
+    }
+
+    public static String construct(int width, int height, int[] hull, List<ModuleAtPosition> modules, int centerX, int centerY, String name, String designer, String description, String CITG_ID) {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
+        if (designer == null)
+            designer = "";
+        if (description == null)
+            description = "";
+        if (CITG_ID == null)
+            CITG_ID = "";
+
         //header
-        pushBytes(buffer, "0A04 0072 6F6F 7403 0100 7306 0053 6869 7039 39E9 0300 6D70 73");
+        pushBytes(buffer, "0A04 0072 6F6F 7403 0100 7306 0053 6869 7039 3903 0100 61");
+
+        //designer, description and CITG
+        pushStringWithLength(buffer, designer);
+
+        pushBytes(buffer, "03 0100 64");
+        pushStringWithLength(buffer, description);
+
+        pushBytes(buffer, "03 0200 636B");
+        pushStringWithLength(buffer, CITG_ID);
+
+        //rest of the header
+        pushBytes(buffer, "E9 0300 6D70 73");
 
         //number of modules
         pushIntLE(buffer, modules.size());
-
-        /*//zeroes if some modules are present
-        if (!modules.isEmpty()) {
-            pushBytes(buffer, "00 00");
-        }*/
 
         //module data
         for (ModuleAtPosition module : modules) {
@@ -129,7 +154,7 @@ public class ShipConstructor {
     //A test/debug method for building a 3x3 shi with just the command module
     public static String constructDummy() {
         int[] hull = { HULL_BLOCK, HULL_BLOCK, HULL_BLOCK, HULL_BLOCK, HULL_BLOCK, HULL_BLOCK, HULL_BLOCK, HULL_BLOCK, HULL_BLOCK };
-        return construct(3, 3, hull, new ArrayList<>(), 0, 0, "DUMMY");
+        return construct(3, 3, hull, new ArrayList<>(), 0, 0, "DUMMY", null, null, null);
     }
 
     // A test/showcase method for building a Lathe
@@ -156,7 +181,7 @@ public class ShipConstructor {
         int centerY = 2;
         String name = "LATHE";
 
-        return construct(width, height, hull, modules, centerX, centerY, name);
+        return construct(width, height, hull, modules, centerX, centerY, name, "Tester", "Test lathe", null);
     }
 
     // A test/showcase method for building a Cruiser
@@ -189,7 +214,11 @@ public class ShipConstructor {
         int centerY = 3;
         String name = "CRUISER";
 
-        return construct(width, height, hull, modules, centerX, centerY, name);
+        String designer = "ShipConstr";
+        String description = "A demostration of creating a cruiser ship in program.";
+        String CITG_ID = "c94bc32d1c0e9e18c6566cfa9087bc7f";
+
+        return construct(width, height, hull, modules, centerX, centerY, name, designer, description, CITG_ID);
     }
 
     //a debug method
@@ -210,15 +239,27 @@ public class ShipConstructor {
         System.out.println();
     }
 
+    public static void main(String[] args) {
+        System.out.println("Dummy: " + constructDummy());
+        System.out.println("Lathe: " + constructLathe());
+        System.out.println("Cruiser: " + constructCruiser());
+    }
+
     public static class Ship {
         public int width, height;
         public int[] hull;
         public List<ModuleAtPosition> modules;
         public int commandX, commandY;
         public String name;
+        public String designer;
+        public String description;
+        public String CITG_ID;
 
-        public Ship(int width, int height, int[] hull, List<ModuleAtPosition> modules, int commandX, int commandY, String name) {
-            super();
+        /*public Ship(int width, int height, int[] hull, List<ModuleAtPosition> modules, int commandX, int commandY, String name) {
+            this(width, height, hull, modules, commandX, commandY, name, null, null, null);
+        }*/
+
+        public Ship(int width, int height, int[] hull, List<ModuleAtPosition> modules, int commandX, int commandY, String name, String designer, String description, String CITG_ID) {
             this.width = width;
             this.height = height;
             this.hull = hull;
@@ -226,6 +267,9 @@ public class ShipConstructor {
             this.commandX = commandX;
             this.commandY = commandY;
             this.name = name;
+            this.designer = designer;
+            this.description = description;
+            this.CITG_ID = CITG_ID;
         }
 
     }

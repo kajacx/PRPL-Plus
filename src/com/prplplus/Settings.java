@@ -1,6 +1,8 @@
 package com.prplplus;
 
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class Settings {
@@ -20,8 +22,10 @@ public class Settings {
 
     static {
         Properties props = new Properties();
+        InputStream stream = null;
         try {
-            props.load(new FileInputStream("settings.properties"));
+            stream = new FileInputStream("settings.properties");
+            props.load(stream);
             ZOOM_TO_CURSOR = props.getProperty("zoomToCursor", "false").equals("true");
             OUTLINE_35_25_BOX = props.getProperty("displayMaxSizeOutline", "true").equals("true");
             MAX_SIZE = Integer.parseInt(props.getProperty("maxSize", "128"));
@@ -29,6 +33,14 @@ public class Settings {
             WORK_IN = props.getProperty("PFDirectory");
         } catch (Exception ex) {
             ex.printStackTrace(System.out);
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                    e.printStackTrace(System.out);
+                }
+            }
         }
     }
 }

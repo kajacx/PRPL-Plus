@@ -21,3 +21,8 @@ Load your ship:
  - Hitting the "Load from" button will load your previously saved ship
  - Make sure you select the base-64 encoded one, not the ".dat" file
  - Or you can "Import from Clipboard" to load your ships manually (doesn't save custom modules)
+
+Setting the CITG:
+ - If you have a Corporation In The Game, and want to set your CITG on your ship:
+ - Select your corporation in the default editor on any ship, then click "Set CITG" -> "Apply" -> "PRPL Data to Clipboard"
+ - Then click "Paste" next to the CITG textfield.

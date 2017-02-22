@@ -23,10 +23,40 @@ public class ShipDeconstructor {
         return res;
     }
 
+    public static String readString(byte[] data, int index) {
+        int length = readIntLE(data, index, 2);
+        index += 2; //consume nameLength
+
+        return new String(data, index, length, Charset.forName("UTF-8"));
+    }
+
     public static Ship deconstruct(String base64Ship) {
         byte[] data = Base64.getDecoder().decode(base64Ship);
 
-        int index = 25; //first 25 bytes are just header
+        String designer = null;
+        String description = null;
+        String CITG = null;
+
+        int index = 19; //first 19 bytes are just header
+
+        //look at 19th byte to decide if it has description info
+        if (data[19] == 0x03) {
+            //ship description detected
+
+            index += 4; //skip header
+            designer = readString(data, index);
+            index += designer.length() + 2;
+
+            index += 4; //skip header
+            description = readString(data, index);
+            index += description.length() + 2;
+
+            index += 5; //skip header
+            CITG = readString(data, index);
+            index += CITG.length() + 2;
+        }
+
+        index += 6; //skip the rest of the header
 
         int modules = readIntLE(data, index, 4);
         index += 4; //read number of modules
@@ -78,11 +108,9 @@ public class ShipDeconstructor {
         index += 4; //consume commandY
 
         index += 5; //skip data
-        int nameLength = readIntLE(data, index, 2);
-        index += 2; //consume nameLength
 
-        String name = new String(data, index, nameLength, Charset.forName("UTF-8"));
-        index += nameLength; //consume name length
+        String name = readString(data, index);
+        index += name.length() + 2;
 
         index += 1; //consume last zero
 
@@ -90,6 +118,6 @@ public class ShipDeconstructor {
             throw new IllegalArgumentException("Input string has incorrect size");
         }
 
-        return new Ship(width, height, hull, moduleList, commandX, commandY, name);
+        return new Ship(width, height, hull, moduleList, commandX, commandY, name, designer, description, CITG);
     }
 }
