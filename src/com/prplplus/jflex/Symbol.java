@@ -42,8 +42,8 @@ public class Symbol {
         return false;
     }
 
-    public boolean isEndOFComment() {
-        return text.equals("*/");
+    public boolean isEndOfComment() {
+        return originalText.equals("*/");
     }
 
     public boolean isString() {

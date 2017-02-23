@@ -288,7 +288,7 @@ public class ShipConstructorPanel extends JPanel {
     }
 
     private ImageIcon getImageForModule(Module m) {
-        int scaleFactor = 24 / Math.max(3, Math.max(m.width, m.height));
+        int scaleFactor = 20 / Math.max(3, Math.max(m.width, m.height));
         Image i = m.image;
         if (i == null) {
             return null;

@@ -130,6 +130,14 @@ public class PRPLCompiler {
                 continue;
             }
 
+            //end of comment
+            if (curSymbol.isEndOfComment()) {
+                writer.print(curSymbol.text);
+                if (lexer.peekNextUseful().line == curSymbol.line)
+                    writer.println();
+                continue;
+            }
+
             //function definition
             if (curSymbol instanceof UserFunctionSymbol) {
                 UserFunctionSymbol funcSym = (UserFunctionSymbol) curSymbol;
