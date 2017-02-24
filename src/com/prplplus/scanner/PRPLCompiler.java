@@ -282,8 +282,10 @@ public class PRPLCompiler {
     //writes the stuff that comes before the ref isntruction
     //doesn't write the ref instruction itself
     private void printVarRefWorkaround(VarSymbol var, String scriptNamespace, String functionNamespace) {
-        if (!var.isRef)
-            throw new IllegalArgumentException("Var must be reference");
+        if (!var.isRef) {
+            ErrorHandler.reportError(ErrorType.COMPILER_IN_TROUBLE, var, "Var must be a reference");
+            return;
+        }
 
         String prefix = null;
         if (var.scope == Scope.LOCAL) {
