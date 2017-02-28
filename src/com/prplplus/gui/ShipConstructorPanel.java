@@ -39,6 +39,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import com.prplplus.Clipboard;
+import com.prplplus.OSValidator;
 import com.prplplus.Settings;
 import com.prplplus.Utils;
 import com.prplplus.gui.OffsetIterable.Offset;
@@ -442,20 +443,36 @@ public class ShipConstructorPanel extends JPanel {
             String datFile = file.getParentFile().getAbsolutePath() + "/" + nameField.getText() + ".dat";
             //System.out.println("Saving to:" + datFile);
 
-            ProcessBuilder builder = new ProcessBuilder("GZipExporter/PRPLDatGZip.exe", file.getAbsolutePath(), datFile, "-b64");
-            builder.redirectErrorStream(true);
-            Process process = builder.start();
+            ProcessBuilder builder = null;
 
-            Scanner scan = new Scanner(process.getInputStream());
-            while (scan.hasNextLine()) {
-                String line = scan.nextLine();
-                if (!line.isEmpty()) {
-                    System.out.println("Error in .dat conversion: " + line);
-                    statusArea.setText("Error in .dat conversion: " + line);
-                }
+            if (OSValidator.isWindows()) {
+                builder = new ProcessBuilder("GZipExporter/PRPLDatGZip.exe",
+                        file.getAbsolutePath(), datFile, "-b64");
+            } else if (OSValidator.isUnix() || OSValidator.isSolaris()) {
+                builder = new ProcessBuilder("mono", "GZipExporter/PRPLDatGZip.exe",
+                        file.getAbsolutePath(), datFile, "-b64");
+            } else if (OSValidator.isMac()) {
+                statusArea.setText("Conversion to .dat failed, Mac OS is not supported. Please contact me at " + MainFrame.contact);
+            } else {
+                statusArea.setText("Conversion to .dat failed, Unknown OS: " + OSValidator.getOS());
             }
-            scan.close();
-            process.waitFor();
+
+            if (builder != null) {
+                builder.redirectErrorStream(true);
+                Process process = builder.start();
+
+                Scanner scan = new Scanner(process.getInputStream());
+                while (scan.hasNextLine()) {
+                    String line = scan.nextLine();
+                    if (!line.isEmpty()) {
+                        System.out.println("Error in .dat conversion: " + line);
+                        statusArea.setText("Error in .dat conversion: " + line);
+                    }
+                }
+                scan.close();
+                process.waitFor();
+            }
+
         } catch (Exception ex) {
             ex.printStackTrace(System.out);
             statusArea.setText("Cannot convert to .dat file");
