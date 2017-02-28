@@ -204,15 +204,24 @@ public class ShipConstructorPanel extends JPanel {
 
     private JPanel createModulesPanel() {
         JPanel modulesPanel = new JPanel();
-        modulesPanel.setLayout(new BoxLayout(modulesPanel, BoxLayout.Y_AXIS));
+        modulesPanel.setLayout(new BorderLayout());
         modulesPanel.setBackground(new Color(255, 226, 196));
 
-        modulesPanel.add(new JLabel("Modules", JLabel.CENTER));
+        modulesPanel.add(new JLabel("Modules", JLabel.CENTER), BorderLayout.NORTH);
 
         JTabbedPane tabs = new JTabbedPane();
+        tabs.setPreferredSize(new Dimension(210, 300));
+        tabs.setOpaque(false);
 
+        //default modules
         JPanel defaultModules = new JPanel();
         defaultModules.setLayout(new BoxLayout(defaultModules, BoxLayout.Y_AXIS));
+        defaultModules.setOpaque(false);
+
+        JPanel weaponModules = new JPanel();
+        weaponModules.setLayout(new BoxLayout(weaponModules, BoxLayout.Y_AXIS));
+        weaponModules.setOpaque(false);
+
         for (Module m : Module.standardModules) {
             JButton button = new JButton(m.name);
             button.setIcon(getImageForModule(m));
@@ -221,14 +230,20 @@ public class ShipConstructorPanel extends JPanel {
                 selectedHull = -1;
             });
 
-            defaultModules.add(button);
+            if (m.isWeapon) {
+                weaponModules.add(button);
+            } else {
+                defaultModules.add(button);
+            }
         }
 
-        if (Module.customModules.isEmpty()) {
-            modulesPanel.add(defaultModules);
-        } else {
+        tabs.addTab("Default", defaultModules);
+        tabs.addTab("Weapons", weaponModules);
+
+        if (!Module.customModules.isEmpty()) {
             JPanel customModules = new JPanel();
             customModules.setLayout(new BoxLayout(customModules, BoxLayout.Y_AXIS));
+            customModules.setOpaque(false);
             for (Module m : Module.customModules) {
                 JButton button = new JButton(m.name);
                 button.setIcon(getImageForModule(m));
@@ -240,10 +255,10 @@ public class ShipConstructorPanel extends JPanel {
                 customModules.add(button);
             }
 
-            tabs.addTab("Default", defaultModules);
             tabs.addTab("Custom", customModules);
-            modulesPanel.add(tabs);
         }
+
+        modulesPanel.add(tabs, BorderLayout.CENTER);
 
         return modulesPanel;
     }
@@ -293,7 +308,7 @@ public class ShipConstructorPanel extends JPanel {
     }
 
     private ImageIcon getImageForModule(Module m) {
-        int scaleFactor = 20 / Math.max(3, Math.max(m.width, m.height));
+        int scaleFactor = 32 / Math.max(3, Math.max(m.width, m.height));
         Image i = m.image;
         if (i == null) {
             return null;
@@ -702,10 +717,10 @@ public class ShipConstructorPanel extends JPanel {
         }
 
         private boolean canBePlaced(ModuleAtPosition module) {
-            return canBePlaced(module, true, true, true);
+            return canBePlaced(module, true, true, true, false);
         }
 
-        private boolean canBePlaced(ModuleAtPosition module, boolean checkBounds, boolean checkHull, boolean checkModules) {
+        private boolean canBePlaced(ModuleAtPosition module, boolean checkBounds, boolean checkHull, boolean checkModules, boolean forceCollide) {
             if (checkBounds && !(module.x >= 0 &&
                     module.y >= 0 &&
                     module.x + module.module.width <= MAX_SIZE &&
@@ -723,7 +738,7 @@ public class ShipConstructorPanel extends JPanel {
 
             if (checkModules)
                 for (ModuleAtPosition m : modules) {
-                    if (m.intersectsWith(module))
+                    if (m.intersectsWith(module, forceCollide))
                         return false;
                 }
 
@@ -860,7 +875,7 @@ public class ShipConstructorPanel extends JPanel {
                 pos.x = position.x + off.x;
                 pos.y = position.y + off.y;
 
-                if (canBePlaced(pos, true, false, true)) {
+                if (canBePlaced(pos, true, false, true, true)) {
                     int index = pos.x * MAX_SIZE + pos.y;
                     if (selectedHull == Hull.HULL_ARMOR_MASK) {
                         hullSection[index] = Hull.withArmor(hullSection[index], mouseButton == MouseEvent.BUTTON1);

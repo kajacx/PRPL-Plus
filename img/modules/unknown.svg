@@ -9,14 +9,14 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="14"
-   height="14"
-   viewBox="0 0 14 14"
+   width="32"
+   height="32"
+   viewBox="0 0 32 32"
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r13725"
    sodipodi:docname="unknown.svg"
-   inkscape:export-filename="C:\kajacx\programming\eclipse\my-workplace\PRPL_Plus\img\modules\unknown.png"
+   inkscape:export-filename="C:\kajacx\programming\eclipse\workspaces\ParticleFleet\PRPL_Plus\img\modules\moduleUnknown.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -28,14 +28,14 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="31.301602"
-     inkscape:cx="7.145649"
-     inkscape:cy="4.6164095"
+     inkscape:zoom="5.5333938"
+     inkscape:cx="-0.93276136"
+     inkscape:cy="12.62704"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1920"
-     inkscape:window-height="1017"
+     inkscape:window-width="1366"
+     inkscape:window-height="705"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -56,25 +56,26 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-1038.3622)">
+     transform="translate(0,-1020.3622)">
     <rect
-       style="fill:#a7deae;fill-opacity:1;stroke:none;stroke-width:1.5;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#a7deae;fill-opacity:1;stroke:#28ac04;stroke-width:2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;stroke-linecap:square"
        id="rect4140"
-       width="14"
-       height="14"
-       x="0"
-       y="1038.3622" />
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 3.0183734,1042.9306 c 0.028722,-4.7565 7.9801156,-4.2935 7.9632536,0 -0.01686,4.2935 -3.8856406,1.9866 -4.0438398,5.6382"
-       id="path4136"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="czc" />
-    <circle
-       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.20000005;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="path4138"
-       cx="7.0625"
-       cy="1050.3622"
-       r="1" />
-  </g>
+       width="30"
+       height="30"
+       x="1"
+       y="1021.3622" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot4696"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.97249351;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;"
+       transform="matrix(1.0282845,0,0,1.0282845,7.8510461,1026.8223)"><flowRegion
+         id="flowRegion4698"><rect
+           id="rect4700"
+           width="63.884846"
+           height="64.336647"
+           x="0.7228837"
+           y="0.28347892"
+           style="stroke:none;stroke-opacity:1;fill:#000000;fill-opacity:1;stroke-width:0.97249351;stroke-miterlimit:4;stroke-dasharray:none;" /></flowRegion><flowPara
+         id="flowPara4702"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:Gabriola;-inkscape-font-specification:Gabriola;stroke:none;stroke-opacity:1;fill:#000000;fill-opacity:1;stroke-width:0.97249351;stroke-miterlimit:4;stroke-dasharray:none;">?</flowPara></flowRoot>  </g>
 </svg>
