@@ -199,6 +199,18 @@ public class ShipConstructorPanel extends JPanel {
         loadFrom.addActionListener(e -> loadFrom());
         leftBar.add(loadFrom);
 
+        space = new JPanel();
+        space.setPreferredSize(new Dimension(30, 30));
+        space.setOpaque(false);
+        leftBar.add(space);
+
+        JButton resetCamera = new JButton("Reset camera");
+        resetCamera.addActionListener(e -> {
+            shipRenderer.posX = 0;
+            shipRenderer.posY = 0;
+        });
+        leftBar.add(resetCamera);
+
         wrapper.add(leftBar);
         return wrapper;
     }
