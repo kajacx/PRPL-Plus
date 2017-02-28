@@ -12,6 +12,14 @@ public class ModuleAtPosition {
     }
 
     public boolean intersectsWith(ModuleAtPosition other) {
+        return intersectsWith(other, false);
+    }
+
+    public boolean intersectsWith(ModuleAtPosition other, boolean forceCollide) {
+        if (!forceCollide && (!module.doesCollide() || !other.module.doesCollide())) {
+            return false;
+        }
+
         boolean xCol = false; //x colision
         if (x >= other.x && x < other.x + other.module.width)
             xCol = true;

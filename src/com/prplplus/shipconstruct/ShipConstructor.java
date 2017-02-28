@@ -52,10 +52,12 @@ public class ShipConstructor {
     }
 
     public static String construct(Ship ship) {
-        return construct(ship.width, ship.height, ship.hull, ship.modules, ship.commandX, ship.commandY, ship.name, ship.designer, ship.description, ship.CITG_ID);
+        return construct(ship.width, ship.height, ship.hull, ship.modules, ship.commandX, ship.commandY,
+                ship.name, ship.designer, ship.description, ship.CITG_ID, ship.instabuild);
     }
 
-    public static String construct(int width, int height, int[] hull, List<ModuleAtPosition> modules, int centerX, int centerY, String name, String designer, String description, String CITG_ID) {
+    public static String construct(int width, int height, int[] hull, List<ModuleAtPosition> modules, int centerX, int centerY,
+            String name, String designer, String description, String CITG_ID, boolean instabuild) {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
         if (designer == null)
@@ -66,9 +68,17 @@ public class ShipConstructor {
             CITG_ID = "";
 
         //header
-        pushBytes(buffer, "0A04 0072 6F6F 7403 0100 7306 0053 6869 7039 3903 0100 61");
+        pushBytes(buffer, "0A04 0072 6F6F 7403 0100 73");
+
+        //ship type
+        if (instabuild) {
+            pushStringWithLength(buffer, "Ship8");
+        } else {
+            pushStringWithLength(buffer, "Ship99");
+        }
 
         //designer, description and CITG
+        pushBytes(buffer, "03 0100 61");
         pushStringWithLength(buffer, designer);
 
         pushBytes(buffer, "03 0100 64");
@@ -154,7 +164,7 @@ public class ShipConstructor {
     //A test/debug method for building a 3x3 shi with just the command module
     public static String constructDummy() {
         int[] hull = { HULL_BLOCK, HULL_BLOCK, HULL_BLOCK, HULL_BLOCK, HULL_BLOCK, HULL_BLOCK, HULL_BLOCK, HULL_BLOCK, HULL_BLOCK };
-        return construct(3, 3, hull, new ArrayList<>(), 0, 0, "DUMMY", null, null, null);
+        return construct(3, 3, hull, new ArrayList<>(), 0, 0, "DUMMY", null, null, null, false);
     }
 
     // A test/showcase method for building a Lathe
@@ -181,7 +191,7 @@ public class ShipConstructor {
         int centerY = 2;
         String name = "LATHE";
 
-        return construct(width, height, hull, modules, centerX, centerY, name, "Tester", "Test lathe", null);
+        return construct(width, height, hull, modules, centerX, centerY, name, "Tester", "Test lathe", null, false);
     }
 
     // A test/showcase method for building a Cruiser
@@ -217,8 +227,9 @@ public class ShipConstructor {
         String designer = "ShipConstr";
         String description = "A demostration of creating a cruiser ship in program.";
         String CITG_ID = "c94bc32d1c0e9e18c6566cfa9087bc7f";
+        boolean instabuild = false;
 
-        return construct(width, height, hull, modules, centerX, centerY, name, designer, description, CITG_ID);
+        return construct(width, height, hull, modules, centerX, centerY, name, designer, description, CITG_ID, instabuild);
     }
 
     //a debug method
@@ -254,12 +265,10 @@ public class ShipConstructor {
         public String designer;
         public String description;
         public String CITG_ID;
+        public boolean instabuild;
 
-        /*public Ship(int width, int height, int[] hull, List<ModuleAtPosition> modules, int commandX, int commandY, String name) {
-            this(width, height, hull, modules, commandX, commandY, name, null, null, null);
-        }*/
-
-        public Ship(int width, int height, int[] hull, List<ModuleAtPosition> modules, int commandX, int commandY, String name, String designer, String description, String CITG_ID) {
+        public Ship(int width, int height, int[] hull, List<ModuleAtPosition> modules, int commandX, int commandY,
+                String name, String designer, String description, String CITG_ID, boolean instabuild) {
             this.width = width;
             this.height = height;
             this.hull = hull;
@@ -270,6 +279,7 @@ public class ShipConstructor {
             this.designer = designer;
             this.description = description;
             this.CITG_ID = CITG_ID;
+            this.instabuild = instabuild;
         }
 
     }

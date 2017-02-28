@@ -35,10 +35,11 @@ public class Module {
     public static final Module FIGHTER_BASE    = new Module(15, 3, 0x4120, "FighterBase");
     public static final Module GRABBER         = new Module( 3, 3, 0x4180, "Grabber");
     public static final Module MK7             = new Module( 5, 5, 0x4188, "MK7");
+    public static final Module HQ_COMMAND      = new Module( 5, 9, 0x4170, "HQCommand");
     //@formatter:on
 
     public static final Module[] standardModules = { COMMAND, ENGINE, LATHE, LASER, CANNON, MISSLE_LAUNCHER, PARTICLE_BEAM, DISCHARGE,
-            ENERGY_TANK, PORT, GUPPY, SHIELD, REACTOR, FIGHTER_BASE, GRABBER, MK7 };
+            ENERGY_TANK, PORT, GUPPY, SHIELD, REACTOR, FIGHTER_BASE, GRABBER, MK7, HQ_COMMAND };
 
     public static final List<Module> customModules = new ArrayList<>();
 
@@ -300,5 +301,9 @@ public class Module {
 
     public boolean isCommand() {
         return code == COMMAND_CODE;
+    }
+
+    public boolean doesCollide() {
+        return code != HQ_COMMAND.code;
     }
 }

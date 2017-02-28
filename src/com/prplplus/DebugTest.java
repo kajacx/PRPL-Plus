@@ -28,6 +28,7 @@ public class DebugTest {
         }
     }
 
+    @SuppressWarnings("serial")
     static class MyPanel extends JPanel {
         public MyPanel() {
             setPreferredSize(new Dimension(50, 50));

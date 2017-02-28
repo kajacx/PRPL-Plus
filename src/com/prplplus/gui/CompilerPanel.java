@@ -25,6 +25,7 @@ import com.prplplus.errors.ErrorHandler;
 import com.prplplus.errors.ErrorHandler.ErrorLevel;
 import com.prplplus.scanner.GlobalCompiler;
 
+@SuppressWarnings("serial")
 public class CompilerPanel extends JPanel {
     public JTextPane errorArea;
     public QuickDisplay display;

@@ -29,6 +29,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -59,6 +60,7 @@ public class ShipConstructorPanel extends JPanel {
     private JTextArea descriptionField;
     private JTextField citgField;
     private JTextField statusArea;
+    private JCheckBox instabuildBox;
 
     private Module selectedModule;
     private int selectedHull = -1;
@@ -128,6 +130,9 @@ public class ShipConstructorPanel extends JPanel {
             }
         });
         row1.add(pasteCitg);
+
+        row1.add(instabuildBox = new JCheckBox("Instabuild"));
+        instabuildBox.setOpaque(false);
 
         JPanel row2 = new JPanel(new FlowLayout(FlowLayout.CENTER));
         row2.setOpaque(false);
@@ -254,8 +259,8 @@ public class ShipConstructorPanel extends JPanel {
         statusArea.setColumns(30);
         //area.setEditable(false);
         exportButton.addActionListener(e -> {
-            String text = new ShipExporter(hullSection, modules).exportToBase64(
-                    nameField.getText(), designerField.getText(), descriptionField.getText(), citgField.getText());
+            String text = new ShipExporter(hullSection, modules).exportToBase64(nameField.getText(),
+                    designerField.getText(), descriptionField.getText(), citgField.getText(), instabuildBox.isSelected());
             if (!text.startsWith("Error: ")) {
                 Clipboard.copy(text);
                 statusArea.setText("Export successful");
@@ -333,6 +338,9 @@ public class ShipConstructorPanel extends JPanel {
         descriptionField.setText(ship.description);
         citgField.setText(ship.CITG_ID);
 
+        //set instabuild
+        instabuildBox.setSelected(ship.instabuild);
+
         //and repaint
         repaint();
     }
@@ -371,8 +379,8 @@ public class ShipConstructorPanel extends JPanel {
         ShipExporter exporter = new ShipExporter(hullSection, modules);
 
         //check if export is legit
-        String exportData = exporter.exportToBase64(
-                nameField.getText(), designerField.getText(), descriptionField.getText(), citgField.getText());
+        String exportData = exporter.exportToBase64(nameField.getText(),
+                designerField.getText(), descriptionField.getText(), citgField.getText(), instabuildBox.isSelected());
         if (exportData.startsWith("Error")) {
             statusArea.setText(exportData);
             return;
@@ -680,7 +688,7 @@ public class ShipConstructorPanel extends JPanel {
             ModuleAtPosition module = null;
 
             for (ModuleAtPosition m : modules) {
-                if (m.intersectsWith(pos)) {
+                if (m.intersectsWith(pos, true)) {
                     module = m;
                     break;
                 }

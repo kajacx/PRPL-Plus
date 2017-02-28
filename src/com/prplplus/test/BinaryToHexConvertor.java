@@ -8,7 +8,7 @@ import java.io.PrintWriter;
 
 public class BinaryToHexConvertor {
     public static void main(String[] args) throws IOException {
-        String fileName = "c:\\kajacx\\games\\pf\\Creative Shipyard\\ships\\lathe-ok.txt";
+        String fileName = "c:\\kajacx\\games\\pf\\Creative Shipyard\\ships\\corporate-nohq.txt";
 
         File fileFrom = new File(fileName);
         File fileTo = new File(fileFrom.getAbsolutePath() + "_hex.txt");

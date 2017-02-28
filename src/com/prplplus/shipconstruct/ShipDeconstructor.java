@@ -37,10 +37,18 @@ public class ShipDeconstructor {
         String description = null;
         String CITG = null;
 
-        int index = 19; //first 19 bytes are just header
+        //int index = 19; //first 19 bytes are just header
+        //int index = 18; //HQ workaround, DON'T COMMIT THIS!!!!!
+
+        int index = 11; //at index 11 starts ship type
+
+        String type = readString(data, index);
+        index += type.length() + 2;
+
+        boolean instabuild = type.equals("Ship8");
 
         //look at 19th byte to decide if it has description info
-        if (data[19] == 0x03) {
+        if (data[index] == 0x03) {
             //ship description detected
 
             index += 4; //skip header
@@ -118,6 +126,6 @@ public class ShipDeconstructor {
             throw new IllegalArgumentException("Input string has incorrect size");
         }
 
-        return new Ship(width, height, hull, moduleList, commandX, commandY, name, designer, description, CITG);
+        return new Ship(width, height, hull, moduleList, commandX, commandY, name, designer, description, CITG, instabuild);
     }
 }

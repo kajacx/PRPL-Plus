@@ -21,7 +21,7 @@ public class ShipExporter {
         this.modules = modules;
     }
 
-    public String exportToBase64(String name, String designer, String description, String citg) {
+    public String exportToBase64(String name, String designer, String description, String citg, boolean instabuild) {
         if (name.length() == 0) {
             return "Error: Empty name";
         }
@@ -91,7 +91,7 @@ public class ShipExporter {
             return "Error: Hull is not connected";
         }
 
-        ship = new Ship(width, height, newHull, newModuels, commandX, commandY, name, designer, description, citg);
+        ship = new Ship(width, height, newHull, newModuels, commandX, commandY, name, designer, description, citg, instabuild);
 
         return ShipConstructor.construct(ship);
     }
