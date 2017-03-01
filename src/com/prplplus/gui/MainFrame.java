@@ -2,6 +2,7 @@ package com.prplplus.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Desktop;
+import java.awt.Dimension;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
@@ -16,7 +17,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
@@ -44,11 +44,11 @@ public class MainFrame extends JFrame {
         JTabbedPane tabs = new JTabbedPane();
 
         ImageIcon prplIcon = new ImageIcon("img/icons/prpl_plus.png");
-        JPanel prplPanel = new CompilerPanel();
+        CompilerPanel prplPanel = new CompilerPanel();
         tabs.addTab("PRPL+", prplIcon, prplPanel, "Compiles PRPL+ to PRPL");
 
         ImageIcon constIcon = new ImageIcon("img/icons/ship_constr.png");
-        JPanel constPanel = new ShipConstructorPanel();
+        ShipConstructorPanel constPanel = new ShipConstructorPanel();
         tabs.addTab("Ship Construct", constIcon, constPanel, "Build large ships up to size "
                 + Settings.MAX_SIZE + "x" + Settings.MAX_SIZE);
 
@@ -57,6 +57,9 @@ public class MainFrame extends JFrame {
 
         add(tabs, BorderLayout.CENTER);
         pack();
+        constPanel.modulesTabs.setPreferredSize(
+                new Dimension(ShipConstructorPanel.getTabsWidth(constPanel.modulesTabs), 300));
+        pack(); //need to call pack() twice because of broken tab pane
 
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);

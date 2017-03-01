@@ -56,6 +56,8 @@ public class ShipConstructorPanel extends JPanel {
      */
     private static final long serialVersionUID = -7436127974014599287L;
 
+    public JTabbedPane modulesTabs; //an ugly workaround around tabs width bug
+
     private JTextField nameField;
     private JTextField designerField;
     private JTextArea descriptionField;
@@ -208,11 +210,23 @@ public class ShipConstructorPanel extends JPanel {
         resetCamera.addActionListener(e -> {
             shipRenderer.posX = 0;
             shipRenderer.posY = 0;
+            shipRenderer.repaint();
         });
         leftBar.add(resetCamera);
 
         wrapper.add(leftBar);
         return wrapper;
+    }
+
+    public static int getTabsWidth(JTabbedPane pane) {
+        int width = 0;
+
+        for (int i = 0; i < pane.getTabCount(); i++) {
+            width += pane.getUI().getTabBounds(pane, i).width;
+            //System.out.println(pane.getUI().getTabBounds(pane, i));
+        }
+
+        return width;
     }
 
     private JPanel createModulesPanel() {
@@ -223,7 +237,8 @@ public class ShipConstructorPanel extends JPanel {
         modulesPanel.add(new JLabel("Modules", JLabel.CENTER), BorderLayout.NORTH);
 
         JTabbedPane tabs = new JTabbedPane();
-        tabs.setPreferredSize(new Dimension(210, 300));
+        //tabs.setPreferredSize(new Dimension(210, 300));
+        modulesTabs = tabs;
         tabs.setOpaque(false);
 
         //default modules
@@ -270,6 +285,11 @@ public class ShipConstructorPanel extends JPanel {
 
             tabs.addTab("Custom", customModules);
         }
+
+        //tabs.addTab("Kappa", new JLabel("Poro"));
+
+        //tabs.revalidate();
+        //System.out.println(getTabsWidth(tabs));
 
         modulesPanel.add(tabs, BorderLayout.CENTER);
 
