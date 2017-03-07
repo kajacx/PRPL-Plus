@@ -11,5 +11,14 @@ When hull is selected:
  - Left click to place hull/armor
  - Right click to remove hull/armor
  - Mouse wheel to rotate module
+ - Ctrl + mouse drag to move camera
  - Ctrl + mouse wheel to zoom in/out
  - Alt + mouse wheel to change brush size
+
+Using the mirrors:
+ - First mirror button press will let you place a mirror
+ - Second press will move it to the edge from the center
+ - Third press will remove the mirror
+ - Use mirrors to easily build symetrical ships
+ - Hold shift when placing module/hull to place only the original
+ 

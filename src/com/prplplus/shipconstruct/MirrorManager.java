@@ -108,16 +108,16 @@ public class MirrorManager {
     }
 
     public List<? extends ModuleAtPosition> getMirroredModules(ModuleAtPosition module) {
-        return getMirroredHull(new HullAtPosition(module.x, module.y, module.module, 0));
+        return getMirroredHull(new HullAtPosition(module.x, module.y, module.module, 0), true);
     }
 
-    private List<HullAtPosition> getMirroredHull(HullAtPosition module) {
+    private List<HullAtPosition> getMirroredHull(HullAtPosition module, boolean detectCollisions) {
         ArrayList<HullAtPosition> ret = new ArrayList<>();
         ret.add(module);
 
         if (horizontalMirror >= 0) {
             int yDist = horizontalMirror - 2 * module.y;
-            if (yDist > 0 && yDist < 2 * module.module.height) {
+            if (detectCollisions && yDist > 0 && yDist < 2 * module.module.height) {
                 //the module collides with the mirror line: 
                 //the mirrored module would collide with the original: do nothing
             } else { // mirror the module to the other side
@@ -132,7 +132,7 @@ public class MirrorManager {
                 HullAtPosition newModule = ret.get(i);
 
                 int xDist = verticalMirror - 2 * newModule.x;
-                if (xDist > 0 && xDist < 2 * newModule.module.width) {
+                if (detectCollisions && xDist > 0 && xDist < 2 * newModule.module.width) {
                     //the module collides with the mirror line: 
                     //the mirrored module would collide with the original: do nothing
                 } else { // mirror the module to the other side
@@ -150,7 +150,7 @@ public class MirrorManager {
             addRotatedModule(ret, module.module, halfX, halfY, Hull.rotateCCW(Hull.rotateCCW(module.hull)));
             addRotatedModule(ret, module.module, -halfY, halfX, Hull.rotateCCW(module.hull));
 
-            if (anyCollide(ret)) {
+            if (detectCollisions && anyCollide(ret)) {
                 //remove all added modules on colision
                 ret.remove(3);
                 ret.remove(2);
@@ -183,7 +183,7 @@ public class MirrorManager {
 
         HullAtPosition brush = new HullAtPosition(pos.x - brushSize / 2, pos.y - brushSize / 2, m, hullType);
 
-        for (HullAtPosition mirrored : getMirroredHull(brush)) {
+        for (HullAtPosition mirrored : getMirroredHull(brush, false)) {
             ret.add(new MirroredHullBrush(mirrored.hull, mirrored.x + brushSize / 2, mirrored.y + brushSize / 2));
         }
 

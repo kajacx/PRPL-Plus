@@ -39,6 +39,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 import com.prplplus.Clipboard;
 import com.prplplus.OSValidator;
@@ -788,6 +789,7 @@ public class ShipConstructorPanel extends JPanel {
                 }
 
                 if (mirrorManager.hasAnyMirror()) {
+                    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
                     List<MirroredHullBrush> mirrored = mirrorManager.getMirroredHull(
                             pos, selectedHull, brushSizes[brushSizeIndex]);
                     for (MirroredHullBrush mirror : mirrored) {
@@ -805,6 +807,7 @@ public class ShipConstructorPanel extends JPanel {
                             g.drawRect(x, y, w, h);
                         }
                     }
+                    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
                 }
             }
 
@@ -1086,18 +1089,18 @@ public class ShipConstructorPanel extends JPanel {
             return true;
         }
 
-        private void onHullClick(ModuleAtPosition position, int mouseButton) {
-            ModuleAtPosition pos = position.copy();
-            for (Offset off : OffsetIterable.getFor(brushSizeIndex, Hull.getOffsetDirection(selectedHull))) {
-                pos.x = position.x + off.x;
-                pos.y = position.y + off.y;
+        private void fillHull(int x, int y, MouseEvent e, int hullType) {
+            ModuleAtPosition pos = new ModuleAtPosition(x, y, Module.BRUSH_1X1);
+            for (Offset off : OffsetIterable.getFor(brushSizeIndex, Hull.getOffsetDirection(hullType))) {
+                pos.x = x + off.x;
+                pos.y = y + off.y;
 
                 if (canBePlaced(pos, true, false, true, true)) {
                     int index = pos.x * MAX_SIZE + pos.y;
-                    if (selectedHull == Hull.HULL_ARMOR_MASK) {
-                        hullSection[index] = Hull.withArmor(hullSection[index], mouseButton == MouseEvent.BUTTON1);
-                    } else if (mouseButton == MouseEvent.BUTTON1) {
-                        hullSection[index] = selectedHull;
+                    if (hullType == Hull.HULL_ARMOR_MASK) {
+                        hullSection[index] = Hull.withArmor(hullSection[index], SwingUtilities.isLeftMouseButton(e));
+                    } else if (SwingUtilities.isLeftMouseButton(e)) {
+                        hullSection[index] = hullType;
                     } else {
                         hullSection[index] = Hull.HULL_SPACE;
                     }
@@ -1105,11 +1108,28 @@ public class ShipConstructorPanel extends JPanel {
             }
         }
 
-        private void onModuleClick(ModuleAtPosition pos) {
+        private void onHullClick(ModuleAtPosition position, MouseEvent e) {
+            if (e.isControlDown()) {
+                //move camera instead
+                return;
+            }
+
+            fillHull(position.x, position.y, e, selectedHull);
+
+            if (!e.isShiftDown() && mirrorManager.hasAnyMirror()) {
+                for (MirroredHullBrush mirror : mirrorManager.getMirroredHull(
+                        position, selectedHull, brushSizes[brushSizeIndex])) {
+                    fillHull(mirror.x, mirror.y, e, mirror.hullPiece);
+                }
+            }
+        }
+
+        private void onModuleClick(ModuleAtPosition pos, MouseEvent e) {
             if (canBePlaced(pos)) {
                 modules.add(pos);
             }
-            if (mirrorManager.hasAnyMirror()) {
+
+            if (!e.isShiftDown() && mirrorManager.hasAnyMirror()) {
                 for (ModuleAtPosition mirrored : mirrorManager.getMirroredModules(pos)) {
                     if (canBePlaced(mirrored)) {
                         modules.add(mirrored);
@@ -1139,11 +1159,11 @@ public class ShipConstructorPanel extends JPanel {
         public void mouseClicked(MouseEvent e) {
             if (selectedHull != -1) { //hull placement
                 ModuleAtPosition pos = tryPlace(Module.BRUSH_1X1);
-                onHullClick(pos, e.getButton());
+                onHullClick(pos, e);
             } else if (e.getButton() == MouseEvent.BUTTON1) {
                 if (selectedModule != null) { //module placement
                     ModuleAtPosition pos = tryPlace(selectedModule);
-                    onModuleClick(pos);
+                    onModuleClick(pos, e);
                 }
                 if (selectedMirror != MirrorManager.MIRROR_NONE) {
                     ModuleAtPosition pos = tryPlace(Module.BRUSH_1X1);
@@ -1183,8 +1203,14 @@ public class ShipConstructorPanel extends JPanel {
 
         @Override
         public void mouseDragged(MouseEvent e) {
-            posX += lastX - e.getX();
-            posY += lastY - e.getY();
+            if (selectedHull != -1 && !e.isControlDown()) {
+                //drag-paint hull
+                onHullClick(tryPlace(Module.BRUSH_1X1), e);
+            } else {
+                //move camera
+                posX += lastX - e.getX();
+                posY += lastY - e.getY();
+            }
 
             lastX = e.getX();
             lastY = e.getY();
