@@ -97,6 +97,38 @@ public class Hull {
         return rotateCCW(rotateCCW(rotateCCW(hull)));
     }
 
+    public static int flipHorizontaly(int hull) {
+      //@formatter:off
+        switch(hull) {
+        case HULL_CORNER_LB: return HULL_CORNER_LT;
+        case HULL_CORNER_RB: return HULL_CORNER_RT;
+        case HULL_CORNER_RT: return HULL_CORNER_RB;
+        case HULL_CORNER_LT: return HULL_CORNER_LB;
+        case HULL_SPIKE_B: return HULL_SPIKE_T;
+        case HULL_SPIKE_R: return HULL_SPIKE_R;
+        case HULL_SPIKE_T: return HULL_SPIKE_B;
+        case HULL_SPIKE_L: return HULL_SPIKE_L;
+        default: return hull;
+        }
+        //@formatter:on
+    }
+
+    public static int flipVerticaly(int hull) {
+      //@formatter:off
+        switch(hull) {
+        case HULL_CORNER_LB: return HULL_CORNER_RB;
+        case HULL_CORNER_RB: return HULL_CORNER_LB;
+        case HULL_CORNER_RT: return HULL_CORNER_LT;
+        case HULL_CORNER_LT: return HULL_CORNER_RT;
+        case HULL_SPIKE_B: return HULL_SPIKE_B;
+        case HULL_SPIKE_R: return HULL_SPIKE_L;
+        case HULL_SPIKE_T: return HULL_SPIKE_T;
+        case HULL_SPIKE_L: return HULL_SPIKE_R;
+        default: return hull;
+        }
+        //@formatter:on
+    }
+
     public static int getOffsetDirection(int hull) {
         //@formatter:off
         switch(withArmor(hull, false)) {

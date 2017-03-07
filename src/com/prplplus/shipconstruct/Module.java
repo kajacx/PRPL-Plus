@@ -36,6 +36,12 @@ public class Module {
     public static final Module GRABBER         = new Module( 3, 3, 0x4180, "Grabber", false);
     public static final Module MK7             = new Module( 5, 5, 0x4188, "MK7", true);
     public static final Module HQ_COMMAND      = new Module( 5, 9, 0x4170, "HQCommand", false);
+    
+    //brushes used for collision detection in mirrored editing
+    public static final Module BRUSH_1X1       = new Module( 1, 1,     -3, "Brush 1x1", false, true);
+    public static final Module BRUSH_3X3       = new Module( 3, 3,     -3, "Brush 3x3", false, true);
+    public static final Module BRUSH_5X5       = new Module( 5, 5,     -3, "Brush 5x5", false, true);
+    public static final Module BRUSH_9X9       = new Module( 9, 9,     -3, "Brush 9x9", false, true);
     //@formatter:on
 
     public static final Module[] standardModules = { COMMAND, ENGINE, LATHE, LASER, CANNON, MISSLE_LAUNCHER, PARTICLE_BEAM, DISCHARGE,
@@ -53,6 +59,11 @@ public class Module {
 
     //create a standart module
     private Module(int width, int height, int code, String name, boolean isWeapon) {
+        this(width, height, code, name, isWeapon, false);
+    }
+
+    //create a standart module
+    private Module(int width, int height, int code, String name, boolean isWeapon, boolean skipImage) {
         this.width = width;
         this.height = height;
         this.code = code;
@@ -62,12 +73,13 @@ public class Module {
         buildCost = DEFAULT_BUILD_COST;
         scriptName = null;
 
-        Image i;
-        try {
-            i = ImageIO.read(new File("img/modules/module" + name + ".png"));
-        } catch (IOException e) {
-            e.printStackTrace(System.out);
-            i = null;
+        Image i = null;
+        if (!skipImage) {
+            try {
+                i = ImageIO.read(new File("img/modules/module" + name + ".png"));
+            } catch (IOException e) {
+                e.printStackTrace(System.out);
+            }
         }
         image = i;
     }

@@ -2,11 +2,13 @@ package com.prplplus.gui;
 
 import static com.prplplus.Settings.MAX_SIZE;
 
+import java.awt.AlphaComposite;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
@@ -44,6 +46,8 @@ import com.prplplus.Settings;
 import com.prplplus.Utils;
 import com.prplplus.gui.OffsetIterable.Offset;
 import com.prplplus.shipconstruct.Hull;
+import com.prplplus.shipconstruct.MirrorManager;
+import com.prplplus.shipconstruct.MirrorManager.MirroredHullBrush;
 import com.prplplus.shipconstruct.Module;
 import com.prplplus.shipconstruct.ModuleAtPosition;
 import com.prplplus.shipconstruct.ShipConstructor.Ship;
@@ -67,6 +71,9 @@ public class ShipConstructorPanel extends JPanel {
 
     private Module selectedModule;
     private int selectedHull = -1;
+    private int selectedMirror = MirrorManager.MIRROR_NONE;
+
+    private MirrorManager mirrorManager = new MirrorManager();
 
     private int[] hullSection = new int[MAX_SIZE * MAX_SIZE];
     private List<ModuleAtPosition> modules = new ArrayList<>();
@@ -83,21 +90,15 @@ public class ShipConstructorPanel extends JPanel {
         add(shipRenderer = new ShipRenderer(), BorderLayout.CENTER);
         add(createModulesPanel(), BorderLayout.EAST);
         add(createBottomBar(), BorderLayout.SOUTH);
+
+        //mirrorManager.setHorizontalMirror(25);
+        //mirrorManager.setVerticalMirror(25);
+
+        mirrorManager.setRotationMirror(25, 25);
     }
 
     private int brushSizeIndex = 0;
     private int[] brushSizes = { 1, 3, 5, 9 };
-
-    /*private static GridBagConstraints createConstraints(int posX, int posY, int width, int height) {
-        GridBagConstraints c = new GridBagConstraints();
-        c.gridx = posX;
-        c.gridy = posY;
-        c.gridwidth = width;
-        c.gridheight = height;
-        //c.weightx = c.weighty = 1;
-        //c.anchor = GridBagConstraints.CENTER;
-        return c;
-    }*/
 
     private JPanel createTopBar() {
         JPanel topBar = new JPanel(new BorderLayout());
@@ -169,7 +170,7 @@ public class ShipConstructorPanel extends JPanel {
         JPanel wrapper = new JPanel(new FlowLayout(FlowLayout.CENTER));
         wrapper.setBackground(new Color(255, 226, 196));
 
-        JPanel leftBar = new JPanel(new GridLayout(10, 1));
+        JPanel leftBar = new JPanel(new GridLayout(15, 1));
         leftBar.setOpaque(false);
 
         JButton moveUp = new JButton("Move Up");
@@ -214,6 +215,23 @@ public class ShipConstructorPanel extends JPanel {
         });
         leftBar.add(resetCamera);
 
+        space = new JPanel();
+        space.setPreferredSize(new Dimension(30, 30));
+        space.setOpaque(false);
+        leftBar.add(space);
+
+        JButton horizontalMirror = new JButton("Horizontal Mirror");
+        horizontalMirror.addActionListener(e -> mirrorButtonPressed(MirrorManager.MIRROR_HORIZONTAL));
+        leftBar.add(horizontalMirror);
+
+        JButton verticalMirror = new JButton("Vertical Mirror");
+        verticalMirror.addActionListener(e -> mirrorButtonPressed(MirrorManager.MIRROR_VERTICAL));
+        leftBar.add(verticalMirror);
+
+        JButton rotationMirror = new JButton("Rotation Mirror");
+        rotationMirror.addActionListener(e -> mirrorButtonPressed(MirrorManager.MIRROR_ROTATION));
+        leftBar.add(rotationMirror);
+
         wrapper.add(leftBar);
         return wrapper;
     }
@@ -256,6 +274,8 @@ public class ShipConstructorPanel extends JPanel {
             button.addActionListener(e -> {
                 selectedModule = m;
                 selectedHull = -1;
+                selectedMirror = MirrorManager.MIRROR_NONE;
+                shipRenderer.repaint();
             });
 
             if (m.isWeapon) {
@@ -285,11 +305,6 @@ public class ShipConstructorPanel extends JPanel {
 
             tabs.addTab("Custom", customModules);
         }
-
-        //tabs.addTab("Kappa", new JLabel("Poro"));
-
-        //tabs.revalidate();
-        //System.out.println(getTabsWidth(tabs));
 
         modulesPanel.add(tabs, BorderLayout.CENTER);
 
@@ -348,6 +363,52 @@ public class ShipConstructorPanel extends JPanel {
         }
         i = i.getScaledInstance(m.width * scaleFactor, m.height * scaleFactor, Image.SCALE_DEFAULT);
         return new ImageIcon(i);
+    }
+
+    private void mirrorButtonPressed(int mirror) {
+        selectedHull = -1;
+        selectedModule = null;
+
+        if (selectedMirror == mirror) {
+            selectedMirror = MirrorManager.MIRROR_NONE;
+        } else if (selectedMirror != MirrorManager.MIRROR_NONE) {
+            selectedMirror = mirror;
+        } else {
+
+            //move/remove mirror
+            switch (mirror) {
+            case MirrorManager.MIRROR_HORIZONTAL:
+                if (mirrorManager.hasHorizontalMirror() && mirrorManager.getHorizontalMirror() % 2 == 1) {
+                    mirrorManager.setHorizontalMirror(mirrorManager.getHorizontalMirror() & ~1);
+                } else if (mirrorManager.hasHorizontalMirror()) {
+                    mirrorManager.clearHorizontalMirror();
+                } else {
+                    selectedMirror = MirrorManager.MIRROR_HORIZONTAL;
+                }
+                break;
+            case MirrorManager.MIRROR_VERTICAL:
+                if (mirrorManager.hasVerticalMirror() && mirrorManager.getVerticalMirror() % 2 == 1) {
+                    mirrorManager.setVerticalMirror(mirrorManager.getVerticalMirror() & ~1);
+                } else if (mirrorManager.hasVerticalMirror()) {
+                    mirrorManager.clearVerticalMirror();
+                } else {
+                    selectedMirror = MirrorManager.MIRROR_VERTICAL;
+                }
+                break;
+            case MirrorManager.MIRROR_ROTATION:
+                if (mirrorManager.hasRotationMirror() && mirrorManager.getRotationMirrorX() % 2 == 1) {
+                    mirrorManager.setRotationMirror(mirrorManager.getRotationMirrorX() & ~1,
+                            mirrorManager.getRotationMirrorY() & ~1);
+                } else if (mirrorManager.hasRotationMirror()) {
+                    mirrorManager.clearRotationMirror();
+                } else {
+                    selectedMirror = MirrorManager.MIRROR_ROTATION;
+                }
+                break;
+            }
+        }
+
+        shipRenderer.repaint();
     }
 
     //import everything except custom modules
@@ -590,6 +651,8 @@ public class ShipConstructorPanel extends JPanel {
                             selectedHull = -1;
                         }
                         selectedModule = null;
+                        selectedMirror = MirrorManager.MIRROR_NONE;
+                        shipRenderer.repaint();
                         //System.out.println("Selected " + selectedHull);
                         break;
                     }
@@ -655,9 +718,21 @@ public class ShipConstructorPanel extends JPanel {
 
         private Color transparentRed = new Color(255, 0, 0, 64);
 
+        private void paintModulePreview(Graphics g, ModuleAtPosition pos) {
+            g.drawImage(pos.module.image, pos.x * zoom, pos.y * zoom, pos.module.width * zoom, pos.module.height * zoom, null);
+            if (!canBePlaced(pos)) {
+                //draw a red rectangle over it
+                g.setColor(transparentRed);
+                g.fillRect(pos.x * zoom, pos.y * zoom, pos.module.width * zoom, pos.module.height * zoom);
+            }
+        }
+
         @Override
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
+            Graphics2D g2d = (Graphics2D) g;
+            //TODO: paintComponent bookmark
+
             g.translate(-posX, -posY);
 
             //grid
@@ -691,7 +766,7 @@ public class ShipConstructorPanel extends JPanel {
 
             //selected hull
             if (selectedHull != -1) {
-                ModuleAtPosition pos = tryPlace(Module.LASER);
+                ModuleAtPosition pos = tryPlace(Module.BRUSH_1X1);
                 //if(inBounds(pos))
                 int w = pos.module.width * zoom;
                 int h = pos.module.height * zoom;
@@ -711,18 +786,85 @@ public class ShipConstructorPanel extends JPanel {
                     g.setColor(Color.black);
                     g.drawRect(x, y, w, h);
                 }
+
+                if (mirrorManager.hasAnyMirror()) {
+                    List<MirroredHullBrush> mirrored = mirrorManager.getMirroredHull(
+                            pos, selectedHull, brushSizes[brushSizeIndex]);
+                    for (MirroredHullBrush mirror : mirrored) {
+                        direction = Hull.getOffsetDirection(mirror.hullPiece);
+                        for (Offset off : OffsetIterable.getFor(brushSize, direction)) {
+                            int x = (mirror.x + off.x) * zoom;
+                            int y = (mirror.y + off.y) * zoom;
+
+                            //if (selectedHull != Hull.HULL_ARMOR_MASK) {
+                            g.setColor(semiTransparentBackground);
+                            g.fillRect(x, y, w, h);
+                            //}
+                            g.drawImage(Hull.hullImages[mirror.hullPiece], x, y, w, h, null);
+                            g.setColor(Color.black);
+                            g.drawRect(x, y, w, h);
+                        }
+                    }
+                }
             }
 
             //selected module
             if (selectedModule != null) {
                 //System.out.println(selectedModule);
                 ModuleAtPosition pos = tryPlace(selectedModule);
-                g.drawImage(pos.module.image, pos.x * zoom, pos.y * zoom, pos.module.width * zoom, pos.module.height * zoom, null);
-                if (!canBePlaced(pos)) {
-                    //draw a red rectangle over it
-                    g.setColor(transparentRed);
-                    g.fillRect(pos.x * zoom, pos.y * zoom, pos.module.width * zoom, pos.module.height * zoom);
+                paintModulePreview(g, pos);
+
+                if (mirrorManager.hasAnyMirror()) {
+                    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+                    List<? extends ModuleAtPosition> mirroredModules = mirrorManager.getMirroredModules(pos);
+                    for (ModuleAtPosition mirrored : mirroredModules) {
+                        paintModulePreview(g, mirrored);
+                    }
+                    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
                 }
+            }
+
+            //mirrors
+            if (mirrorManager.hasHorizontalMirror()) {
+                g.setColor(Color.GREEN);
+                int posY = mirrorManager.getHorizontalMirror() * zoom / 2;
+                g.drawLine(0, posY, zoom * MAX_SIZE, posY);
+            }
+            if (mirrorManager.hasVerticalMirror()) {
+                g.setColor(Color.GREEN);
+                int posX = mirrorManager.getVerticalMirror() * zoom / 2;
+                g.drawLine(posX, 0, posX, zoom * MAX_SIZE);
+            }
+            if (mirrorManager.hasRotationMirror()) {
+                g.setColor(Color.CYAN);
+                int posX = mirrorManager.getRotationMirrorX() * zoom / 2;
+                g.drawLine(posX, 0, posX, zoom * MAX_SIZE);
+                int posY = mirrorManager.getRotationMirrorY() * zoom / 2;
+                g.drawLine(0, posY, zoom * MAX_SIZE, posY);
+                g.fillOval(posX - zoom / 4, posY - zoom / 4, zoom / 2, zoom / 2);
+            }
+
+            //selectedMirror
+            if (selectedMirror == MirrorManager.MIRROR_HORIZONTAL) {
+                ModuleAtPosition pos = tryPlace(Module.BRUSH_1X1);
+                g.setColor(Color.ORANGE);
+                int posY = pos.y * zoom + zoom / 2;
+                g.drawLine(0, posY, zoom * MAX_SIZE, posY);
+            }
+            if (selectedMirror == MirrorManager.MIRROR_VERTICAL) {
+                ModuleAtPosition pos = tryPlace(Module.BRUSH_1X1);
+                g.setColor(Color.ORANGE);
+                int posX = pos.x * zoom + zoom / 2;
+                g.drawLine(posX, 0, posX, zoom * MAX_SIZE);
+            }
+            if (selectedMirror == MirrorManager.MIRROR_ROTATION) {
+                ModuleAtPosition pos = tryPlace(Module.BRUSH_1X1);
+                g.setColor(Color.ORANGE);
+                int posX = pos.x * zoom + zoom / 2;
+                g.drawLine(posX, 0, posX, zoom * MAX_SIZE);
+                int posY = pos.y * zoom + zoom / 2;
+                g.drawLine(0, posY, zoom * MAX_SIZE, posY);
+                g.fillOval(posX - zoom / 4, posY - zoom / 4, zoom / 2, zoom / 2);
             }
 
             g.translate(posX, posY);
@@ -748,7 +890,7 @@ public class ShipConstructorPanel extends JPanel {
         }
 
         private void removeModuleAtMouseLocation() {
-            ModuleAtPosition pos = tryPlace(Module.LASER);
+            ModuleAtPosition pos = tryPlace(Module.BRUSH_1X1);
             ModuleAtPosition module = null;
 
             for (ModuleAtPosition m : modules) {
@@ -762,7 +904,7 @@ public class ShipConstructorPanel extends JPanel {
         }
 
         private boolean nothingSelected() {
-            return selectedModule == null && selectedHull == -1;
+            return selectedModule == null && selectedHull == -1 && selectedMirror == MirrorManager.MIRROR_NONE;
         }
 
         private boolean canBePlaced(ModuleAtPosition module) {
@@ -794,6 +936,20 @@ public class ShipConstructorPanel extends JPanel {
             return true;
         }
 
+        private void shiftMirrors(int xShift, int yShift) {
+            if (mirrorManager.hasHorizontalMirror()) {
+                mirrorManager.setHorizontalMirror(mirrorManager.getHorizontalMirror() + 2 * yShift);
+            }
+            if (mirrorManager.hasVerticalMirror()) {
+                mirrorManager.setVerticalMirror(mirrorManager.getVerticalMirror() + 2 * xShift);
+            }
+            if (mirrorManager.hasRotationMirror()) {
+                mirrorManager.setRotationMirror(mirrorManager.getRotationMirrorX() + 2 * xShift,
+                        mirrorManager.getRotationMirrorY() + 2 * yShift);
+            }
+            mirrorManager.fixMirrors(MAX_SIZE);
+        }
+
         private boolean shiftLeft() {
             //check hull
             int x = 0;
@@ -820,6 +976,9 @@ public class ShipConstructorPanel extends JPanel {
             for (int y = 0; y < MAX_SIZE; y++) {
                 hullSection[x * MAX_SIZE + y] = Hull.HULL_SPACE;
             }
+
+            //move (and remove) mirrors
+            shiftMirrors(-1, 0);
 
             repaint();
             return true;
@@ -852,6 +1011,9 @@ public class ShipConstructorPanel extends JPanel {
                 hullSection[x * MAX_SIZE + y] = Hull.HULL_SPACE;
             }
 
+            //move (and remove) mirrors
+            shiftMirrors(1, 0);
+
             repaint();
             return true;
         }
@@ -882,6 +1044,9 @@ public class ShipConstructorPanel extends JPanel {
             for (int x = 0; x < MAX_SIZE; x++) {
                 hullSection[x * MAX_SIZE + y] = Hull.HULL_SPACE;
             }
+
+            //move (and remove) mirrors
+            shiftMirrors(0, -1);
 
             repaint();
             return true;
@@ -914,6 +1079,9 @@ public class ShipConstructorPanel extends JPanel {
                 hullSection[x * MAX_SIZE + y] = Hull.HULL_SPACE;
             }
 
+            //move (and remove) mirrors
+            shiftMirrors(0, 1);
+
             repaint();
             return true;
         }
@@ -935,26 +1103,58 @@ public class ShipConstructorPanel extends JPanel {
                     }
                 }
             }
+        }
 
+        private void onModuleClick(ModuleAtPosition pos) {
+            if (canBePlaced(pos)) {
+                modules.add(pos);
+            }
+            if (mirrorManager.hasAnyMirror()) {
+                for (ModuleAtPosition mirrored : mirrorManager.getMirroredModules(pos)) {
+                    if (canBePlaced(mirrored)) {
+                        modules.add(mirrored);
+                    }
+                }
+            }
+        }
+
+        private void onMirrorClick(ModuleAtPosition pos) {
+            switch (selectedMirror) {
+            case MirrorManager.MIRROR_HORIZONTAL:
+                mirrorManager.setHorizontalMirror(pos.y * 2 + 1);
+                break;
+            case MirrorManager.MIRROR_VERTICAL:
+                mirrorManager.setVerticalMirror(pos.x * 2 + 1);
+                break;
+            case MirrorManager.MIRROR_ROTATION:
+                mirrorManager.setRotationMirror(pos.x * 2 + 1, pos.y * 2 + 1);
+                break;
+            }
+            selectedMirror = MirrorManager.MIRROR_NONE;
+
+            mirrorManager.fixMirrors(MAX_SIZE);
         }
 
         @Override
         public void mouseClicked(MouseEvent e) {
             if (selectedHull != -1) { //hull placement
-                ModuleAtPosition pos = tryPlace(Module.LASER);
+                ModuleAtPosition pos = tryPlace(Module.BRUSH_1X1);
                 onHullClick(pos, e.getButton());
             } else if (e.getButton() == MouseEvent.BUTTON1) {
                 if (selectedModule != null) { //module placement
                     ModuleAtPosition pos = tryPlace(selectedModule);
-                    if (canBePlaced(pos)) {
-                        modules.add(pos);
-                    }
+                    onModuleClick(pos);
+                }
+                if (selectedMirror != MirrorManager.MIRROR_NONE) {
+                    ModuleAtPosition pos = tryPlace(Module.BRUSH_1X1);
+                    onMirrorClick(pos);
                 }
             } else if (e.getButton() == MouseEvent.BUTTON3) {
                 if (nothingSelected()) {
                     removeModuleAtMouseLocation();
                 }
                 selectedModule = null;
+                selectedMirror = MirrorManager.MIRROR_NONE;
             }
 
             this.repaint();
