@@ -95,7 +95,7 @@ public class ShipConstructorPanel extends JPanel {
         //mirrorManager.setHorizontalMirror(25);
         //mirrorManager.setVerticalMirror(25);
 
-        mirrorManager.setRotationMirror(25, 25);
+        //mirrorManager.setRotationMirror(25, 25);
     }
 
     private int brushSizeIndex = 0;
