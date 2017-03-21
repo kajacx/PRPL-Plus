@@ -36,9 +36,11 @@ public class Hull {
     public static final int HULL_ARMOR_SPIKE_T   = 0x0012;
     public static final int HULL_ARMOR_SPIKE_L   = 0x0013;
     
+    public static final int HULL_MODULE_REMOVAL  = 0x0020; //don't use this either, it's for removing modules
+    
     //@formatter:on
 
-    public static Image[] hullImages = new Image[HULL_ARMOR_SPIKE_L + 1];
+    public static Image[] hullImages = new Image[HULL_MODULE_REMOVAL + 1];
 
     static {
         for (Field f : Hull.class.getDeclaredFields()) {

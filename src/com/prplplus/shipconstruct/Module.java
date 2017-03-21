@@ -44,6 +44,11 @@ public class Module {
     public static final Module BRUSH_9X9       = new Module( 9, 9,     -3, "Brush 9x9", false, true);
     //@formatter:on
 
+    public static final Module[] brushByIndex = { BRUSH_1X1, BRUSH_3X3, BRUSH_5X5, BRUSH_9X9 };
+
+    public static final Module[] brushBySize = { null, BRUSH_1X1, null, BRUSH_3X3, null, BRUSH_5X5,
+            null, null, null, BRUSH_9X9 };
+
     public static final Module[] standardModules = { COMMAND, ENGINE, LATHE, LASER, CANNON, MISSLE_LAUNCHER, PARTICLE_BEAM, DISCHARGE,
             ENERGY_TANK, PORT, GUPPY, SHIELD, REACTOR, FIGHTER_BASE, GRABBER, MK7, HQ_COMMAND };
 

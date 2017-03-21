@@ -608,13 +608,14 @@ public class ShipConstructorPanel extends JPanel {
         }
     }
 
-    private int[] hullToDraw = { Hull.HULL_BLOCK, Hull.HULL_CORNER_LB, Hull.HULL_SPIKE_B, Hull.HULL_ARMOR_MASK, Hull.HULL_SPACE };
+    private int[] hullToDraw = { Hull.HULL_BLOCK, Hull.HULL_CORNER_LB, Hull.HULL_SPIKE_B,
+            Hull.HULL_ARMOR_MASK, Hull.HULL_MODULE_REMOVAL, Hull.HULL_SPACE };
 
     private class HullSelector extends JPanel implements MouseListener {
         private static final long serialVersionUID = 5928644466757778196L;
 
         public HullSelector() {
-            setPreferredSize(new Dimension(350, 30));
+            setPreferredSize(new Dimension(380, 30));
             setBackground(new Color(196, 128, 64));
 
             addMouseListener(this);
@@ -939,6 +940,15 @@ public class ShipConstructorPanel extends JPanel {
             return true;
         }
 
+        private void removeColliding(ModuleAtPosition module) {
+            for (int i = 0; i < modules.size(); i++) {
+                if (modules.get(i).intersectsWith(module, true)) {
+                    modules.remove(i);
+                    i--;
+                }
+            }
+        }
+
         private void shiftMirrors(int xShift, int yShift) {
             if (mirrorManager.hasHorizontalMirror()) {
                 mirrorManager.setHorizontalMirror(mirrorManager.getHorizontalMirror() + 2 * yShift);
@@ -1091,18 +1101,27 @@ public class ShipConstructorPanel extends JPanel {
 
         private void fillHull(int x, int y, MouseEvent e, int hullType) {
             ModuleAtPosition pos = new ModuleAtPosition(x, y, Module.BRUSH_1X1);
-            for (Offset off : OffsetIterable.getFor(brushSizeIndex, Hull.getOffsetDirection(hullType))) {
-                pos.x = x + off.x;
-                pos.y = y + off.y;
+            boolean isLeftButton = SwingUtilities.isLeftMouseButton(e);
+            boolean processOffsets = true;
+            if (hullType == Hull.HULL_MODULE_REMOVAL) {
+                Module brush = Module.brushByIndex[brushSizeIndex];
+                removeColliding(new ModuleAtPosition(x - brush.width / 2, y - brush.height / 2, brush));
+                processOffsets = !isLeftButton;
+            }
+            if (processOffsets) {
+                for (Offset off : OffsetIterable.getFor(brushSizeIndex, Hull.getOffsetDirection(hullType))) {
+                    pos.x = x + off.x;
+                    pos.y = y + off.y;
 
-                if (canBePlaced(pos, true, false, true, true)) {
-                    int index = pos.x * MAX_SIZE + pos.y;
-                    if (hullType == Hull.HULL_ARMOR_MASK) {
-                        hullSection[index] = Hull.withArmor(hullSection[index], SwingUtilities.isLeftMouseButton(e));
-                    } else if (SwingUtilities.isLeftMouseButton(e)) {
-                        hullSection[index] = hullType;
-                    } else {
-                        hullSection[index] = Hull.HULL_SPACE;
+                    if (canBePlaced(pos, true, false, true, true)) {
+                        int index = pos.x * MAX_SIZE + pos.y;
+                        if (hullType == Hull.HULL_ARMOR_MASK) {
+                            hullSection[index] = Hull.withArmor(hullSection[index], isLeftButton);
+                        } else if (isLeftButton) {
+                            hullSection[index] = hullType;
+                        } else {
+                            hullSection[index] = Hull.HULL_SPACE;
+                        }
                     }
                 }
             }

@@ -10,10 +10,13 @@ When module is selected:
 When hull is selected:
  - Left click to place hull/armor
  - Right click to remove hull/armor
- - Mouse wheel to rotate module
+ - Mouse wheel to rotate hull
  - Ctrl + mouse drag to move camera
  - Ctrl + mouse wheel to zoom in/out
  - Alt + mouse wheel to change brush size
+ - When module remover is selected (red cross):
+     Left click to remove modules
+     Right click to remove modules and hull
 
 Using the mirrors:
  - First mirror button press will let you place a mirror
