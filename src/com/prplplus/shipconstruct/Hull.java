@@ -146,4 +146,44 @@ public class Hull {
         //@formatter:on
         }
     }
+
+    //for alt-rotation between hulls
+    public static int nextHull(int hull) {
+        //@formatter:off
+        switch (hull) {
+        case HULL_BLOCK: return HULL_CORNER_LB;
+        case HULL_CORNER_LB:
+        case HULL_CORNER_RB:
+        case HULL_CORNER_RT:
+        case HULL_CORNER_LT: return HULL_SPIKE_B;
+        case HULL_SPIKE_B:
+        case HULL_SPIKE_R:
+        case HULL_SPIKE_T:
+        case HULL_SPIKE_L: return HULL_ARMOR_MASK;
+        case HULL_ARMOR_MASK: return HULL_MODULE_REMOVAL;
+        case HULL_MODULE_REMOVAL: return Hull.HULL_BLOCK;
+        default: return hull;
+            //@formatter:on
+        }
+    }
+
+    //for alt-rotation between hulls
+    public static int prevHull(int hull) {
+        //@formatter:off
+        switch (hull) {
+        case HULL_BLOCK: return HULL_MODULE_REMOVAL;
+        case HULL_CORNER_LB:
+        case HULL_CORNER_RB:
+        case HULL_CORNER_RT:
+        case HULL_CORNER_LT: return HULL_BLOCK;
+        case HULL_SPIKE_B:
+        case HULL_SPIKE_R:
+        case HULL_SPIKE_T:
+        case HULL_SPIKE_L: return HULL_CORNER_LB;
+        case HULL_ARMOR_MASK: return HULL_SPIKE_B;
+        case HULL_MODULE_REMOVAL: return Hull.HULL_ARMOR_MASK;
+        default: return hull;
+            //@formatter:on
+        }
+    }
 }

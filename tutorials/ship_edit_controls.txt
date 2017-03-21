@@ -6,14 +6,16 @@ General:
 When module is selected:
  - Left click to place module
  - Right click to disselect
+ - Shift + mouse wheel to rotate between modules
 
 When hull is selected:
- - Left click to place hull/armor
- - Right click to remove hull/armor
+ - Left click/drag to place hull/armor
+ - Right click/drag to remove hull/armor
  - Mouse wheel to rotate hull
  - Ctrl + mouse drag to move camera
  - Ctrl + mouse wheel to zoom in/out
  - Alt + mouse wheel to change brush size
+ - Shift + mouse wheel to rotate between hull types
  - When module remover is selected (red cross):
      Left click to remove modules
      Right click to remove modules and hull

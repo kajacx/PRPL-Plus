@@ -278,12 +278,19 @@ public class ShipConstructorPanel extends JPanel {
                 selectedMirror = MirrorManager.MIRROR_NONE;
                 shipRenderer.repaint();
             });
+            defaultModules.add(button);
+        }
 
-            if (m.isWeapon) {
-                weaponModules.add(button);
-            } else {
-                defaultModules.add(button);
-            }
+        for (Module m : Module.weaponModules) {
+            JButton button = new JButton(m.name);
+            button.setIcon(getImageForModule(m));
+            button.addActionListener(e -> {
+                selectedModule = m;
+                selectedHull = -1;
+                selectedMirror = MirrorManager.MIRROR_NONE;
+                shipRenderer.repaint();
+            });
+            weaponModules.add(button);
         }
 
         tabs.addTab("Default", defaultModules);
@@ -1249,7 +1256,11 @@ public class ShipConstructorPanel extends JPanel {
             if (e.isControlDown()) {
                 processZoom(e);
             } else if (e.isShiftDown()) {
-                //TODO: hull type rotation
+                if (e.getWheelRotation() > 0) {
+                    selectedHull = Hull.nextHull(selectedHull);
+                } else {
+                    selectedHull = Hull.prevHull(selectedHull);
+                }
             } else if (e.isAltDown()) {
                 brushSizeIndex -= e.getWheelRotation();
                 brushSizeIndex = Utils.clamp(0, brushSizes.length - 1, brushSizeIndex);
@@ -1260,6 +1271,18 @@ public class ShipConstructorPanel extends JPanel {
                 } else {
                     selectedHull = Hull.rotateCCW(selectedHull);
                 }
+            }
+        }
+
+        private void onModuleWheel(MouseWheelEvent e) {
+            if (e.isShiftDown()) {
+                int index = Module.allModules.indexOf(selectedModule);
+                index += e.getWheelRotation();
+                index %= Module.allModules.size();
+                index += index < 0 ? Module.allModules.size() : 0;
+                selectedModule = Module.allModules.get(index);
+            } else {
+                processZoom(e);
             }
         }
 
@@ -1303,6 +1326,8 @@ public class ShipConstructorPanel extends JPanel {
         public void mouseWheelMoved(MouseWheelEvent e) {
             if (selectedHull != -1) {
                 onHullWheel(e);
+            } else if (selectedModule != null) {
+                onModuleWheel(e);
             } else {
                 processZoom(e);
             }

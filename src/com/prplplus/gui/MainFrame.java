@@ -25,7 +25,7 @@ import com.prplplus.Settings;
 public class MainFrame extends JFrame {
     private static final long serialVersionUID = -3729420411039341803L;
 
-    public static final String version = "v0.1.5";
+    public static final String version = "v0.1.6";
     public static final String title = "PRPL Toolset";
     public static final String contact = "kajacx@gmail.com";
 
@@ -40,6 +40,9 @@ public class MainFrame extends JFrame {
         super(title + " " + version);
         setLayout(new BorderLayout());
         setJMenuBar(createMenu());
+
+        ImageIcon icon = new ImageIcon("img/icons/main_icon.png");
+        setIconImage(icon.getImage());
 
         JTabbedPane tabs = new JTabbedPane();
 

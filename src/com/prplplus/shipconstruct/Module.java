@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
@@ -14,34 +15,35 @@ import javax.imageio.ImageIO;
 public class Module {
     public static final int COMMAND_CODE = -1;
     public static final int CUSTOM_CODE = -2;
+    public static final int BRUSH_CODE = -3;
 
     public static final int DEFAULT_BUILD_COST = 50;
 
     //@formatter:off
-    public static final Module UNKNOWN         = new Module( 1, 1,     -2, "Unknown", false); //an unknown custom module
-    public static final Module COMMAND         = new Module( 3, 3,     -1, "Command", false);
-    public static final Module ENGINE          = new Module( 2, 3, 0x40A0, "Engine", false);
-    public static final Module LATHE           = new Module( 3, 3, 0x4110, "Lathe", true);
-    public static final Module LASER           = new Module( 1, 1, 0x4000, "Laser", true);
-    public static final Module CANNON          = new Module( 2, 2, 0x3F80, "Cannon", true);
-    public static final Module MISSLE_LAUNCHER = new Module( 2, 2, 0x4040, "MissleLauncher", true);
-    public static final Module PARTICLE_BEAM   = new Module( 1, 1, 0x4080, "ParticleBeam", true);
-    public static final Module DISCHARGE       = new Module( 3, 3, 0x4190, "Discharge", true);
-    public static final Module ENERGY_TANK     = new Module( 3, 3, 0x40C0, "EnergyTank", false);
-    public static final Module PORT            = new Module( 3, 3, 0x4100, "Port", false);
-    public static final Module GUPPY           = new Module( 3, 3, 0x40E0, "Guppy", false);
-    public static final Module SHIELD          = new Module( 3, 3, 0x4140, "Shield", false);
-    public static final Module REACTOR         = new Module( 3, 3, 0x4160, "Reactor", false);
-    public static final Module FIGHTER_BASE    = new Module(15, 3, 0x4120, "FighterBase", true);
-    public static final Module GRABBER         = new Module( 3, 3, 0x4180, "Grabber", false);
-    public static final Module MK7             = new Module( 5, 5, 0x4188, "MK7", true);
-    public static final Module HQ_COMMAND      = new Module( 5, 9, 0x4170, "HQCommand", false);
+    public static final Module UNKNOWN         = new Module( 1, 1,     -2, "Unknown"); //an unknown custom module
+    public static final Module COMMAND         = new Module( 3, 3,     -1, "Command");
+    public static final Module ENGINE          = new Module( 2, 3, 0x40A0, "Engine");
+    public static final Module LATHE           = new Module( 3, 3, 0x4110, "Lathe");
+    public static final Module LASER           = new Module( 1, 1, 0x4000, "Laser");
+    public static final Module CANNON          = new Module( 2, 2, 0x3F80, "Cannon");
+    public static final Module MISSLE_LAUNCHER = new Module( 2, 2, 0x4040, "MissleLauncher");
+    public static final Module PARTICLE_BEAM   = new Module( 1, 1, 0x4080, "ParticleBeam");
+    public static final Module DISCHARGE       = new Module( 3, 3, 0x4190, "Discharge");
+    public static final Module ENERGY_TANK     = new Module( 3, 3, 0x40C0, "EnergyTank");
+    public static final Module PORT            = new Module( 3, 3, 0x4100, "Port");
+    public static final Module GUPPY           = new Module( 3, 3, 0x40E0, "Guppy");
+    public static final Module SHIELD          = new Module( 3, 3, 0x4140, "Shield");
+    public static final Module REACTOR         = new Module( 3, 3, 0x4160, "Reactor");
+    public static final Module FIGHTER_BASE    = new Module(15, 3, 0x4120, "FighterBase");
+    public static final Module GRABBER         = new Module( 3, 3, 0x4180, "Grabber");
+    public static final Module MK7             = new Module( 5, 5, 0x4188, "MK7");
+    public static final Module HQ_COMMAND      = new Module( 5, 9, 0x4170, "HQCommand");
     
     //brushes used for collision detection in mirrored editing
-    public static final Module BRUSH_1X1       = new Module( 1, 1,     -3, "Brush 1x1", false, true);
-    public static final Module BRUSH_3X3       = new Module( 3, 3,     -3, "Brush 3x3", false, true);
-    public static final Module BRUSH_5X5       = new Module( 5, 5,     -3, "Brush 5x5", false, true);
-    public static final Module BRUSH_9X9       = new Module( 9, 9,     -3, "Brush 9x9", false, true);
+    public static final Module BRUSH_1X1       = new Module( 1, 1,     -3, "Brush 1x1", true);
+    public static final Module BRUSH_3X3       = new Module( 3, 3,     -3, "Brush 3x3", true);
+    public static final Module BRUSH_5X5       = new Module( 5, 5,     -3, "Brush 5x5", true);
+    public static final Module BRUSH_9X9       = new Module( 9, 9,     -3, "Brush 9x9", true);
     //@formatter:on
 
     public static final Module[] brushByIndex = { BRUSH_1X1, BRUSH_3X3, BRUSH_5X5, BRUSH_9X9 };
@@ -49,10 +51,15 @@ public class Module {
     public static final Module[] brushBySize = { null, BRUSH_1X1, null, BRUSH_3X3, null, BRUSH_5X5,
             null, null, null, BRUSH_9X9 };
 
-    public static final Module[] standardModules = { COMMAND, ENGINE, LATHE, LASER, CANNON, MISSLE_LAUNCHER, PARTICLE_BEAM, DISCHARGE,
-            ENERGY_TANK, PORT, GUPPY, SHIELD, REACTOR, FIGHTER_BASE, GRABBER, MK7, HQ_COMMAND };
+    public static final Module[] standardModules = { COMMAND, ENGINE, ENERGY_TANK,
+            PORT, GUPPY, SHIELD, REACTOR, GRABBER, HQ_COMMAND };
+
+    public static final Module[] weaponModules = { LATHE, LASER, CANNON, MISSLE_LAUNCHER,
+            PARTICLE_BEAM, DISCHARGE, FIGHTER_BASE, MK7 };
 
     public static final List<Module> customModules = new ArrayList<>();
+
+    public static final List<Module> allModules = new ArrayList<>();
 
     public final int width, height;
     public final int code; //-1: command, -2: custom
@@ -60,20 +67,18 @@ public class Module {
     public final Image image;
     public final int buildCost;
     public final String scriptName;
-    public final boolean isWeapon;
 
     //create a standart module
-    private Module(int width, int height, int code, String name, boolean isWeapon) {
-        this(width, height, code, name, isWeapon, false);
+    private Module(int width, int height, int code, String name) {
+        this(width, height, code, name, false);
     }
 
     //create a standart module
-    private Module(int width, int height, int code, String name, boolean isWeapon, boolean skipImage) {
+    private Module(int width, int height, int code, String name, boolean skipImage) {
         this.width = width;
         this.height = height;
         this.code = code;
         this.name = name;
-        this.isWeapon = isWeapon;
 
         buildCost = DEFAULT_BUILD_COST;
         scriptName = null;
@@ -97,7 +102,6 @@ public class Module {
         this.name = name;
         this.buildCost = buildCost;
         this.scriptName = scriptName;
-        this.isWeapon = false;
 
         Image i;
         try {
@@ -118,7 +122,6 @@ public class Module {
         this.name = name;
         this.buildCost = UNKNOWN.buildCost;
         this.scriptName = UNKNOWN.scriptName;
-        this.isWeapon = false;
     }
 
     static {
@@ -153,8 +156,12 @@ public class Module {
             }
         }
 
+        allModules.addAll(Arrays.asList(standardModules));
+        allModules.addAll(Arrays.asList(weaponModules));
+        allModules.addAll(customModules);
     }
 
+    //TODO: replace this with Float.floatToIntBits()
     public static final int[] indexToPos = {
             0x0000, //+??
             0x3F80, //+80
