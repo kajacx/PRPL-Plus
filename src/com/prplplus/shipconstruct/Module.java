@@ -51,7 +51,11 @@ public class Module {
     public static final Module[] brushBySize = { null, BRUSH_1X1, null, BRUSH_3X3, null, BRUSH_5X5,
             null, null, null, BRUSH_9X9 };
 
-    public static final Module[] standardModules = { COMMAND, ENGINE, ENERGY_TANK,
+    //someone should put me to programming prison for this...
+    public static final Module[] standardModules = { COMMAND, ENGINE, LATHE, LASER, CANNON, MISSLE_LAUNCHER, PARTICLE_BEAM, DISCHARGE,
+            ENERGY_TANK, PORT, GUPPY, SHIELD, REACTOR, FIGHTER_BASE, GRABBER, MK7, HQ_COMMAND };
+
+    public static final Module[] defaultModules = { COMMAND, ENGINE, ENERGY_TANK,
             PORT, GUPPY, SHIELD, REACTOR, GRABBER, HQ_COMMAND };
 
     public static final Module[] weaponModules = { LATHE, LASER, CANNON, MISSLE_LAUNCHER,
@@ -156,7 +160,7 @@ public class Module {
             }
         }
 
-        allModules.addAll(Arrays.asList(standardModules));
+        allModules.addAll(Arrays.asList(defaultModules));
         allModules.addAll(Arrays.asList(weaponModules));
         allModules.addAll(customModules);
     }

@@ -269,7 +269,7 @@ public class ShipConstructorPanel extends JPanel {
         weaponModules.setLayout(new BoxLayout(weaponModules, BoxLayout.Y_AXIS));
         weaponModules.setOpaque(false);
 
-        for (Module m : Module.standardModules) {
+        for (Module m : Module.defaultModules) {
             JButton button = new JButton(m.name);
             button.setIcon(getImageForModule(m));
             button.addActionListener(e -> {
@@ -623,7 +623,7 @@ public class ShipConstructorPanel extends JPanel {
         private static final long serialVersionUID = 5928644466757778196L;
 
         public HullSelector() {
-            setPreferredSize(new Dimension(380, 30));
+            setPreferredSize(new Dimension(390, 30));
             setBackground(new Color(196, 128, 64));
 
             addMouseListener(this);
