@@ -20,12 +20,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
+import com.prplplus.OSValidator;
 import com.prplplus.Settings;
 
 public class MainFrame extends JFrame {
     private static final long serialVersionUID = -3729420411039341803L;
 
-    public static final String version = "v0.1.6";
+    public static final String version = "v0.1.7";
     public static final String title = "PRPL Toolset";
     public static final String contact = "kajacx@gmail.com";
 
@@ -60,9 +61,13 @@ public class MainFrame extends JFrame {
 
         add(tabs, BorderLayout.CENTER);
         pack();
-        constPanel.modulesTabs.setPreferredSize(
-                new Dimension(ShipConstructorPanel.getTabsWidth(constPanel.modulesTabs), 300));
-        pack(); //need to call pack() twice because of broken tab pane
+
+        if (!OSValidator.isMac()) {
+            //don't use this hack on mac, it causes null pointer exception
+            constPanel.modulesTabs.setPreferredSize(
+                    new Dimension(ShipConstructorPanel.getTabsWidth(constPanel.modulesTabs), 300));
+            pack(); //need to call pack() twice because of broken tab pane
+        }
 
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);

@@ -553,7 +553,8 @@ public class ShipConstructorPanel extends JPanel {
                 builder = new ProcessBuilder("mono", "GZipExporter/PRPLDatGZip.exe",
                         file.getAbsolutePath(), datFile, "-b64");
             } else if (OSValidator.isMac()) {
-                statusArea.setText("Conversion to .dat failed, Mac OS is not supported. Please contact me at " + MainFrame.contact);
+                builder = new ProcessBuilder("mono", "GZipExporter/PRPLDatGZip.exe",
+                        file.getAbsolutePath(), datFile, "-b64");
             } else {
                 statusArea.setText("Conversion to .dat failed, Unknown OS: " + OSValidator.getOS());
             }
