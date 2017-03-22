@@ -1,5 +1,6 @@
 package com.prplplus;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,7 +17,7 @@ public class Settings {
      */
     public static boolean OUTLINE_35_25_BOX = true;
 
-    public static String WORK_IN = "c:/Users/Karel/Documents/My Games/particlefleet/";
+    public static String WORK_IN = "default";
 
     public static int MAX_SIZE = 128;
 
@@ -28,9 +29,15 @@ public class Settings {
             props.load(stream);
             ZOOM_TO_CURSOR = props.getProperty("zoomToCursor", "false").equals("true");
             OUTLINE_35_25_BOX = props.getProperty("displayMaxSizeOutline", "true").equals("true");
-            MAX_SIZE = Integer.parseInt(props.getProperty("maxSize", "128"));
+            MAX_SIZE = readInt(props, "maxSize", 128);
             MAX_SIZE = Math.min(Math.max(35, MAX_SIZE), 128);
-            WORK_IN = props.getProperty("PFDirectory");
+            WORK_IN = props.getProperty("PFDirectory", WORK_IN);
+            if (WORK_IN.equals("default")) {
+                WORK_IN = Utils.getPFLocalFilesFolder();
+            }
+            if (!(new File(WORK_IN).exists())) {
+                System.out.println("Warning: PF directiory doesn't exists: " + WORK_IN);
+            }
         } catch (Exception ex) {
             ex.printStackTrace(System.out);
         } finally {
@@ -41,6 +48,18 @@ public class Settings {
                     e.printStackTrace(System.out);
                 }
             }
+        }
+    }
+
+    private static int readInt(Properties props, String key, int defaultValue) {
+        if (props.containsKey(key)) {
+            try {
+                return Integer.parseInt(props.getProperty(key));
+            } catch (NumberFormatException ex) {
+                return defaultValue;
+            }
+        } else {
+            return defaultValue;
         }
     }
 }

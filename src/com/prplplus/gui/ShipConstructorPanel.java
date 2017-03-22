@@ -40,6 +40,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.prplplus.Clipboard;
 import com.prplplus.OSValidator;
@@ -81,6 +82,8 @@ public class ShipConstructorPanel extends JPanel {
 
     private ShipRenderer shipRenderer;
 
+    private JFileChooser fileChooser = new JFileChooser();
+
     public ShipConstructorPanel() {
         setLayout(new BorderLayout());
 
@@ -96,6 +99,12 @@ public class ShipConstructorPanel extends JPanel {
         //mirrorManager.setVerticalMirror(25);
 
         //mirrorManager.setRotationMirror(25, 25);
+
+        fileChooser.setCurrentDirectory(new File(Settings.WORK_IN + "/ships/"));
+        FileNameExtensionFilter txtFilter = new FileNameExtensionFilter("Text files (*.txt)", "txt");
+        // add filters
+        fileChooser.addChoosableFileFilter(txtFilter);
+        fileChooser.setFileFilter(txtFilter);
     }
 
     private int brushSizeIndex = 0;
@@ -490,8 +499,6 @@ public class ShipConstructorPanel extends JPanel {
         return true;
     }
 
-    private JFileChooser fileChooser = new JFileChooser();
-
     private void saveAs() {
         ShipExporter exporter = new ShipExporter(hullSection, modules);
 
@@ -504,6 +511,10 @@ public class ShipConstructorPanel extends JPanel {
         }
 
         //select file
+        File nowSelected = fileChooser.getSelectedFile();
+        if (nowSelected == null) {
+            fileChooser.setSelectedFile(new File(Settings.WORK_IN + "/ships/" + nameField.getText() + ".txt"));
+        }
         int result = fileChooser.showSaveDialog(this);
         if (result != JFileChooser.APPROVE_OPTION) {
             return;
@@ -516,6 +527,12 @@ public class ShipConstructorPanel extends JPanel {
         File file;
         try {
             file = fileChooser.getSelectedFile();
+
+            if (fileChooser.getFileFilter() != fileChooser.getAcceptAllFileFilter()
+                    && !file.getName().contains(".")) {
+                file = new File(file.getAbsolutePath() + ".txt");
+            }
+
             PrintWriter writer = new PrintWriter(file);
             writer.println(exportData);
             writer.println(exporter.exportCustomModules());

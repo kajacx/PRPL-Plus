@@ -8,4 +8,19 @@ public class Utils {
             return upper;
         return value;
     }
+
+    public static String getPFLocalFilesFolder() {
+        String format;
+        if (OSValidator.isWindows()) {
+            format = "c:/Users/%s/Documents/My Games/particlefleet/";
+        } else if (OSValidator.isUnix() || OSValidator.isSolaris()) {
+            format = "/home/%s/.local/share/knuckl​ecracker/particlefleet/";
+        } else if (OSValidator.isMac()) {
+            format = "/Users/%s/Library/Application Support/com.knucklecracker/particlefleet/";
+        } else {
+            return null;
+        }
+
+        return String.format(format, System.getProperty("user.name"));
+    }
 }
