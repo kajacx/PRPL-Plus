@@ -14,7 +14,7 @@ public class Utils {
         if (OSValidator.isWindows()) {
             format = "c:/Users/%s/Documents/My Games/particlefleet/";
         } else if (OSValidator.isUnix() || OSValidator.isSolaris()) {
-            format = "/home/%s/.local/share/knuckl​ecracker/particlefleet/";
+            format = "/home/%s/.local/share/knucklecracker/particlefleet/";
         } else if (OSValidator.isMac()) {
             format = "/Users/%s/Library/Application Support/com.knucklecracker/particlefleet/";
         } else {
