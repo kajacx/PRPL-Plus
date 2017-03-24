@@ -26,7 +26,7 @@ import com.prplplus.Settings;
 public class MainFrame extends JFrame {
     private static final long serialVersionUID = -3729420411039341803L;
 
-    public static final String version = "v0.1.7";
+    public static final String version = "v0.1.8";
     public static final String title = "PRPL Toolset";
     public static final String contact = "kajacx@gmail.com";
 
@@ -69,6 +69,8 @@ public class MainFrame extends JFrame {
             pack(); //need to call pack() twice because of broken tab pane
         }
 
+        tabs.setSelectedIndex(1);
+
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
@@ -81,7 +83,9 @@ public class MainFrame extends JFrame {
         menu = new JMenu("File");
 
         item = new JMenuItem("Exit");
-        item.addActionListener(e -> this.dispose());
+        item.addActionListener(e -> {
+            System.exit(0);
+        });
         menu.add(item);
 
         bar.add(menu);

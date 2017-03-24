@@ -72,6 +72,17 @@ public class Module {
     public final int buildCost;
     public final String scriptName;
 
+    //create an arbitary module
+    public Module(int width, int height, int code, String name, Image image, int buildCost, String scriptName) {
+        this.width = width;
+        this.height = height;
+        this.code = code;
+        this.name = name;
+        this.image = image;
+        this.buildCost = buildCost;
+        this.scriptName = scriptName;
+    }
+
     //create a standart module
     private Module(int width, int height, int code, String name) {
         this(width, height, code, name, false);
