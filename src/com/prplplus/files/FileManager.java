@@ -9,7 +9,7 @@ import java.util.Scanner;
 import javax.imageio.ImageIO;
 
 import com.prplplus.Settings;
-import com.prplplus.shipconstruct.ShipPart;
+import com.prplplus.shipconstruct.parts.ShipPart;
 
 public class FileManager {
     public static List<ShipPart> loadShipParts() {
@@ -21,7 +21,10 @@ public class FileManager {
                     Scanner scan = new Scanner(file);
                     ShipPart part = ShipPart.loadFromB64(scan.nextLine());
                     scan.close();
-                    Image image = ImageIO.read(new File(file.getName().replace(".txt", ".png")));
+
+                    File pngFile = new File(file.getAbsolutePath().replace(".txt", ".png"));
+                    //System.out.println(pngFile + " " + pngFile.exists());
+                    Image image = ImageIO.read(pngFile);
                     part.image = image;
                     parts.add(part);
                 }

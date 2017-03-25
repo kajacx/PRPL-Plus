@@ -1,6 +1,9 @@
-package com.prplplus.shipconstruct;
+package com.prplplus.shipconstruct.parts;
 
 import java.util.List;
+
+import com.prplplus.shipconstruct.Hull;
+import com.prplplus.shipconstruct.ModuleAtPosition;
 
 public class ShipPartRotator {
     //private int[] hullBuffer = new int[Settings.MAX_SIZE * Settings.MAX_SIZE];

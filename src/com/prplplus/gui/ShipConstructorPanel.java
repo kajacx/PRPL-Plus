@@ -36,6 +36,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -54,9 +55,9 @@ import com.prplplus.shipconstruct.MirrorManager.MirroredHullBrush;
 import com.prplplus.shipconstruct.Module;
 import com.prplplus.shipconstruct.ModuleAtPosition;
 import com.prplplus.shipconstruct.ShipConstructor.Ship;
+import com.prplplus.shipconstruct.parts.ShipPart;
 import com.prplplus.shipconstruct.ShipDeconstructor;
 import com.prplplus.shipconstruct.ShipExporter;
-import com.prplplus.shipconstruct.ShipPart;
 
 public class ShipConstructorPanel extends JPanel {
     /**
@@ -73,9 +74,10 @@ public class ShipConstructorPanel extends JPanel {
     private JTextField statusArea;
     private JCheckBox instabuildBox;
 
-    private Module selectedModule;
+    private Module selectedModule = null;
     private int selectedHull = -1;
     private int selectedMirror = MirrorManager.MIRROR_NONE;
+    private ShipPart selectedPart = null;
 
     private MirrorManager mirrorManager = new MirrorManager();
 
@@ -90,10 +92,11 @@ public class ShipConstructorPanel extends JPanel {
         setLayout(new BorderLayout());
 
         setBackground(new Color(255, 255, 196));
+        shipRenderer = new ShipRenderer();
 
         add(createTopBar(), BorderLayout.NORTH);
         add(createLeftBar(), BorderLayout.WEST);
-        add(shipRenderer = new ShipRenderer(), BorderLayout.CENTER);
+        add(shipRenderer, BorderLayout.CENTER);
         add(createModulesPanel(), BorderLayout.EAST);
         add(createBottomBar(), BorderLayout.SOUTH);
 
@@ -178,7 +181,7 @@ public class ShipConstructorPanel extends JPanel {
         return topBar;
     }
 
-    private class PartButton extends JPanel {
+    private class PartButton extends JPanel implements MouseListener {
         private Dimension size;
         private ShipPart part;
         private Image image;
@@ -191,7 +194,8 @@ public class ShipConstructorPanel extends JPanel {
             this.part = part;
             this.image = image;
 
-            setOpaque(false);
+            setOpaque(true);
+            setBackground(shipRenderer.getBackground());
 
             int imageW = image.getWidth(null);
             int imageH = image.getHeight(null);
@@ -207,6 +211,8 @@ public class ShipConstructorPanel extends JPanel {
                 drawX = (width - drawW) / 2;
                 drawY = 0;
             }
+
+            addMouseListener(this);
         }
 
         @Override
@@ -221,30 +227,71 @@ public class ShipConstructorPanel extends JPanel {
             g.setColor(Color.BLACK);
             g.drawRect(0, 0, size.width - 1, size.height - 1);
         }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            ShipPart selectedPart = ShipConstructorPanel.this.selectedPart;
+            unselectAll();
+            if (part != selectedPart) {
+                ShipConstructorPanel.this.selectedPart = part;
+            }
+            ShipConstructorPanel.this.repaint();
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+        }
     }
 
     private JPanel createPartsBar() {
-        JPanel parts = new JPanel();
+        JPanel partsPanel = new JPanel();
         //parts.setLayout(new GridLayout(15, 1));
-        parts.setLayout(new BoxLayout(parts, BoxLayout.Y_AXIS));
-        parts.setOpaque(false);
+        partsPanel.setLayout(new BoxLayout(partsPanel, BoxLayout.Y_AXIS));
+        partsPanel.setOpaque(false);
 
-        parts.add(new JLabel("Ship parts"));
-        parts.add(Utils.createSpace(10, 10));
+        partsPanel.add(new JLabel("Ship parts"));
+        partsPanel.add(Utils.createSpace(10, 10));
+
+        JPanel partsList = new JPanel() {
+            @Override
+            public Dimension getPreferredSize() {
+                Dimension size = super.getPreferredSize();
+                return new Dimension(80, (int) size.height);
+            }
+        };
+        partsList.setLayout(new BoxLayout(partsList, BoxLayout.Y_AXIS));
 
         for (ShipPart part : FileManager.loadShipParts()) {
-            parts.add(new JLabel(part.getName()));
-            parts.add(new PartButton(80, 60, part, part.image));
-            parts.add(Utils.createSpace(10, 10));
+            partsList.add(new JLabel(part.getName()));
+            partsList.add(new PartButton(80, 60, part, part.image));
+            partsList.add(Utils.createSpace(10, 10));
         }
 
+        partsList.setAutoscrolls(true);
+
+        JScrollPane scrollPane = new JScrollPane(partsList);
+        scrollPane.setPreferredSize(new Dimension(80, 400));
+        partsPanel.add(scrollPane);
+
         JButton savePart = new JButton("Save Part");
-        parts.add(savePart);
+        partsPanel.add(savePart);
 
         JButton loadPart = new JButton("Load Part");
-        parts.add(loadPart);
+        partsPanel.add(loadPart);
 
-        return parts;
+        return partsPanel;
     }
 
     private JPanel createLeftBar() {
@@ -354,9 +401,8 @@ public class ShipConstructorPanel extends JPanel {
             JButton button = new JButton(m.name);
             button.setIcon(getImageForModule(m));
             button.addActionListener(e -> {
+                unselectAll();
                 selectedModule = m;
-                selectedHull = -1;
-                selectedMirror = MirrorManager.MIRROR_NONE;
                 shipRenderer.repaint();
             });
             defaultModules.add(button);
@@ -454,9 +500,17 @@ public class ShipConstructorPanel extends JPanel {
         return new ImageIcon(i);
     }
 
-    private void mirrorButtonPressed(int mirror) {
-        selectedHull = -1;
+    private void unselectAll() {
         selectedModule = null;
+        selectedHull = -1;
+        selectedMirror = MirrorManager.MIRROR_NONE;
+        selectedPart = null;
+    }
+
+    private void mirrorButtonPressed(int mirror) {
+        int selectedMirror0 = this.selectedMirror;
+        unselectAll();
+        this.selectedMirror = selectedMirror0;
 
         if (selectedMirror == mirror) {
             selectedMirror = MirrorManager.MIRROR_NONE;
@@ -749,12 +803,11 @@ public class ShipConstructorPanel extends JPanel {
                     int y = 8;
 
                     if (e.getX() >= x && e.getX() < x + 14 && e.getY() >= y && e.getY() <= y + 14) {
+                        unselectAll();
                         selectedHull = hullToDraw[i];
                         if (selectedHull == Hull.HULL_SPACE) {
                             selectedHull = -1;
                         }
-                        selectedModule = null;
-                        selectedMirror = MirrorManager.MIRROR_NONE;
                         shipRenderer.repaint();
                         //System.out.println("Selected " + selectedHull);
                         break;

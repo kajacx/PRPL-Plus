@@ -1,4 +1,4 @@
-package com.prplplus.shipconstruct;
+package com.prplplus.shipconstruct.parts;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -6,6 +6,11 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.prplplus.shipconstruct.Hull;
+import com.prplplus.shipconstruct.Module;
+import com.prplplus.shipconstruct.ModuleAtPosition;
+import com.prplplus.shipconstruct.ShipConstructor;
+import com.prplplus.shipconstruct.ShipDeconstructor;
 import com.prplplus.shipconstruct.ShipConstructor.Ship;
 
 public class ShipPart {

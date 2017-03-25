@@ -14,8 +14,8 @@ import javax.swing.JPanel;
 import com.prplplus.shipconstruct.Hull;
 import com.prplplus.shipconstruct.Module;
 import com.prplplus.shipconstruct.ModuleAtPosition;
-import com.prplplus.shipconstruct.ShipPart;
-import com.prplplus.shipconstruct.ShipPartRotator;
+import com.prplplus.shipconstruct.parts.ShipPart;
+import com.prplplus.shipconstruct.parts.ShipPartRotator;
 
 public class DebugTest {
     public static void main(String[] args) {
