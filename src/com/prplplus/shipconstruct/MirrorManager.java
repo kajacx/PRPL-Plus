@@ -165,7 +165,7 @@ public class MirrorManager {
     public List<MirroredHullBrush> getMirroredHull(ModuleAtPosition pos, int hullType, int brushSize) {
         ArrayList<MirroredHullBrush> ret = new ArrayList<>();
 
-        Module m = Module.brushBySize[brushSize];
+        Module m = Module.brushManager.getBrush(brushSize, brushSize);
 
         HullAtPosition brush = new HullAtPosition(pos.x - brushSize / 2, pos.y - brushSize / 2, m, hullType);
 

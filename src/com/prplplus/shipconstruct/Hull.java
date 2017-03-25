@@ -59,6 +59,10 @@ public class Hull {
         }
     }
 
+    public static boolean hasArmor(int hull) {
+        return hull >= HULL_ARMOR_BLOCK;
+    }
+
     public static int withArmor(int hull, boolean armor) {
         if (armor && hull >= HULL_BLOCK && hull <= HULL_SPIKE_L) {
             return hull + HULL_ARMOR_BLOCK - HULL_BLOCK;
@@ -100,35 +104,37 @@ public class Hull {
     }
 
     public static int flipHorizontaly(int hull) {
-      //@formatter:off
-        switch(hull) {
-        case HULL_CORNER_LB: return HULL_CORNER_LT;
-        case HULL_CORNER_RB: return HULL_CORNER_RT;
-        case HULL_CORNER_RT: return HULL_CORNER_RB;
-        case HULL_CORNER_LT: return HULL_CORNER_LB;
-        case HULL_SPIKE_B: return HULL_SPIKE_T;
-        case HULL_SPIKE_R: return HULL_SPIKE_R;
-        case HULL_SPIKE_T: return HULL_SPIKE_B;
-        case HULL_SPIKE_L: return HULL_SPIKE_L;
-        default: return hull;
+        boolean hasArmor = hasArmor(hull);
+        //@formatter:off
+        switch(withArmor(hull, false)) {
+        case HULL_CORNER_LB: hull = HULL_CORNER_LT; break;
+        case HULL_CORNER_RB: hull = HULL_CORNER_RT; break;
+        case HULL_CORNER_RT: hull = HULL_CORNER_RB; break;
+        case HULL_CORNER_LT: hull = HULL_CORNER_LB; break;
+        case HULL_SPIKE_B:   hull = HULL_SPIKE_T;   break;
+        case HULL_SPIKE_R:   hull = HULL_SPIKE_R;   break;
+        case HULL_SPIKE_T:   hull = HULL_SPIKE_B;   break;
+        case HULL_SPIKE_L:   hull = HULL_SPIKE_L;   break;
         }
         //@formatter:on
+        return withArmor(hull, hasArmor);
     }
 
     public static int flipVerticaly(int hull) {
-      //@formatter:off
-        switch(hull) {
-        case HULL_CORNER_LB: return HULL_CORNER_RB;
-        case HULL_CORNER_RB: return HULL_CORNER_LB;
-        case HULL_CORNER_RT: return HULL_CORNER_LT;
-        case HULL_CORNER_LT: return HULL_CORNER_RT;
-        case HULL_SPIKE_B: return HULL_SPIKE_B;
-        case HULL_SPIKE_R: return HULL_SPIKE_L;
-        case HULL_SPIKE_T: return HULL_SPIKE_T;
-        case HULL_SPIKE_L: return HULL_SPIKE_R;
-        default: return hull;
+        boolean hasArmor = hasArmor(hull);
+        //@formatter:off
+        switch(withArmor(hull, false)) {
+        case HULL_CORNER_LB: hull = HULL_CORNER_RB; break;
+        case HULL_CORNER_RB: hull = HULL_CORNER_LB; break;
+        case HULL_CORNER_RT: hull = HULL_CORNER_LT; break;
+        case HULL_CORNER_LT: hull = HULL_CORNER_RT; break;
+        case HULL_SPIKE_B:   hull = HULL_SPIKE_B;   break;
+        case HULL_SPIKE_R:   hull = HULL_SPIKE_L;   break;
+        case HULL_SPIKE_T:   hull = HULL_SPIKE_T;   break;
+        case HULL_SPIKE_L:   hull = HULL_SPIKE_R;   break;
         }
         //@formatter:on
+        return withArmor(hull, hasArmor);
     }
 
     public static int getOffsetDirection(int hull) {

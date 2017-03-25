@@ -19,6 +19,8 @@ public class Module {
 
     public static final int DEFAULT_BUILD_COST = 50;
 
+    public static final BrushManager brushManager = new BrushManager();
+
     //@formatter:off
     public static final Module UNKNOWN         = new Module( 1, 1,     -2, "Unknown"); //an unknown custom module
     public static final Module COMMAND         = new Module( 3, 3,     -1, "Command");
@@ -40,16 +42,8 @@ public class Module {
     public static final Module HQ_COMMAND      = new Module( 5, 9, 0x4170, "HQCommand");
     
     //brushes used for collision detection in mirrored editing
-    public static final Module BRUSH_1X1       = new Module( 1, 1,     -3, "Brush 1x1", true);
-    public static final Module BRUSH_3X3       = new Module( 3, 3,     -3, "Brush 3x3", true);
-    public static final Module BRUSH_5X5       = new Module( 5, 5,     -3, "Brush 5x5", true);
-    public static final Module BRUSH_9X9       = new Module( 9, 9,     -3, "Brush 9x9", true);
+    public static final Module BRUSH_1X1       = brushManager.getBrush(1, 1);
     //@formatter:on
-
-    public static final Module[] brushByIndex = { BRUSH_1X1, BRUSH_3X3, BRUSH_5X5, BRUSH_9X9 };
-
-    public static final Module[] brushBySize = { null, BRUSH_1X1, null, BRUSH_3X3, null, BRUSH_5X5,
-            null, null, null, BRUSH_9X9 };
 
     //someone should put me to programming prison for this...
     public static final Module[] standardModules = { COMMAND, ENGINE, LATHE, LASER, CANNON, MISSLE_LAUNCHER, PARTICLE_BEAM, DISCHARGE,
@@ -66,7 +60,7 @@ public class Module {
     public static final List<Module> allModules = new ArrayList<>();
 
     public final int width, height;
-    public final int code; //-1: command, -2: custom
+    public final int code; //-1: command, -2: custom, -3: brush
     public final String name;
     public final Image image;
     public final int buildCost;
@@ -349,5 +343,26 @@ public class Module {
 
     public boolean doesCollide() {
         return code != HQ_COMMAND.code;
+    }
+
+    public boolean isSquare() {
+        return width == height;
+    }
+
+    public static class BrushManager {
+        private List<List<Module>> brushes = new ArrayList<>();
+
+        public Module getBrush(int width, int height) {
+            for (int i = brushes.size(); i < width; i++) {
+                brushes.add(new ArrayList<>());
+            }
+
+            List<Module> inner = brushes.get(width - 1);
+            for (int i = inner.size(); i < height; i++) {
+                inner.add(new Module(width, height, BRUSH_CODE, "Brush" + width + "x" + height, null, 0, null));
+            }
+
+            return inner.get(height - 1);
+        }
     }
 }

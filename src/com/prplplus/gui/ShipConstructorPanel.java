@@ -46,6 +46,7 @@ import com.prplplus.Clipboard;
 import com.prplplus.OSValidator;
 import com.prplplus.Settings;
 import com.prplplus.Utils;
+import com.prplplus.files.FileManager;
 import com.prplplus.gui.OffsetIterable.Offset;
 import com.prplplus.shipconstruct.Hull;
 import com.prplplus.shipconstruct.MirrorManager;
@@ -55,6 +56,7 @@ import com.prplplus.shipconstruct.ModuleAtPosition;
 import com.prplplus.shipconstruct.ShipConstructor.Ship;
 import com.prplplus.shipconstruct.ShipDeconstructor;
 import com.prplplus.shipconstruct.ShipExporter;
+import com.prplplus.shipconstruct.ShipPart;
 
 public class ShipConstructorPanel extends JPanel {
     /**
@@ -176,9 +178,79 @@ public class ShipConstructorPanel extends JPanel {
         return topBar;
     }
 
+    private class PartButton extends JPanel {
+        private Dimension size;
+        private ShipPart part;
+        private Image image;
+
+        private int drawX, drawY;
+        private int drawW, drawH;
+
+        private PartButton(int width, int height, ShipPart part, Image image) {
+            size = new Dimension(width, height);
+            this.part = part;
+            this.image = image;
+
+            setOpaque(false);
+
+            int imageW = image.getWidth(null);
+            int imageH = image.getHeight(null);
+
+            if (imageW * height >= imageH * width) {
+                drawW = width;
+                drawH = imageH * width / imageW;
+                drawX = 0;
+                drawY = (height - drawH) / 2;
+            } else {
+                drawW = imageW * height / imageH;
+                drawH = height;
+                drawX = (width - drawW) / 2;
+                drawY = 0;
+            }
+        }
+
+        @Override
+        public Dimension getPreferredSize() {
+            return size;
+        }
+
+        @Override
+        public void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            g.drawImage(image, drawX, drawY, drawW, drawH, null);
+            g.setColor(Color.BLACK);
+            g.drawRect(0, 0, size.width - 1, size.height - 1);
+        }
+    }
+
+    private JPanel createPartsBar() {
+        JPanel parts = new JPanel();
+        //parts.setLayout(new GridLayout(15, 1));
+        parts.setLayout(new BoxLayout(parts, BoxLayout.Y_AXIS));
+        parts.setOpaque(false);
+
+        parts.add(new JLabel("Ship parts"));
+        parts.add(Utils.createSpace(10, 10));
+
+        for (ShipPart part : FileManager.loadShipParts()) {
+            parts.add(new JLabel(part.getName()));
+            parts.add(new PartButton(80, 60, part, part.image));
+            parts.add(Utils.createSpace(10, 10));
+        }
+
+        JButton savePart = new JButton("Save Part");
+        parts.add(savePart);
+
+        JButton loadPart = new JButton("Load Part");
+        parts.add(loadPart);
+
+        return parts;
+    }
+
     private JPanel createLeftBar() {
         JPanel wrapper = new JPanel(new FlowLayout(FlowLayout.CENTER));
         wrapper.setBackground(new Color(255, 226, 196));
+        wrapper.add(createPartsBar());
 
         JPanel leftBar = new JPanel(new GridLayout(15, 1));
         leftBar.setOpaque(false);
@@ -200,7 +272,7 @@ public class ShipConstructorPanel extends JPanel {
         leftBar.add(moveDown);
 
         JPanel space = new JPanel();
-        space.setPreferredSize(new Dimension(30, 30));
+        space.setPreferredSize(new Dimension(20, 20));
         space.setOpaque(false);
         leftBar.add(space);
 
@@ -213,7 +285,7 @@ public class ShipConstructorPanel extends JPanel {
         leftBar.add(loadFrom);
 
         space = new JPanel();
-        space.setPreferredSize(new Dimension(30, 30));
+        space.setPreferredSize(new Dimension(20, 20));
         space.setOpaque(false);
         leftBar.add(space);
 
@@ -226,7 +298,7 @@ public class ShipConstructorPanel extends JPanel {
         leftBar.add(resetCamera);
 
         space = new JPanel();
-        space.setPreferredSize(new Dimension(30, 30));
+        space.setPreferredSize(new Dimension(20, 20));
         space.setOpaque(false);
         leftBar.add(space);
 
@@ -612,11 +684,15 @@ public class ShipConstructorPanel extends JPanel {
             try {
                 String data = scan.nextLine();
                 Ship ship = ShipDeconstructor.deconstruct(data);
-                importShip(ship);
-                statusArea.setText("Load successful");
-                if (scan.hasNextLine()) {
-                    if (!importCustomModules(ship, scan.nextLine())) {
-                        statusArea.setText("Could not load custom modules");
+                if (ship.designer.equals(ShipPart.designer)) {
+                    statusArea.setText("Cannot import a part as a ship");
+                } else {
+                    importShip(ship);
+                    statusArea.setText("Load successful");
+                    if (scan.hasNextLine()) {
+                        if (!importCustomModules(ship, scan.nextLine())) {
+                            statusArea.setText("Could not load custom modules");
+                        }
                     }
                 }
             } catch (RuntimeException ex) {
@@ -759,6 +835,7 @@ public class ShipConstructorPanel extends JPanel {
             super.paintComponent(g);
             Graphics2D g2d = (Graphics2D) g;
             //TODO: paintComponent bookmark
+            int zoom = this.zoom; //make a local cache for that efficiency value
 
             g.translate(-posX, -posY);
 
@@ -1129,7 +1206,8 @@ public class ShipConstructorPanel extends JPanel {
             boolean isLeftButton = SwingUtilities.isLeftMouseButton(e);
             boolean processOffsets = true;
             if (hullType == Hull.HULL_MODULE_REMOVAL) {
-                Module brush = Module.brushByIndex[brushSizeIndex];
+                int brushSize = brushSizes[brushSizeIndex];
+                Module brush = Module.brushManager.getBrush(brushSize, brushSize);
                 removeColliding(new ModuleAtPosition(x - brush.width / 2, y - brush.height / 2, brush));
                 processOffsets = !isLeftButton;
             }
@@ -1372,4 +1450,6 @@ public class ShipConstructorPanel extends JPanel {
         }
 
     }
+
+
 }

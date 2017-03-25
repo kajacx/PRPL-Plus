@@ -1,5 +1,9 @@
 package com.prplplus;
 
+import java.awt.Dimension;
+
+import javax.swing.JPanel;
+
 public class Utils {
     public static int clamp(int lower, int upper, int value) {
         if (value < lower)
@@ -22,5 +26,12 @@ public class Utils {
         }
 
         return String.format(format, System.getProperty("user.name"));
+    }
+
+    public static JPanel createSpace(int w, int h) {
+        JPanel space = new JPanel();
+        space.setPreferredSize(new Dimension(w, h));
+        space.setOpaque(false);
+        return space;
     }
 }
