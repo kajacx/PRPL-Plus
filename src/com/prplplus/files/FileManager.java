@@ -2,6 +2,7 @@ package com.prplplus.files;
 
 import java.awt.Image;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -32,5 +33,21 @@ public class FileManager {
             }
         }
         return parts;
+    }
+
+    private static Image selectionCursor;
+
+    public static Image getSelectionCursor() {
+        if (selectionCursor == null) {
+            try {
+                selectionCursor = ImageIO.read(new File("img/other/selectionCursor.png"));
+            } catch (IOException e) {
+                e.printStackTrace(System.out);
+                if (e.getCause() != null) {
+                    e.getCause().printStackTrace(System.out);
+                }
+            }
+        }
+        return selectionCursor;
     }
 }

@@ -58,6 +58,7 @@ import com.prplplus.shipconstruct.ShipConstructor.Ship;
 import com.prplplus.shipconstruct.ShipDeconstructor;
 import com.prplplus.shipconstruct.ShipExporter;
 import com.prplplus.shipconstruct.parts.PartAtPosition;
+import com.prplplus.shipconstruct.parts.PartSelection;
 import com.prplplus.shipconstruct.parts.ShipPart;
 import com.prplplus.shipconstruct.parts.SquareIsomorph;
 
@@ -82,6 +83,7 @@ public class ShipConstructorPanel extends JPanel {
     private ShipPart selectedPart = null;
 
     private MirrorManager mirrorManager = new MirrorManager();
+    private PartSelection partSelection = new PartSelection();
     private List<ShipPart> avaliableParts = new ArrayList<>();
 
     private int[] hullSection = new int[MAX_SIZE * MAX_SIZE];
@@ -289,11 +291,23 @@ public class ShipConstructorPanel extends JPanel {
         scrollPane.setPreferredSize(new Dimension(80, 400));
         partsPanel.add(scrollPane);
 
+        JButton selectPart = new JButton("Select");
+        selectPart.addActionListener(e -> {
+            unselectAll();
+            partSelection.state = PartSelection.STATE_READY;
+            repaint();
+        });
+        partsPanel.add(selectPart);
+
         JButton savePart = new JButton("Save Part");
         partsPanel.add(savePart);
 
-        JButton loadPart = new JButton("Load Part");
-        partsPanel.add(loadPart);
+        JButton cancelPart = new JButton("Cancel");
+        cancelPart.addActionListener(e -> {
+            unselectAll();
+            repaint();
+        });
+        partsPanel.add(cancelPart);
 
         return partsPanel;
     }
@@ -509,6 +523,7 @@ public class ShipConstructorPanel extends JPanel {
         selectedHull = -1;
         selectedMirror = MirrorManager.MIRROR_NONE;
         selectedPart = null;
+        partSelection.state = PartSelection.STATE_IDLE;
     }
 
     private void mirrorButtonPressed(int mirror) {
@@ -1069,6 +1084,17 @@ public class ShipConstructorPanel extends JPanel {
                 int posY = pos.y * zoom + zoom / 2;
                 g.drawLine(0, posY, zoom * MAX_SIZE, posY);
                 g.fillOval(posX - zoom / 4, posY - zoom / 4, zoom / 2, zoom / 2);
+            }
+
+            //selection cursor
+            if (partSelection.state == PartSelection.STATE_READY) {
+                ModuleAtPosition pos = tryPlace(Module.BRUSH_2X2);
+
+                //g.drawImage(FileManager.getSelectionCursor(), zoom * pos.x + zoom / 2, zoom * pos.y + zoom / 2, zoom, zoom, null);
+
+                g.setColor(Color.red);
+                g.drawLine(zoom * pos.x + zoom / 2, zoom * pos.y + zoom, zoom * (pos.x + 1) + zoom / 2, zoom * pos.y + zoom);
+                g.drawLine(zoom * pos.x + zoom, zoom * pos.y + zoom / 2, zoom * pos.x + zoom, zoom * (pos.y + 1) + zoom / 2);
             }
 
             g.translate(posX, posY);

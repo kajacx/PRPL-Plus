@@ -41,8 +41,8 @@ public class Module {
     public static final Module MK7             = new Module( 5, 5, 0x4188, "MK7");
     public static final Module HQ_COMMAND      = new Module( 5, 9, 0x4170, "HQCommand");
     
-    //brushes used for collision detection in mirrored editing
     public static final Module BRUSH_1X1       = brushManager.getBrush(1, 1);
+    public static final Module BRUSH_2X2       = brushManager.getBrush(2, 2);
     //@formatter:on
 
     //someone should put me to programming prison for this...
