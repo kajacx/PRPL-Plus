@@ -9,7 +9,7 @@ public class RotatablePart {
         parts[SquareIsomorph.RotateCCW.ordinal()] = ShipPartRotator.rotateCCW(part);
         parts[SquareIsomorph.RotateCW.ordinal()] = ShipPartRotator.rotateCW(part);
         parts[SquareIsomorph.FlipHorizontaly.ordinal()] = ShipPartRotator.flipHorizontaly(part);
-        parts[SquareIsomorph.FlipHorizontaly.ordinal()] = ShipPartRotator.flipVerticaly(part);
+        parts[SquareIsomorph.FlipVerticaly.ordinal()] = ShipPartRotator.flipVerticaly(part);
 
         SquareIsomorph rotate180 = SquareIsomorph.RotateCCW.andThen(SquareIsomorph.RotateCCW);
         parts[rotate180.ordinal()] = ShipPartRotator.rotateCCW(parts[SquareIsomorph.RotateCCW.ordinal()]);
@@ -19,13 +19,26 @@ public class RotatablePart {
 
         SquareIsomorph flipMinor = SquareIsomorph.FlipHorizontaly.andThen(SquareIsomorph.RotateCCW);
         parts[flipMinor.ordinal()] = ShipPartRotator.rotateCCW(parts[SquareIsomorph.FlipHorizontaly.ordinal()]);
+
+        for (int i = 1; i < parts.length; i++) {
+            parts[i].rotator = this;
+        }
     }
 
-    public void applyRotation(SquareIsomorph rotation) {
+    public ShipPart applyRotation(SquareIsomorph rotation) {
         activeRotation = activeRotation.andThen(rotation);
+        return parts[activeRotation.ordinal()];
     }
 
     public ShipPart withRelativeRotation(SquareIsomorph rotation) {
         return parts[activeRotation.andThen(rotation).ordinal()];
+    }
+
+    public ShipPart getOriginalPart() {
+        return parts[SquareIsomorph.Identity.ordinal()];
+    }
+
+    public void reset() {
+        activeRotation = SquareIsomorph.Identity;
     }
 }

@@ -8,13 +8,12 @@ import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 
-import com.prplplus.Settings;
 import com.prplplus.shipconstruct.parts.ShipPart;
 
 public class FileManager {
     public static List<ShipPart> loadShipParts() {
         List<ShipPart> parts = new ArrayList<>();
-        File partsFolder = new File(Settings.WORK_IN + "/ships/parts");
+        File partsFolder = new File("parts");
         for (File file : partsFolder.listFiles()) {
             try {
                 if (file.getName().endsWith(".txt")) {

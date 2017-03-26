@@ -10,8 +10,8 @@ import com.prplplus.shipconstruct.Hull;
 import com.prplplus.shipconstruct.Module;
 import com.prplplus.shipconstruct.ModuleAtPosition;
 import com.prplplus.shipconstruct.ShipConstructor;
-import com.prplplus.shipconstruct.ShipDeconstructor;
 import com.prplplus.shipconstruct.ShipConstructor.Ship;
+import com.prplplus.shipconstruct.ShipDeconstructor;
 
 public class ShipPart {
     public static final String designer = "kajacx's Part Builder";
@@ -25,6 +25,7 @@ public class ShipPart {
 
     private boolean rotated90; //is rotated 90 degrees / don't place non-square modules
     private Module placementBrush;
+    protected RotatablePart rotator;
 
     public Image image;
 
@@ -68,6 +69,13 @@ public class ShipPart {
 
     public Module getPlacementBrush() {
         return placementBrush;
+    }
+
+    public RotatablePart getRotator() {
+        if (rotator == null) {
+            rotator = new RotatablePart(this);
+        }
+        return rotator;
     }
 
     public BufferedImage createImage() {

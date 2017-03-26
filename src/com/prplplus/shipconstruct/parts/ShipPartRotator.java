@@ -66,7 +66,7 @@ public class ShipPartRotator {
         int[] newHull = flipped.getHull();
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                newHull[j * width + (height - i + 1)] = Hull.rotateCCW(origHull[i * height + j]);
+                newHull[j * width + (width - i - 1)] = Hull.rotateCCW(origHull[i * height + j]);
             }
         }
 

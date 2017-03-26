@@ -3,6 +3,10 @@ package com.prplplus.shipconstruct;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.prplplus.shipconstruct.parts.PartAtPosition;
+import com.prplplus.shipconstruct.parts.RotatablePart;
+import com.prplplus.shipconstruct.parts.SquareIsomorph;
+
 public class MirrorManager {
 
     public static final int MIRROR_NONE = 0, MIRROR_HORIZONTAL = 1, MIRROR_VERTICAL = 2, MIRROR_ROTATION = 3;
@@ -92,9 +96,9 @@ public class MirrorManager {
         }
     }
 
-    private void addRotatedModule(List<HullAtPosition> list, Module module, int xOff, int yOff, int hull) {
+    private void addRotatedModule(List<HullAtPosition> list, Module module, int xOff, int yOff, int hull, SquareIsomorph rotation) {
         list.add(new HullAtPosition((rotationMirrorX + xOff - module.width) / 2,
-                (rotationMirrorY + yOff - module.height) / 2, module, hull));
+                (rotationMirrorY + yOff - module.height) / 2, module, hull, rotation));
     }
 
     private boolean anyCollide(List<HullAtPosition> modules) {
@@ -122,7 +126,7 @@ public class MirrorManager {
                 //the mirrored module would collide with the original: do nothing
             } else { // mirror the module to the other side
                 int newY = (horizontalMirror + yDist - 2 * module.module.height) / 2;
-                ret.add(new HullAtPosition(module.x, newY, module.module, Hull.flipHorizontaly(module.hull)));
+                ret.add(new HullAtPosition(module.x, newY, module.module, Hull.flipHorizontaly(module.hull), SquareIsomorph.FlipHorizontaly));
             }
         }
 
@@ -137,7 +141,7 @@ public class MirrorManager {
                     //the mirrored module would collide with the original: do nothing
                 } else { // mirror the module to the other side
                     int newX = (verticalMirror + xDist - 2 * newModule.module.width) / 2;
-                    ret.add(new HullAtPosition(newX, newModule.y, newModule.module, Hull.flipVerticaly(newModule.hull)));
+                    ret.add(new HullAtPosition(newX, newModule.y, newModule.module, Hull.flipVerticaly(newModule.hull), SquareIsomorph.FlipVerticaly));
                 }
             }
         }
@@ -146,9 +150,9 @@ public class MirrorManager {
             int halfX = rotationMirrorX - 2 * module.x - module.module.width;
             int halfY = rotationMirrorY - 2 * module.y - module.module.height;
 
-            addRotatedModule(ret, module.module, halfY, -halfX, Hull.rotateCW(module.hull));
-            addRotatedModule(ret, module.module, halfX, halfY, Hull.rotateCCW(Hull.rotateCCW(module.hull)));
-            addRotatedModule(ret, module.module, -halfY, halfX, Hull.rotateCCW(module.hull));
+            addRotatedModule(ret, module.module, halfY, -halfX, Hull.rotateCW(module.hull), SquareIsomorph.RotateCW);
+            addRotatedModule(ret, module.module, halfX, halfY, Hull.rotateCCW(Hull.rotateCCW(module.hull)), SquareIsomorph.RotateCCW.andThen(SquareIsomorph.RotateCCW));
+            addRotatedModule(ret, module.module, -halfY, halfX, Hull.rotateCCW(module.hull), SquareIsomorph.RotateCCW);
 
             if (detectCollisions && anyCollide(ret)) {
                 //remove all added modules on colision
@@ -176,12 +180,29 @@ public class MirrorManager {
         return ret;
     }
 
+    public List<PartAtPosition> getMirroredParts(ModuleAtPosition originalPart, RotatablePart rotator) {
+        List<PartAtPosition> parts = new ArrayList<>();
+
+        List<HullAtPosition> hulls = getMirroredHull(new HullAtPosition(originalPart.x, originalPart.y, originalPart.module, 0), false);
+        for (HullAtPosition hull : hulls) {
+            parts.add(new PartAtPosition(hull.x, hull.y, rotator.withRelativeRotation(hull.rotation)));
+        }
+
+        return parts;
+    }
+
     private static class HullAtPosition extends ModuleAtPosition {
         public int hull;
+        public SquareIsomorph rotation;
 
         public HullAtPosition(int x, int y, Module module, int hull) {
+            this(x, y, module, hull, SquareIsomorph.Identity);
+        }
+
+        public HullAtPosition(int x, int y, Module module, int hull, SquareIsomorph rotation) {
             super(x, y, module);
             this.hull = hull;
+            this.rotation = rotation;
         }
 
     }
