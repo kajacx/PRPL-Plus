@@ -3,8 +3,10 @@ package com.prplplus.shipconstruct;
 import static com.prplplus.Settings.MAX_SIZE;
 
 import java.io.PrintStream;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 
 import com.prplplus.shipconstruct.ShipConstructor.Ship;
 
@@ -41,6 +43,10 @@ public class ShipExporter {
                     maxY = Math.max(maxY, y);
                 }
             }
+        }
+
+        if (minX == Integer.MAX_VALUE) {
+            return "Error: No hull pieces";
         }
 
         this.minX = minX;
@@ -212,14 +218,31 @@ public class ShipExporter {
 
     //true - connected, false - disconnected
     private void searchConnected(int[] hull, int x, int y) {
-        if (x < 0 || x >= MAX_SIZE || y < 0 || y >= MAX_SIZE)
-            return;
-        if (hull[x * MAX_SIZE + y] == Hull.HULL_SPACE)
-            return;
-        hull[x * MAX_SIZE + y] = Hull.HULL_SPACE;
-        searchConnected(hull, x + 1, y);
-        searchConnected(hull, x, y + 1);
-        searchConnected(hull, x - 1, y);
-        searchConnected(hull, x, y - 1);
+        Queue<Integer> queue = new ArrayDeque<>();
+        queue.add(x);
+        queue.add(y);
+        while (!queue.isEmpty()) {
+            x = queue.poll();
+            y = queue.poll();
+
+            if (x < 0 || x >= MAX_SIZE || y < 0 || y >= MAX_SIZE)
+                continue;
+            if (hull[x * MAX_SIZE + y] == Hull.HULL_SPACE)
+                continue;
+
+            hull[x * MAX_SIZE + y] = Hull.HULL_SPACE;
+
+            queue.add(x + 1);
+            queue.add(y);
+
+            queue.add(x);
+            queue.add(y + 1);
+
+            queue.add(x - 1);
+            queue.add(y);
+
+            queue.add(x);
+            queue.add(y - 1);
+        }
     }
 }

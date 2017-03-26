@@ -29,10 +29,23 @@ public class ShipPart {
 
     public Image image;
 
+    //when loading from a file
     public ShipPart(String name, int width, int height) {
         this(name, width, height, false);
     }
 
+    //when selection in editor, automaticly creates the image
+    public ShipPart(int width, int height, int[] hull, List<ModuleAtPosition> modules) {
+        this.width = width;
+        this.height = height;
+        this.hull = hull;
+        this.modules = modules;
+
+        placementBrush = Module.brushManager.getBrush(width, height);
+        image = createImage();
+    }
+
+    //when created via rotation
     protected ShipPart(String name, int width, int height, boolean rotated90) {
         this.name = name;
         this.width = width;
@@ -45,6 +58,10 @@ public class ShipPart {
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getWidth() {

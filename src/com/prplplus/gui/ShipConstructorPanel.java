@@ -34,6 +34,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -246,6 +247,7 @@ public class ShipConstructorPanel extends JPanel {
             unselectAll();
             if (part != selectedPart) {
                 ShipConstructorPanel.this.selectedPart = part;
+                ShipConstructorPanel.this.selectedPart.getRotator().reset();
             }
             ShipConstructorPanel.this.repaint();
         }
@@ -264,13 +266,6 @@ public class ShipConstructorPanel extends JPanel {
         partsPanel.add(new JLabel("Ship parts"));
         partsPanel.add(Utils.createSpace(10, 10));
 
-        /*JPanel partsList = new JPanel() {
-            @Override
-            public Dimension getPreferredSize() {
-                Dimension size = super.getPreferredSize();
-                return new Dimension(80, (int) size.height);
-            }
-        };*/
         JPanel partsList = new JPanel();
         partsList.setLayout(new BoxLayout(partsList, BoxLayout.Y_AXIS));
 
@@ -300,6 +295,26 @@ public class ShipConstructorPanel extends JPanel {
         partsPanel.add(selectPart);
 
         JButton savePart = new JButton("Save Part");
+        savePart.addActionListener(e -> {
+            if (partSelection.state == PartSelection.STATE_SELECTED) {
+                ShipPart part = partSelection.doSelectPart(hullSection, modules);
+                String name = JOptionPane.showInputDialog(this, "Choose a name for the part");
+                if (name != null) {
+                    part.setName(name);
+                    savePart(part);
+
+                    partsList.add(new JLabel(part.getName()));
+                    partsList.add(new PartButton(80, 60, part, part.image));
+                    avaliableParts.add(part);
+
+                    unselectAll();
+                    selectedPart = part;
+
+                    this.revalidate();
+                    this.repaint();
+                }
+            }
+        });
         partsPanel.add(savePart);
 
         JButton cancelPart = new JButton("Cancel");
@@ -794,6 +809,10 @@ public class ShipConstructorPanel extends JPanel {
         }
     }
 
+    private void savePart(ShipPart part) {
+
+    }
+
     private int[] hullToDraw = { Hull.HULL_BLOCK, Hull.HULL_CORNER_LB, Hull.HULL_SPIKE_B,
             Hull.HULL_ARMOR_MASK, Hull.HULL_MODULE_REMOVAL, Hull.HULL_SPACE };
 
@@ -1092,9 +1111,13 @@ public class ShipConstructorPanel extends JPanel {
 
                 //g.drawImage(FileManager.getSelectionCursor(), zoom * pos.x + zoom / 2, zoom * pos.y + zoom / 2, zoom, zoom, null);
 
-                g.setColor(Color.red);
+                g.setColor(Color.RED);
                 g.drawLine(zoom * pos.x + zoom / 2, zoom * pos.y + zoom, zoom * (pos.x + 1) + zoom / 2, zoom * pos.y + zoom);
                 g.drawLine(zoom * pos.x + zoom, zoom * pos.y + zoom / 2, zoom * pos.x + zoom, zoom * (pos.y + 1) + zoom / 2);
+            } else if (partSelection.state == PartSelection.STATE_SELECTING || partSelection.state == PartSelection.STATE_SELECTED) {
+                g.setColor(Color.RED);
+                g.drawRect(partSelection.fromXs * zoom, partSelection.fromYs * zoom,
+                        (partSelection.toXs - partSelection.fromXs) * zoom, (partSelection.toYs - partSelection.fromYs) * zoom);
             }
 
             g.translate(posX, posY);
@@ -1507,13 +1530,19 @@ public class ShipConstructorPanel extends JPanel {
 
         @Override
         public void mousePressed(MouseEvent e) {
+            if (e.getButton() == MouseEvent.BUTTON1 &&
+                    (partSelection.state == PartSelection.STATE_READY || partSelection.state == PartSelection.STATE_SELECTED)) {
+                ModuleAtPosition pos = tryPlace(Module.BRUSH_2X2);
+                partSelection.setFromSelection(pos.x + 1, pos.y + 1);
+            }
         }
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            /*if (e.getButton() == MouseEvent.BUTTON1) {
-            dragging = false;
-            }*/
+            if (e.getButton() == MouseEvent.BUTTON1 && partSelection.state == PartSelection.STATE_SELECTING) {
+                ModuleAtPosition pos = tryPlace(Module.BRUSH_2X2);
+                partSelection.setToSelection(pos.x + 1, pos.y + 1);
+            }
         }
 
         @Override
@@ -1531,6 +1560,9 @@ public class ShipConstructorPanel extends JPanel {
             if (selectedHull != -1 && !e.isControlDown()) {
                 //drag-paint hull
                 onHullClick(tryPlace(Module.BRUSH_1X1), e);
+            } else if (partSelection.state == PartSelection.STATE_SELECTING && SwingUtilities.isLeftMouseButton(e)) {
+                ModuleAtPosition pos = tryPlace(Module.BRUSH_2X2);
+                partSelection.changeSelection(pos.x + 1, pos.y + 1);
             } else {
                 //move camera
                 posX += lastX - e.getX();
