@@ -72,20 +72,17 @@ public class ShipDeconstructor {
         List<ModuleAtPosition> moduleList = new ArrayList<>(modules);
 
         for (int i = 0; i < modules; i++) {
-            index += 2; //skip zeros
-            int moduleId = readIntLE(data, index, 2);
-            index += 2; //consume data
-            Module m = Module.getById(moduleId);
+            int moduleId = readIntLE(data, index, 4);
+            index += 4; //consume data
+            Module m = Module.getById(Module.decodePositition(moduleId));
 
-            index += 2; //skip zeros
-            int xPos = readIntLE(data, index, 2);
-            index += 2; //consume data
-            int x = Module.getDistFromPos(xPos);
+            int xPos = readIntLE(data, index, 4);
+            index += 4; //consume data
+            int x = Module.decodePositition(xPos);
 
-            index += 2; //skip zeros
-            int yPos = readIntLE(data, index, 2);
-            index += 2; //consume data
-            int y = Module.getDistFromPos(yPos);
+            int yPos = readIntLE(data, index, 4);
+            index += 4; //consume data
+            int y = Module.decodePositition(yPos);
 
             moduleList.add(new ModuleAtPosition(x, y, m));
         }

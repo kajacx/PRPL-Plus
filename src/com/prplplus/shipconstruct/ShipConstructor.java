@@ -16,6 +16,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ShipConstructor {
 
@@ -60,12 +61,14 @@ public class ShipConstructor {
             String name, String designer, String description, String CITG_ID, boolean instabuild) {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
+        //fix input data
         if (designer == null)
             designer = "";
         if (description == null)
             description = "";
         if (CITG_ID == null)
             CITG_ID = "";
+        modules = modules.stream().filter(m -> !m.module.isCustom()).collect(Collectors.toList()); //remove custom modules
 
         //header
         pushBytes(buffer, "0A04 0072 6F6F 7403 0100 73");
@@ -95,12 +98,9 @@ public class ShipConstructor {
 
         //module data
         for (ModuleAtPosition module : modules) {
-            pushBytes(buffer, "00 00");
-            pushIntLE(buffer, module.module.code, 2);
-            pushBytes(buffer, "00 00");
-            pushIntLE(buffer, Module.indexToPos[module.x], 2);
-            pushBytes(buffer, "00 00");
-            pushIntLE(buffer, Module.indexToPos[module.y], 2);
+            pushIntLE(buffer, Module.encodePosition(module.module.code));
+            pushIntLE(buffer, Module.encodePosition(module.x));
+            pushIntLE(buffer, Module.encodePosition(module.y));
         }
 
         //always the same data

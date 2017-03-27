@@ -1,0 +1,23 @@
+Using the mirrors:
+ - First mirror button press will let you place a mirror
+ - Second press will move it to the edge from the center
+ - Third press will remove the mirror
+ - Use mirrors to easily build symetrical ships
+ - Hold shift when placing module/hull/part to place only the original
+ - Mirrors will not remove modules when right-clicking (use the module removal for that)
+
+Using ship parts:
+ - Select and place entire parts of a ship (cannot be drag-placed)
+ - Right click to cancel selection
+ - Mouse wheel to rotate the ship parts
+ - Ctrl+Mouse wheel to zoom the camera
+ - Alt+Mouse wheel to flip the ship part horizontaly/verticaly
+ - Shift+Mouse wheel to rotate between parts
+ - Works with mirrors
+ - Non-square modules are disabled when the part is rotated by 90°
+
+Creating/deleting ship parts:
+ - Select the "Select" button and then proceed to drag-select a rectangle
+ - Then hit "Save Part" to save
+ - To delete a ship part, go to the parts/ subfolder, and manually delete it
+ - You can include a custom image (for example with a watermark or logo) with .png extension

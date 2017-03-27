@@ -11,8 +11,8 @@ public class RotatablePart {
         parts[SquareIsomorph.FlipHorizontaly.ordinal()] = ShipPartRotator.flipHorizontaly(part);
         parts[SquareIsomorph.FlipVerticaly.ordinal()] = ShipPartRotator.flipVerticaly(part);
 
-        SquareIsomorph rotate180 = SquareIsomorph.RotateCCW.andThen(SquareIsomorph.RotateCCW);
-        parts[rotate180.ordinal()] = ShipPartRotator.rotateCCW(parts[SquareIsomorph.RotateCCW.ordinal()]);
+        SquareIsomorph rotate180 = SquareIsomorph.FlipVerticaly.andThen(SquareIsomorph.FlipHorizontaly);
+        parts[rotate180.ordinal()] = ShipPartRotator.flipHorizontaly(parts[SquareIsomorph.FlipVerticaly.ordinal()]);
 
         SquareIsomorph flipMajor = SquareIsomorph.FlipVerticaly.andThen(SquareIsomorph.RotateCCW);
         parts[flipMajor.ordinal()] = ShipPartRotator.rotateCCW(parts[SquareIsomorph.FlipVerticaly.ordinal()]);

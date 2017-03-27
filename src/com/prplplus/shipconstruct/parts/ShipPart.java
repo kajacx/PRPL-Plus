@@ -1,7 +1,6 @@
 package com.prplplus.shipconstruct.parts;
 
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +26,7 @@ public class ShipPart {
     private Module placementBrush;
     protected RotatablePart rotator;
 
-    public Image image;
+    public BufferedImage image;
 
     //when loading from a file
     public ShipPart(String name, int width, int height) {

@@ -4,8 +4,8 @@ Import ships from PF editor to this editor:
 
 Export ships from this editor to PF (directly):
  - After creating your ship, click the "Save as" button to save your ship
- - This will also create a ".dat" file, move that file to "c:\Users\[YourName]\Documents\My Games\particlefleet\ships\"
- - Currently works on Windows and Linux (with mono), contact me if you are a Mac user
+ - This will create a ".dat" file in the PF's ship directory, overriding any ships with the same name!
+ - Currently works on Windows and on Linux and Mac with mono
  - Once exported this way, you can see the ship editor, add it you fleet or ship pickup, even if larger than 35x25
 
 Export ships from this editor to PF (via AddCustomShipToInventory):

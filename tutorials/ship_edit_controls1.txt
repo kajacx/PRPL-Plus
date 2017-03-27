@@ -1,7 +1,7 @@
 General:
  - Mouse wheel to zoom in/out
  - Mouse drag to move camera
- - Right click to remove module
+ - Right click to remove a module
 
 When module is selected:
  - Left click to place module
@@ -16,14 +16,7 @@ When hull is selected:
  - Ctrl + mouse wheel to zoom in/out
  - Alt + mouse wheel to change brush size
  - Shift + mouse wheel to rotate between hull types
- - When module remover is selected (red cross):
+ - When module remover is selected (the red cross):
      Left click to remove modules
      Right click to remove modules and hull
-
-Using the mirrors:
- - First mirror button press will let you place a mirror
- - Second press will move it to the edge from the center
- - Third press will remove the mirror
- - Use mirrors to easily build symetrical ships
- - Hold shift when placing module/hull to place only the original
- 
+     Works with mirror mode

@@ -21,29 +21,35 @@ public class Module {
 
     public static final BrushManager brushManager = new BrushManager();
 
-    //@formatter:off
-    public static final Module UNKNOWN         = new Module( 1, 1,     -2, "Unknown"); //an unknown custom module
-    public static final Module COMMAND         = new Module( 3, 3,     -1, "Command");
-    public static final Module ENGINE          = new Module( 2, 3, 0x40A0, "Engine");
-    public static final Module LATHE           = new Module( 3, 3, 0x4110, "Lathe");
-    public static final Module LASER           = new Module( 1, 1, 0x4000, "Laser");
-    public static final Module CANNON          = new Module( 2, 2, 0x3F80, "Cannon");
-    public static final Module MISSLE_LAUNCHER = new Module( 2, 2, 0x4040, "MissleLauncher");
-    public static final Module PARTICLE_BEAM   = new Module( 1, 1, 0x4080, "ParticleBeam");
-    public static final Module DISCHARGE       = new Module( 3, 3, 0x4190, "Discharge");
-    public static final Module ENERGY_TANK     = new Module( 3, 3, 0x40C0, "EnergyTank");
-    public static final Module PORT            = new Module( 3, 3, 0x4100, "Port");
-    public static final Module GUPPY           = new Module( 3, 3, 0x40E0, "Guppy");
-    public static final Module SHIELD          = new Module( 3, 3, 0x4140, "Shield");
-    public static final Module REACTOR         = new Module( 3, 3, 0x4160, "Reactor");
-    public static final Module FIGHTER_BASE    = new Module(15, 3, 0x4120, "FighterBase");
-    public static final Module GRABBER         = new Module( 3, 3, 0x4180, "Grabber");
-    public static final Module MK7             = new Module( 5, 5, 0x4188, "MK7");
-    public static final Module HQ_COMMAND      = new Module( 5, 9, 0x4170, "HQCommand");
+    //@formatter:off                                         W, H, ID
+    public static final Module UNKNOWN         = new Module( 1, 1, -2, "Unknown"); //an unknown custom module
+    public static final Module COMMAND         = new Module( 3, 3, -1, "Command");
+    public static final Module ENGINE          = new Module( 2, 3,  5, "Engine");
+    public static final Module LATHE           = new Module( 3, 3,  9, "Lathe");
+    public static final Module LASER           = new Module( 1, 1,  2, "Laser");
+    public static final Module CANNON          = new Module( 2, 2,  1, "Cannon");
+    public static final Module MISSLE_LAUNCHER = new Module( 2, 2,  3, "MissleLauncher");
+    public static final Module PARTICLE_BEAM   = new Module( 1, 1,  4, "ParticleBeam");
+    public static final Module DISCHARGE       = new Module( 3, 3, 18, "Discharge");
+    public static final Module ENERGY_TANK     = new Module( 3, 3,  6, "EnergyTank");
+    public static final Module PORT            = new Module( 3, 3,  8, "Port");
+    public static final Module GUPPY           = new Module( 3, 3,  7, "Guppy");
+    public static final Module SHIELD          = new Module( 3, 3, 12, "Shield");
+    public static final Module REACTOR         = new Module( 3, 3, 14, "Reactor");
+    public static final Module FIGHTER_BASE    = new Module(15, 3, 10, "FighterBase");
+    public static final Module GRABBER         = new Module( 3, 3, 16, "Grabber");
+    public static final Module MK7             = new Module( 5, 5, 17, "MK7");
+    public static final Module HQ_COMMAND      = new Module( 5, 9, 15, "HQCommand");
     
     public static final Module BRUSH_1X1       = brushManager.getBrush(1, 1);
     public static final Module BRUSH_2X2       = brushManager.getBrush(2, 2);
     //@formatter:on
+
+    /*public static void main(String[] main) {
+        for (Module m : standardModules) {
+            System.out.format("%20s -> %02d%n", m.name, decodePositition(m.code << 16));
+        }
+    }*/
 
     //someone should put me to programming prison for this...
     public static final Module[] standardModules = { COMMAND, ENGINE, LATHE, LASER, CANNON, MISSLE_LAUNCHER, PARTICLE_BEAM, DISCHARGE,
@@ -170,149 +176,19 @@ public class Module {
         allModules.addAll(customModules);
     }
 
-    //TODO: replace this with Float.floatToIntBits()
-    public static final int[] indexToPos = {
-            0x0000, //+??
-            0x3F80, //+80
-            0x4000, //+40
-            0x4040, //+40
-            0x4080, //+20
-            0x40A0, //+20
-            0x40C0, //+20
-            0x40E0, //+20
-            0x4100, //+10
-            0x4110, //+10
-            0x4120, //+10
-            0x4130, //+10
-            0x4140, //+10
-            0x4150, //+10
-            0x4160, //+10
-            0x4170, //+10
-            0x4180, //+08
-            0x4188, //+08
-            0x4190, //+08
-            0x4198, //+08
-            0x41A0, //+08
-            0x41A8, //+08
-            0x41B0, //+08
-            0x41B8, //+08
-            0x41C0, //+08
-            0x41C8, //+08
-            0x41D0, //+08
-            0x41D8, //+08
-            0x41E0, //+08
-            0x41E8, //+08
-            0x41F0, //+08
-            0x41F8, //+08
-            0x4200, //+04
-            0x4204, //+04
-            0x4208, //+04
-            0x420C, //+04
-            0x4210, //+04
-            0x4214, //+04
-            0x4218, //+04
-            0x421C, //+04
-            0x4220, //+04
-            0x4224, //+04
-            0x4228, //+04
-            0x422C, //+04
-            0x4230, //+04
-            0x4234, //+04
-            0x4238, //+04
-            0x423C, //+04
-            0x4240, //+04
-            0x4244, //+04
-            0x4248, //+04
-            0x424C, //+04
-            0x4250, //+04
-            0x4254, //+04
-            0x4258, //+04
-            0x425C, //+04
-            0x4260, //+04
-            0x4264, //+04
-            0x4268, //+04
-            0x426C, //+04
-            0x4270, //+04
-            0x4274, //+04
-            0x4278, //+04
-            0x427C, //+04
-            0x4280, //+02
-            0x4282, //+02
-            0x4284, //+02
-            0x4286, //+02
-            0x4288, //+02
-            0x428A, //+02
-            0x428C, //+02
-            0x428E, //+02
-            0x4290, //+02
-            0x4292, //+02
-            0x4294, //+02
-            0x4296, //+02
-            0x4298, //+02
-            0x429A, //+02
-            0x429C, //+02
-            0x429E, //+02
-            0x42A0, //+02
-            0x42A2, //+02
-            0x42A4, //+02
-            0x42A6, //+02
-            0x42A8, //+02
-            0x42AA, //+02
-            0x42AC, //+02
-            0x42AE, //+02
-            0x42B0, //+02
-            0x42B2, //+02
-            0x42B4, //+02
-            0x42B6, //+02
-            0x42B8, //+02
-            0x42BA, //+02
-            0x42BC, //+02
-            0x42BE, //+02
-            0x42C0, //+02
-            0x42C2, //+02
-            0x42C4, //+02
-            0x42C6, //+02
-            0x42C8, //+02
-            0x42CA, //+02
-            0x42CC, //+02
-            0x42CE, //+02
-            0x42D0, //+02
-            0x42D2, //+02
-            0x42D4, //+02
-            0x42D6, //+02
-            0x42D8, //+02
-            0x42DA, //+02
-            0x42DC, //+02
-            0x42DE, //+02
-            0x42E0, //+02
-            0x42E2, //+02
-            0x42E4, //+02
-            0x42E6, //+02
-            0x42E8, //+02
-            0x42EA, //+02
-            0x42EC, //+02
-            0x42EE, //+02
-            0x42F0, //+02
-            0x42F2, //+02
-            0x42F4, //+02
-            0x42F6, //+02
-            0x42F8, //+02
-            0x42FA, //+02
-            0x42FC, //+02
-            0x42FE, //+02
-            0x4300
-    };
+    public static int encodePosition(int pos) {
+        return Float.floatToIntBits(pos);
+    }
 
-    public static int getDistFromPos(int pos) {
-        for (int i = 0; i < Module.indexToPos.length; i++) {
-            if (Module.indexToPos[i] == pos)
-                return i;
-        }
-        System.out.format("Pos not found: %04X%n", pos);
-        return -1;
+    public static int decodePositition(int encoded) {
+        return (int) Float.intBitsToFloat(encoded);
     }
 
     public static Module getById(int id) {
+        if (id == COMMAND_CODE) {
+            return COMMAND;
+        }
+
         for (Module m : Module.standardModules) {
             if (m.code == id) {
                 return m;

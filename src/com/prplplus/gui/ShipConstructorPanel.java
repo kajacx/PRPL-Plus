@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -303,6 +304,7 @@ public class ShipConstructorPanel extends JPanel {
                     part.setName(name);
                     savePart(part);
 
+                    partsList.add(Utils.createSpace(10, 10));
                     partsList.add(new JLabel(part.getName()));
                     partsList.add(new PartButton(80, 60, part, part.image));
                     avaliableParts.add(part);
@@ -810,7 +812,31 @@ public class ShipConstructorPanel extends JPanel {
     }
 
     private void savePart(ShipPart part) {
+        String fileNameNoExt = FileManager.getSipPartsFolder() + "/" + part.getName();
+        File partFile = new File(fileNameNoExt + ".txt");
 
+        try (PrintWriter writer = new PrintWriter(partFile)) {
+            String b64 = part.saveToB64();
+            writer.println(b64);
+
+            for (ModuleAtPosition pos : part.getModules()) {
+                if (pos.module.isCustom()) {
+                    writer.print(pos.module.name);
+                    writer.print(",");
+                    writer.print(pos.x);
+                    writer.print(",");
+                    writer.print(pos.y);
+                    writer.print(";");
+                }
+            }
+            writer.println();
+
+            ImageIO.write(part.image, "png", new File(fileNameNoExt + ".png"));
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace(System.out);
+        }
     }
 
     private int[] hullToDraw = { Hull.HULL_BLOCK, Hull.HULL_CORNER_LB, Hull.HULL_SPIKE_B,
@@ -942,7 +968,9 @@ public class ShipConstructorPanel extends JPanel {
             }
 
             for (ModuleAtPosition m : part.part.getModules()) {
-                g.drawImage(m.module.image, (m.x + part.x) * zoom, (m.y + part.y) * zoom, m.module.width * zoom, m.module.height * zoom, null);
+                if (!part.part.isRotated90() || m.module.isSquare()) {
+                    g.drawImage(m.module.image, (m.x + part.x) * zoom, (m.y + part.y) * zoom, m.module.width * zoom, m.module.height * zoom, null);
+                }
             }
         }
 
@@ -1157,7 +1185,11 @@ public class ShipConstructorPanel extends JPanel {
         }
 
         private boolean nothingSelected() {
-            return selectedModule == null && selectedHull == -1 && selectedMirror == MirrorManager.MIRROR_NONE;
+            return selectedModule == null
+                    && selectedHull == -1
+                    && selectedMirror == MirrorManager.MIRROR_NONE
+                    && selectedPart == null
+                    && partSelection.state == PartSelection.STATE_IDLE;
         }
 
         private boolean canBePlaced(ModuleAtPosition module) {
@@ -1476,9 +1508,11 @@ public class ShipConstructorPanel extends JPanel {
 
             //place modules
             for (ModuleAtPosition module : part.part.getModules()) {
-                ModuleAtPosition newMod = new ModuleAtPosition(part.x + module.x, part.y + module.y, module.module);
-                if (canBePlaced(newMod, true, false, false, false)) {
-                    modules.add(newMod);
+                if (!part.part.isRotated90() || module.module.isSquare()) {
+                    ModuleAtPosition newMod = new ModuleAtPosition(part.x + module.x, part.y + module.y, module.module);
+                    if (canBePlaced(newMod, true, false, false, false)) {
+                        modules.add(newMod);
+                    }
                 }
             }
         }
@@ -1490,7 +1524,7 @@ public class ShipConstructorPanel extends JPanel {
                 ModuleAtPosition partMod = tryPlace(selectedPart.getPlacementBrush());
                 PartAtPosition partPos = new PartAtPosition(partMod.x, partMod.y, selectedPart);
 
-                if (mirrorManager.hasAnyMirror()) {
+                if (!e.isShiftDown() && mirrorManager.hasAnyMirror()) {
                     List<PartAtPosition> parts = mirrorManager.getMirroredParts(partMod, selectedPart.getRotator());
                     for (PartAtPosition part : parts) {
                         placeShipPart(part);

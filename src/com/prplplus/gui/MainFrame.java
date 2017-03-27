@@ -26,7 +26,7 @@ import com.prplplus.Settings;
 public class MainFrame extends JFrame {
     private static final long serialVersionUID = -3729420411039341803L;
 
-    public static final String version = "v0.1.8";
+    public static final String version = "v0.2.0";
     public static final String title = "PRPL Toolset";
     public static final String contact = "kajacx@gmail.com";
 
@@ -107,9 +107,14 @@ public class MainFrame extends JFrame {
         });
         menu.add(item);
 
-        item = new JMenuItem("Ship Construct Controls");
-        String controls = getFileContents("tutorials/ship_edit_controls.txt", "Unable to load controls file.");
-        item.addActionListener(e -> JOptionPane.showMessageDialog(this, controls));
+        item = new JMenuItem("Ship Construct Controls 1");
+        String controls1 = getFileContents("tutorials/ship_edit_controls1.txt", "Unable to load controls file.");
+        item.addActionListener(e -> JOptionPane.showMessageDialog(this, controls1));
+        menu.add(item);
+
+        item = new JMenuItem("Ship Construct Controls 2");
+        String controls2 = getFileContents("tutorials/ship_edit_controls2.txt", "Unable to load controls file.");
+        item.addActionListener(e -> JOptionPane.showMessageDialog(this, controls2));
         menu.add(item);
 
         item = new JMenuItem("How to Import Ships");

@@ -9,23 +9,53 @@ import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 
+import com.prplplus.shipconstruct.Module;
+import com.prplplus.shipconstruct.ModuleAtPosition;
 import com.prplplus.shipconstruct.parts.ShipPart;
 
 public class FileManager {
+    public static File getSipPartsFolder() {
+        return new File("parts");
+    }
+
     public static List<ShipPart> loadShipParts() {
         List<ShipPart> parts = new ArrayList<>();
-        File partsFolder = new File("parts");
+        File partsFolder = getSipPartsFolder();
+
         for (File file : partsFolder.listFiles()) {
             try {
                 if (file.getName().endsWith(".txt")) {
                     Scanner scan = new Scanner(file);
                     ShipPart part = ShipPart.loadFromB64(scan.nextLine());
+
+                    if (scan.hasNextLine()) { //custom modules
+                        for (String moduleData : scan.nextLine().split(";")) {
+                            if (moduleData.isEmpty())
+                                continue;
+
+                            //read data
+                            String[] tokens = moduleData.split(",");
+                            Module module = Module.getCustomByName(tokens[0]);
+                            int posX = Integer.parseInt(tokens[1]);
+                            int posY = Integer.parseInt(tokens[2]);
+
+                            //and done
+                            part.getModules().add(new ModuleAtPosition(posX, posY, module));
+                        }
+                    }
+
                     scan.close();
 
+                    //image
                     File pngFile = new File(file.getAbsolutePath().replace(".txt", ".png"));
-                    //System.out.println(pngFile + " " + pngFile.exists());
-                    Image image = ImageIO.read(pngFile);
-                    part.image = image;
+                    if (pngFile.exists()) {
+                        //use the image
+                        part.image = ImageIO.read(pngFile);
+                    } else {
+                        //create the image
+                        part.image = part.createImage();
+                    }
+
                     parts.add(part);
                 }
             } catch (Exception ex) {
