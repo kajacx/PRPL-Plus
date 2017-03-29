@@ -8,7 +8,7 @@ import com.prplplus.jflex.Symbol;
 public class SpecialSymbol extends Symbol {
 
     public static enum Type {
-        LOCAL_PREFIX, SEMI_GLOBAL_PREFIX, PRPL_PLUS_PREFIX, BLOCK_FOLD, INCLUDE, LIBRARY
+        LOCAL_PREFIX, SEMI_GLOBAL_PREFIX, PRPL_PLUS_PREFIX, BLOCK_FOLD, INCLUDE, REL_INCLUDE, LIBRARY
     }
 
     public Type type;

@@ -15,7 +15,8 @@ public class NamespaceManager {
 
     //returns unique prefix with underscore
     public String getPrefixFor(String name) {
-        String prefix = name; //TODO: better prefix extraction
+        //String prefix = name; //
+        String prefix = "f";
 
         if (!usedPrefixes.contains(prefix)) {
             usedPrefixes.add(prefix);

@@ -16,6 +16,7 @@ import com.prplplus.errors.ErrorHandler.ErrorType;
 import com.prplplus.jflex.PrplPlusLexer;
 import com.prplplus.jflex.Symbol;
 import com.prplplus.jflex.symbols.SpecialSymbol;
+import com.prplplus.jflex.symbols.SpecialSymbol.Type;
 import com.prplplus.jflex.symbols.UserFunctionSymbol;
 import com.prplplus.jflex.symbols.VarSymbol;
 import com.prplplus.jflex.symbols.VarSymbol.Operation;
@@ -37,10 +38,17 @@ public class PRPLCompiler {
         openedScripts.add(new File(primaryFile).getAbsolutePath());
     }
 
-    private void include(String fname, Symbol symbol) {
+    private void include(String fname, Symbol symbol, boolean relativePath) {
 
         try {
-            File importFile = new File(Settings.WORK_IN + "/editor/" + fname);
+            File importFile;
+            if (relativePath) {
+                String parentFile = new File(symbol.fileFrom).getParentFile().getAbsolutePath();
+                importFile = new File(parentFile + "/" + fname);
+            } else {
+                importFile = new File(Settings.WORK_IN + "/editor/" + fname);
+            }
+
             if (!importFile.exists()) {
                 ErrorHandler.reportError(ErrorType.INCLUDE_FILE_NOT_FOUND, symbol, importFile.getAbsolutePath());
                 return;
@@ -58,7 +66,7 @@ public class PRPLCompiler {
             }
 
             FileReader reader = new FileReader(importFile);
-            PrplPlusLexer lexer = new PrplPlusLexer(reader, fname);
+            PrplPlusLexer lexer = new PrplPlusLexer(reader, importFile.getAbsolutePath());
             CachedLexer cached = new CachedLexer(lexer);
 
             openedScripts.add(absPath);
@@ -176,6 +184,7 @@ public class PRPLCompiler {
                         writer.println();
                     break;
                 case INCLUDE:
+                case REL_INCLUDE:
                     if (isInFunction) {
                         ErrorHandler.reportError(ErrorType.INCLUDE_INSIDE_FUNCTION, curSymbol);
                     }
@@ -189,7 +198,7 @@ public class PRPLCompiler {
                         }
                         String fname = next.text.substring(1, next.text.length() - 1);
                         next.text = "";
-                        include(fname, curSymbol);
+                        include(fname, curSymbol, specSym.type == Type.REL_INCLUDE);
                     } else {
                         ErrorHandler.reportError(ErrorType.INCLUDE_MISSING_FILENAME, curSymbol);
                     }

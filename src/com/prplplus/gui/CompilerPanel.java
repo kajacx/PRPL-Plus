@@ -148,7 +148,7 @@ public class CompilerPanel extends JPanel {
             add(errorStatus, BorderLayout.CENTER);
 
             pack();
-            setAlwaysOnTop(true);
+            //setAlwaysOnTop(true);
             setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         }
 

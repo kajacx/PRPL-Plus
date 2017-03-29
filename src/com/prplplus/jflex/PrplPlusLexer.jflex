@@ -112,6 +112,7 @@ Identifier = [a-zA-Z_][0-9a-zA-Z_]*
 "--%"				{ return new SpecialSymbol(this, SpecialSymbol.Type.PRPL_PLUS_PREFIX); }
 
 "%include"          { return new SpecialSymbol(this, SpecialSymbol.Type.INCLUDE); }
+"%relinclude"       { return new SpecialSymbol(this, SpecialSymbol.Type.REL_INCLUDE); }
 "%library"          { return new SpecialSymbol(this, SpecialSymbol.Type.LIBRARY); }
 "%blockstart"       { return new SpecialSymbol(this, SpecialSymbol.Type.BLOCK_FOLD); }
 "%blockend"         { return new SpecialSymbol(this, SpecialSymbol.Type.BLOCK_FOLD); }
