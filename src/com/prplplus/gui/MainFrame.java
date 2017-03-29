@@ -31,10 +31,20 @@ public class MainFrame extends JFrame {
     public static final String contact = "kajacx@gmail.com";
 
     public static void main(String[] args) {
+        processArgs(args);
+
         SwingUtilities.invokeLater(() -> {
             MainFrame frame = new MainFrame();
             frame.setVisible(true);
         });
+    }
+
+    private static void processArgs(String[] args) {
+        for (String arg : args) {
+            if (arg.equalsIgnoreCase("-forceExport")) {
+                Settings.enableForceExport = true;
+            }
+        }
     }
 
     public MainFrame() {

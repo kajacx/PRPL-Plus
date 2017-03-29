@@ -24,16 +24,17 @@ public class ShipExporter {
     }
 
     public String exportToBase64(String name, String designer, String description, String citg, boolean instabuild) {
+        return exportToBase64(name, designer, description, citg, instabuild,
+                Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
+    }
+
+    public String exportToBase64(String name, String designer, String description, String citg, boolean instabuild,
+            int minX, int minY, int maxX, int maxY) {
         if (name.length() == 0) {
             return "Error: Empty name";
         }
 
         //get bounds
-        int minX = Integer.MAX_VALUE;
-        int minY = Integer.MAX_VALUE;
-        int maxX = Integer.MIN_VALUE;
-        int maxY = Integer.MIN_VALUE;
-
         for (int x = 0; x < MAX_SIZE; x++) {
             for (int y = 0; y < MAX_SIZE; y++) {
                 if (hull[x * MAX_SIZE + y] != Hull.HULL_SPACE) {

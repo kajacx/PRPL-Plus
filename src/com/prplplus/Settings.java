@@ -21,6 +21,12 @@ public class Settings {
 
     public static int MAX_SIZE = 128;
 
+    /**
+     * enables force export, which fakes the ship size to be larger than it actually is
+     * settable via a -forceExport argument
+     */
+    public static boolean enableForceExport = false;
+
     static {
         Properties props = new Properties();
         InputStream stream = null;

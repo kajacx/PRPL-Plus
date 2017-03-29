@@ -184,6 +184,8 @@ public class ShipConstructorPanel extends JPanel {
     }
 
     private class PartButton extends JPanel implements MouseListener {
+        private static final long serialVersionUID = -5869951129835489796L;
+
         private Dimension size;
         private ShipPart part;
         private Image image;
@@ -359,8 +361,14 @@ public class ShipConstructorPanel extends JPanel {
         leftBar.add(space);
 
         JButton saveAs = new JButton("Save as");
-        saveAs.addActionListener(e -> saveAs());
+        saveAs.addActionListener(e -> saveAs(false));
         leftBar.add(saveAs);
+
+        if (Settings.enableForceExport) {
+            JButton forceExport = new JButton("Force export");
+            forceExport.addActionListener(e -> saveAs(true));
+            leftBar.add(forceExport);
+        }
 
         JButton loadFrom = new JButton("Load from");
         loadFrom.addActionListener(e -> loadFrom());
@@ -673,12 +681,20 @@ public class ShipConstructorPanel extends JPanel {
         return true;
     }
 
-    private void saveAs() {
+    private void saveAs(boolean forceExport) {
         ShipExporter exporter = new ShipExporter(hullSection, modules);
 
         //check if export is legit
-        String exportData = exporter.exportToBase64(nameField.getText(),
-                designerField.getText(), descriptionField.getText(), citgField.getText(), instabuildBox.isSelected());
+        String exportData;
+
+        if (partSelection.state == PartSelection.STATE_SELECTED) {
+            exportData = exporter.exportToBase64(nameField.getText(),
+                    designerField.getText(), descriptionField.getText(), citgField.getText(), instabuildBox.isSelected(),
+                    partSelection.fromXs, partSelection.fromYs, partSelection.toXs - 1, partSelection.toYs - 1);
+        } else {
+            exportData = exporter.exportToBase64(nameField.getText(),
+                    designerField.getText(), descriptionField.getText(), citgField.getText(), instabuildBox.isSelected());
+        }
         if (exportData.startsWith("Error")) {
             statusArea.setText(exportData);
             return;
@@ -1748,6 +1764,5 @@ public class ShipConstructorPanel extends JPanel {
         }
 
     }
-
 
 }
