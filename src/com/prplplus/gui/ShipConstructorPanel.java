@@ -65,9 +65,6 @@ import com.prplplus.shipconstruct.parts.ShipPart;
 import com.prplplus.shipconstruct.parts.SquareIsomorph;
 
 public class ShipConstructorPanel extends JPanel {
-    /**
-     * 
-     */
     private static final long serialVersionUID = -7436127974014599287L;
 
     public JTabbedPane modulesTabs; //an ugly workaround around tabs width bug
