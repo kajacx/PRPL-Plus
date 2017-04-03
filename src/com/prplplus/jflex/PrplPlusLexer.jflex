@@ -143,7 +143,7 @@ Identifier = [a-zA-Z_][0-9a-zA-Z_]*
 {Identifier}		{ return new Symbol(this); } /* Build-in function/operator/whatever */
 [\[\]\:\.]	    	{ return new Symbol(this); } /* List indexers and stuff */
 -?[0-9]+(\.[0-9]+)?	{ return new Symbol(this); } /* Number constant */
-\"[^\"\#]*\"		{ return new Symbol(this); } /* String constant */
+\"[^\"]*\"		    { return new Symbol(this); } /* String constant */
 
 
 
