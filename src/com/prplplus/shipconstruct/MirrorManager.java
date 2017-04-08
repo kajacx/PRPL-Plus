@@ -141,7 +141,7 @@ public class MirrorManager {
                     //the mirrored module would collide with the original: do nothing
                 } else { // mirror the module to the other side
                     int newX = (verticalMirror + xDist - 2 * newModule.module.width) / 2;
-                    ret.add(new HullAtPosition(newX, newModule.y, newModule.module, Hull.flipVerticaly(newModule.hull), SquareIsomorph.FlipVerticaly));
+                    ret.add(new HullAtPosition(newX, newModule.y, newModule.module, Hull.flipVerticaly(newModule.hull), newModule.rotation.andThen(SquareIsomorph.FlipVerticaly)));
                 }
             }
         }

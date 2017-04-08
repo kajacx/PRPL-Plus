@@ -30,6 +30,8 @@ public class MainFrame extends JFrame {
     public static final String title = "PRPL Toolset";
     public static final String contact = "kajacx@gmail.com";
 
+    private static boolean openShipBuild = true;
+
     public static void main(String[] args) {
         processArgs(args);
 
@@ -43,6 +45,9 @@ public class MainFrame extends JFrame {
         for (String arg : args) {
             if (arg.equalsIgnoreCase("-forceExport")) {
                 Settings.enableForceExport = true;
+            }
+            if (arg.equalsIgnoreCase("-shipBuild")) {
+                openShipBuild = true;
             }
         }
     }
@@ -79,7 +84,9 @@ public class MainFrame extends JFrame {
             pack(); //need to call pack() twice because of broken tab pane
         }
 
-        //tabs.setSelectedIndex(1);
+        if (openShipBuild) {
+            tabs.setSelectedIndex(1);
+        }
 
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);

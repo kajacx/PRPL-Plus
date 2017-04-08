@@ -298,21 +298,23 @@ public class ShipConstructorPanel extends JPanel {
         savePart.addActionListener(e -> {
             if (partSelection.state == PartSelection.STATE_SELECTED) {
                 ShipPart part = partSelection.doSelectPart(hullSection, modules);
-                String name = JOptionPane.showInputDialog(this, "Choose a name for the part");
-                if (name != null) {
-                    part.setName(name);
-                    savePart(part);
+                if (part != null) {
+                    String name = JOptionPane.showInputDialog(this, "Choose a name for the part");
+                    if (name != null) {
+                        part.setName(name);
+                        savePart(part);
 
-                    partsList.add(Utils.createSpace(10, 10));
-                    partsList.add(new JLabel(part.getName()));
-                    partsList.add(new PartButton(80, 60, part, part.image));
-                    avaliableParts.add(part);
+                        partsList.add(Utils.createSpace(10, 10));
+                        partsList.add(new JLabel(part.getName()));
+                        partsList.add(new PartButton(80, 60, part, part.image));
+                        avaliableParts.add(part);
 
-                    unselectAll();
-                    selectedPart = part;
+                        unselectAll();
+                        selectedPart = part;
 
-                    this.revalidate();
-                    this.repaint();
+                        this.revalidate();
+                        this.repaint();
+                    }
                 }
             }
         });
@@ -1190,11 +1192,13 @@ public class ShipConstructorPanel extends JPanel {
             for (ModuleAtPosition m : modules) {
                 if (m.intersectsWith(pos, true)) {
                     module = m;
-                    break;
+                    //break; lose a bit of efficiency, but remove the last module found
                 }
             }
 
-            modules.remove(module);
+            if (module != null) {
+                modules.remove(module);
+            }
         }
 
         private boolean nothingSelected() {

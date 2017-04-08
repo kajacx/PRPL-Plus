@@ -39,7 +39,7 @@ public class Module {
     public static final Module FIGHTER_BASE    = new Module(15, 3, 10, "FighterBase");
     public static final Module GRABBER         = new Module( 3, 3, 16, "Grabber");
     public static final Module MK7             = new Module( 5, 5, 17, "MK7");
-    public static final Module HQ_COMMAND      = new Module( 5, 9, 15, "HQCommand");
+    public static final Module HQ_COMMAND      = new Module( 5, 9, 15, "HQCommand", false, false);
     
     public static final Module BRUSH_1X1       = brushManager.getBrush(1, 1);
     public static final Module BRUSH_2X2       = brushManager.getBrush(2, 2);
@@ -71,9 +71,10 @@ public class Module {
     public final Image image;
     public final int buildCost;
     public final String scriptName;
+    public final boolean doesCollide;
 
     //create an arbitary module
-    public Module(int width, int height, int code, String name, Image image, int buildCost, String scriptName) {
+    public Module(int width, int height, int code, String name, Image image, int buildCost, String scriptName, boolean doesCollide) {
         this.width = width;
         this.height = height;
         this.code = code;
@@ -81,15 +82,16 @@ public class Module {
         this.image = image;
         this.buildCost = buildCost;
         this.scriptName = scriptName;
+        this.doesCollide = doesCollide;
     }
 
     //create a standart module
     private Module(int width, int height, int code, String name) {
-        this(width, height, code, name, false);
+        this(width, height, code, name, false, true);
     }
 
     //create a standart module
-    private Module(int width, int height, int code, String name, boolean skipImage) {
+    private Module(int width, int height, int code, String name, boolean skipImage, boolean doesCollide) {
         this.width = width;
         this.height = height;
         this.code = code;
@@ -107,10 +109,11 @@ public class Module {
             }
         }
         image = i;
+        this.doesCollide = doesCollide;
     }
 
     //create a custom module
-    private Module(int width, int height, String name, String imgName, int buildCost, String scriptName) {
+    private Module(int width, int height, String name, String imgName, int buildCost, String scriptName, boolean doesCollide) {
         this.width = width;
         this.height = height;
         this.code = CUSTOM_CODE;
@@ -126,6 +129,7 @@ public class Module {
             i = null;
         }
         image = i;
+        this.doesCollide = doesCollide;
     }
 
     //create an unknown custom module with this name
@@ -137,6 +141,7 @@ public class Module {
         this.name = name;
         this.buildCost = UNKNOWN.buildCost;
         this.scriptName = UNKNOWN.scriptName;
+        this.doesCollide = UNKNOWN.doesCollide;
     }
 
     static {
@@ -159,8 +164,9 @@ public class Module {
                     String imgName = moduleProps.getProperty("imgName");
                     int buildCost = Integer.parseInt(moduleProps.getProperty("buildCost", "50"));
                     String scriptName = moduleProps.getProperty("scriptName");
+                    boolean doesCollide = moduleProps.getProperty("doesCollide", "true").equals("true");
 
-                    customModules.add(new Module(width, height, name, imgName, buildCost, scriptName));
+                    customModules.add(new Module(width, height, name, imgName, buildCost, scriptName, doesCollide));
                 }
             } catch (Exception ex) {
                 ex.printStackTrace(System.out);
@@ -217,10 +223,6 @@ public class Module {
         return code == COMMAND_CODE;
     }
 
-    public boolean doesCollide() {
-        return code != HQ_COMMAND.code;
-    }
-
     public boolean isSquare() {
         return width == height;
     }
@@ -235,7 +237,7 @@ public class Module {
 
             List<Module> inner = brushes.get(width - 1);
             for (int i = inner.size(); i < height; i++) {
-                inner.add(new Module(width, height, BRUSH_CODE, "Brush" + width + "x" + height, null, 0, null));
+                inner.add(new Module(width, height, BRUSH_CODE, "Brush" + width + "x" + height, null, 0, null, false));
             }
 
             return inner.get(height - 1);
