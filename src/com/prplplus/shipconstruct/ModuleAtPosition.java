@@ -16,7 +16,7 @@ public class ModuleAtPosition {
     }
 
     public boolean intersectsWith(ModuleAtPosition other, boolean forceCollide) {
-        if (!forceCollide && (!module.doesCollide() || !other.module.doesCollide())) {
+        if (!forceCollide && (!module.doesCollide || !other.module.doesCollide)) {
             return false;
         }
 
