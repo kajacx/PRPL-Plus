@@ -116,6 +116,7 @@ Identifier = [a-zA-Z_][0-9a-zA-Z_]*
 "%library"          { return new SpecialSymbol(this, SpecialSymbol.Type.LIBRARY); }
 "%blockstart"       { return new SpecialSymbol(this, SpecialSymbol.Type.BLOCK_FOLD); }
 "%blockend"         { return new SpecialSymbol(this, SpecialSymbol.Type.BLOCK_FOLD); }
+"%sharenamespace"   { return new SpecialSymbol(this, SpecialSymbol.Type.SHARE_NAMESPACE); }
 
 
 

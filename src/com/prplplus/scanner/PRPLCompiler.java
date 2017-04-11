@@ -158,7 +158,9 @@ public class PRPLCompiler {
                     }
 
                     isInFunction = true;
-                    functNamespace = manager.getPrefixFor(funcSym.functionName);
+                    if (!lexer.peekNextUseful().isShareNamespace()) {
+                        functNamespace = manager.getPrefixFor(funcSym.functionName);
+                    }
                 }
                 writer.print(curSymbol.text);
                 continue;
@@ -177,6 +179,7 @@ public class PRPLCompiler {
                 case PRPL_PLUS_PREFIX:
                     writer.print("\"" + NamespaceManager.PRPL_PREFIX + "\"");
                     break;
+                case SHARE_NAMESPACE:
                 case BLOCK_FOLD:
                 case LIBRARY:
                     writer.print("#" + curSymbol.text.substring(1));
@@ -306,16 +309,18 @@ public class PRPLCompiler {
         }
 
         if (var.op == Operation.WRITE) {
-            writer.print("->" + NamespaceManager.PRPL_PREFIX + "value ");
-            writer.print("->" + NamespaceManager.PRPL_PREFIX + "varname ");
+            //writer.print("->" + NamespaceManager.PRPL_PREFIX + "value ");
+            //writer.print("->" + NamespaceManager.PRPL_PREFIX + "varname ");
             writer.print("\"" + prefix + "\" ");
-            writer.print("<-" + NamespaceManager.PRPL_PREFIX + "varname ");
+            //writer.print("<-" + NamespaceManager.PRPL_PREFIX + "varname ");
+            writer.print("swap ");
             writer.print("Concat ");
-            writer.print("<-" + NamespaceManager.PRPL_PREFIX + "value ");
+            //writer.print("<-" + NamespaceManager.PRPL_PREFIX + "value ");
         } else {
-            writer.print("->" + NamespaceManager.PRPL_PREFIX + "varname ");
+            //writer.print("->" + NamespaceManager.PRPL_PREFIX + "varname ");
             writer.print("\"" + prefix + "\" ");
-            writer.print("<-" + NamespaceManager.PRPL_PREFIX + "varname ");
+            //writer.print("<-" + NamespaceManager.PRPL_PREFIX + "varname ");
+            writer.print("swap ");
             writer.print("Concat ");
         }
     }

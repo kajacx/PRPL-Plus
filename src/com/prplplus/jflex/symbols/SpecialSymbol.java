@@ -8,7 +8,7 @@ import com.prplplus.jflex.Symbol;
 public class SpecialSymbol extends Symbol {
 
     public static enum Type {
-        LOCAL_PREFIX, SEMI_GLOBAL_PREFIX, PRPL_PLUS_PREFIX, BLOCK_FOLD, INCLUDE, REL_INCLUDE, LIBRARY
+        LOCAL_PREFIX, SEMI_GLOBAL_PREFIX, PRPL_PLUS_PREFIX, BLOCK_FOLD, INCLUDE, REL_INCLUDE, LIBRARY, SHARE_NAMESPACE
     }
 
     public Type type;
@@ -21,6 +21,16 @@ public class SpecialSymbol extends Symbol {
     @Override
     public boolean isLibrary() {
         return type == Type.LIBRARY;
+    }
+
+    @Override
+    public boolean isShareNamespace() {
+        return type == Type.SHARE_NAMESPACE;
+    }
+
+    @Override
+    public boolean isImportant() {
+        return type != Type.BLOCK_FOLD;
     }
 
     public static Symbol pasreBase16(PrplPlusLexer lexer) {
