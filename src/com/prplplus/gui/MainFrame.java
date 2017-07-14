@@ -26,7 +26,7 @@ import com.prplplus.Settings;
 public class MainFrame extends JFrame {
     private static final long serialVersionUID = -3729420411039341803L;
 
-    public static final String version = "v0.2.1";
+    public static final String version = "v0.2.2";
     public static final String title = "PRPL Toolset";
     public static final String contact = "kajacx@gmail.com";
 
