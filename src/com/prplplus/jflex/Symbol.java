@@ -58,6 +58,10 @@ public class Symbol {
         return false;
     }
 
+    public boolean isRecursionFlag() {
+        return false;
+    }
+
     @Override
     public String toString() {
         return String.format("Symbol '%s':%d:%d: '%s'", fileFrom, line, column, text);

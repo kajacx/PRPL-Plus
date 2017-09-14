@@ -6,6 +6,7 @@ import com.prplplus.jflex.Symbol;
 public class UserFunctionSymbol extends Symbol {
     public String functionName;
     public boolean isDefinition;
+    public boolean isRecursive;
 
     public UserFunctionSymbol(PrplPlusLexer lexer, boolean isDefinition) {
         super(lexer);

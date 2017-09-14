@@ -18,7 +18,7 @@ public class VarSymbol extends Symbol {
     }
 
     public static enum Scope {
-        LOCAL, SEMI_GLOBAL, GLOBAL, ARGUMENT;
+        LOCAL, SEMI_GLOBAL, GLOBAL, ARGUMENT, RECURSION;
     }
 
     public String varName;

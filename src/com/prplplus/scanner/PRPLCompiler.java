@@ -108,6 +108,19 @@ public class PRPLCompiler {
 
             Symbol curSymbol = lexer.getNextSymbol();
 
+            //recursive flag for function
+            if (curSymbol.isRecursionFlag()) {
+                //TODO: implement recursion
+                /*Symbol nextSymbol = lexer.peekNextUseful();
+                if (nextSymbol.isFunctionDefinition()) {
+                    UserFunctionSymbol function = (UserFunctionSymbol) nextSymbol;
+                    function.isRecursive = true;
+                } else {
+                    ErrorHandler.reportError(ErrorType.RECURSIVE_NOT_BEFORE_FUNCTION, curSymbol);
+                }*/
+                //don't continue and let it be printed as a special symbol
+            }
+
             //parenthesis
             if (curSymbol.isLeftPar()) {
                 if (ignoreNextLPar) {
@@ -163,6 +176,9 @@ public class PRPLCompiler {
                     }
                 }
                 writer.print(curSymbol.text);
+                if (funcSym.isDefinition && funcSym.isRecursive) {
+                    writer.print(" " + "<-" + functNamespace + "___rec 1 add ->" + functNamespace + "___rec");
+                }
                 continue;
             }
 
@@ -182,6 +198,7 @@ public class PRPLCompiler {
                 case SHARE_NAMESPACE:
                 case BLOCK_FOLD:
                 case LIBRARY:
+                case RECURSIVE:
                     writer.print("#" + curSymbol.text.substring(1));
                     if (lexer.peekNextUseful().line == curSymbol.line)
                         writer.println();
@@ -308,21 +325,9 @@ public class PRPLCompiler {
             ErrorHandler.reportError(ErrorType.COMPILER_IN_TROUBLE, var, "Wrong variable visibility");
         }
 
-        if (var.op == Operation.WRITE) {
-            //writer.print("->" + NamespaceManager.PRPL_PREFIX + "value ");
-            //writer.print("->" + NamespaceManager.PRPL_PREFIX + "varname ");
-            writer.print("\"" + prefix + "\" ");
-            //writer.print("<-" + NamespaceManager.PRPL_PREFIX + "varname ");
-            writer.print("swap ");
-            writer.print("Concat ");
-            //writer.print("<-" + NamespaceManager.PRPL_PREFIX + "value ");
-        } else {
-            //writer.print("->" + NamespaceManager.PRPL_PREFIX + "varname ");
-            writer.print("\"" + prefix + "\" ");
-            //writer.print("<-" + NamespaceManager.PRPL_PREFIX + "varname ");
-            writer.print("swap ");
-            writer.print("Concat ");
-        }
+        writer.print("\"" + prefix + "\" ");
+        writer.print("swap ");
+        writer.print("Concat ");
     }
 
     private void addVaraibleUsage(HashMap<String, Variable> usageMap, VarSymbol var, String scriptNamespace, String functNamespace) {

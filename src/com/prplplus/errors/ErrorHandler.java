@@ -34,7 +34,8 @@ public class ErrorHandler {
         COMPILATION_FAILED(ErrorLevel.ERROR),
         TOO_MANY_FILES_SCANNED(ErrorLevel.ERROR),
         VARIABLE_NEVER_READ_FROM(ErrorLevel.IGNORE),
-        VARIABLE_NEVER_WRITTEN_TO(ErrorLevel.IGNORE);
+        VARIABLE_NEVER_WRITTEN_TO(ErrorLevel.IGNORE),
+        RECURSIVE_NOT_BEFORE_FUNCTION(ErrorLevel.ERROR);
         // @formatter:on
 
         public ErrorLevel level;

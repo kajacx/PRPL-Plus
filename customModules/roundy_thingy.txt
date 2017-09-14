@@ -2,3 +2,4 @@ name:Roundy Thingy
 width:3
 height:3
 imgName:roundy_thingy.png
+scriptName:roundy_thingy.prpl
