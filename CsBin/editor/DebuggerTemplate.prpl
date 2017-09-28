@@ -1,0 +1,3361 @@
+# --Debugger-- 9/16/2017 7:17:21 PM
+
+$StartInDebugMode:1 #will freeze code execution and show debugger on the first command
+$MaxStringLength:40 #how many characters can a string (or a serialized list) have before it's trimmed down when displaying
+
+
+# -- Start import from 'c:/Users/Karel/Documents/My Games/particlefleet/editor/lib/GUI.prpl+' -- #
+#library
+
+$ImgSquareFull:"Custom0pp" # set to a 64x64 white square
+
+
+# -- Start import from 'OnKeyDown.prpl+' -- #
+#library
+# -- End import from 'OnKeyDown.prpl+' -- #
+ 
+    
+once
+    255 ->guiFillRed 255 ->guiFillGreen 255 ->guiFillBlue
+    196 ->guiBorderRed 196 ->guiBorderGreen 196 ->guiBorderBlue
+
+    #blockstart #keyboard definition
+    #"Space", "Backspace", "At", "Minus", "Comma", "DoubleQuote", "Less", "Greater", "Period", "Quote"
+    
+    "[" # EN keyboard
+    "[" " " "Space" "]"
+    "[" "Backspace" "Backspace" "]"
+    "[" "Enter" "Return" "]"
+    "[" "Enter" "KeypadEnter" "]"
+    "[" "@" "Alpha2" "LeftShift" "]"
+    "[" "@" "Alpha2" "RightShift" "]"
+    "[" "-" "Minus" "]"
+    "[" "-" "KeypadMinus" "]"
+    "[" "!" "Alpha1" "LeftShift" "]"
+    "[" "!" "Alpha1" "RightShift" "]"
+    "[" "?" "Slash" "LeftShift" "]"
+    "[" "?" "Slash" "RightShift" "]"
+    "[" DoubleQuote "Quote" "LeftShift" "]"
+    "[" DoubleQuote "Quote" "RightShift" "]"
+    "[" "<" "Comma" "LeftShift" "]"
+    "[" "<" "Comma" "RightShift" "]"
+    "[" ">" "Period" "LeftShift" "]"
+    "[" ">" "Period" "RightShift" "]"
+    "[" "." "Period" "]"
+    "[" "." "KeypadPeriod" "]"
+    "[" "1" "Alpha1" "]"
+    "[" "2" "Alpha2" "]"
+    "[" "3" "Alpha3" "]"
+    "[" "4" "Alpha4" "]"
+    "[" "5" "Alpha5" "]"
+    "[" "6" "Alpha6" "]"
+    "[" "7" "Alpha7" "]"
+    "[" "8" "Alpha8" "]"
+    "[" "9" "Alpha9" "]"
+    "[" "0" "Alpha0" "]"
+    "[" "1" "Keypad1" "]"
+    "[" "2" "Keypad2" "]"
+    "[" "3" "Keypad3" "]"
+    "[" "4" "Keypad4" "]"
+    "[" "5" "Keypad5" "]"
+    "[" "6" "Keypad6" "]"
+    "[" "7" "Keypad7" "]"
+    "[" "8" "Keypad8" "]"
+    "[" "9" "Keypad9" "]"
+    "[" "0" "Keypad0" "]"
+    "]" @guiMakeListRecursive ->guiKeyboardEN
+    #<~keyboardEN pop #so that PRPL+ doesn't complain that variable is never read from (it is via <~!)
+    
+    
+    "[" # CZ keyboard
+    "[" " " "Space" "]"
+    "[" "Backspace" "Backspace" "]"
+    "[" "Enter" "Return" "]"
+    "[" "Enter" "KeypadEnter" "]"
+    "[" "@" "V" "AltGr" "]"
+    "[" "@" "V" "LeftControl" "LeftAlt" "]"
+    "[" "@" "V" "LeftControl" "RightAlt" "]"
+    "[" "-" "Minus" "]"
+    "[" "-" "KeypadMinus" "]"
+    "[" "!" "Quote" "LeftShift" "]"
+    "[" "!" "Quote" "RightShift" "]"
+    "[" "?" "Comma" "LeftShift" "]"
+    "[" "?" "Comma" "RightShift" "]"
+    "[" DoubleQuote "Semicolon" "LeftShift" "]"
+    "[" DoubleQuote "Semicolon" "RightShift" "]"
+    "[" "<" "Comma" "AltGr" "]"
+    "[" ">" "Period" "AltGr" "]"
+    "[" "." "Period" "]"
+    "[" "." "KeypadPeriod" "]"
+    "[" "1" "Alpha1" "RightShift" "]"
+    "[" "2" "Alpha2" "RightShift" "]"
+    "[" "3" "Alpha3" "RightShift" "]"
+    "[" "4" "Alpha4" "RightShift" "]"
+    "[" "5" "Alpha5" "RightShift" "]"
+    "[" "6" "Alpha6" "RightShift" "]"
+    "[" "7" "Alpha7" "RightShift" "]"
+    "[" "8" "Alpha8" "RightShift" "]"
+    "[" "9" "Alpha9" "RightShift" "]"
+    "[" "0" "Alpha0" "LeftShift" "]"
+    "[" "1" "Alpha1" "LeftShift" "]"
+    "[" "2" "Alpha2" "LeftShift" "]"
+    "[" "3" "Alpha3" "LeftShift" "]"
+    "[" "4" "Alpha4" "LeftShift" "]"
+    "[" "5" "Alpha5" "LeftShift" "]"
+    "[" "6" "Alpha6" "LeftShift" "]"
+    "[" "7" "Alpha7" "LeftShift" "]"
+    "[" "8" "Alpha8" "LeftShift" "]"
+    "[" "9" "Alpha9" "LeftShift" "]"
+    "[" "0" "Alpha0" "LeftShift" "]"
+    "[" "1" "Keypad1" "]"
+    "[" "2" "Keypad2" "]"
+    "[" "3" "Keypad3" "]"
+    "[" "4" "Keypad4" "]"
+    "[" "5" "Keypad5" "]"
+    "[" "6" "Keypad6" "]"
+    "[" "7" "Keypad7" "]"
+    "[" "8" "Keypad8" "]"
+    "[" "9" "Keypad9" "]"
+    "[" "0" "Keypad0" "]"
+    "]" @guiMakeListRecursive ->guiKeyboardCZ
+    #<~keyboardCZ pop #so that PRPL+ doesn't complain that variable is never read from (it is via <~!)
+    #blockend
+    
+    <-guiKeyboardEN ->guiCurrentKeyboard
+    
+    Self RemoveImages
+    1 OperateWhilePaused
+
+    0 ->s1___selectedTextField
+    "" ->s1___selectedTextFieldName
+    
+    CreateList ->s1___activeWindow
+endonce
+
+@guiCheckInput
+# -- End import from 'c:/Users/Karel/Documents/My Games/particlefleet/editor/lib/GUI.prpl+' -- #
+ 
+
+# -- Start import from 'c:/Users/Karel/Documents/My Games/particlefleet/editor/lib/Invoke.prpl+' -- #
+# This is the VANILLA invoke library
+#library
+
+once
+    CreateList ->invokeUsedVariables
+endonce
+# -- End import from 'c:/Users/Karel/Documents/My Games/particlefleet/editor/lib/Invoke.prpl+' -- #
+  # invoke in not really needed (except for used variable registry), but meh
+
+# -- Start import from 'c:/Users/Karel/Documents/My Games/particlefleet/editor/lib/ListRegistry.prpl+' -- #
+# --ListRegistry-- 9/14/2017 6:14:08 PM
+#library
+
+once
+    CreateList ->listRegistry #list of list IDs
+    1 ->s4___nextFreeId
+endonce
+# -- End import from 'c:/Users/Karel/Documents/My Games/particlefleet/editor/lib/ListRegistry.prpl+' -- #
+ 
+
+once
+    #blockstart #GUI window definition
+    "[" "mainbox" 12 -10 250 200 "[" #main window
+        "[" "box" 0 180 250 20 "[" # satus & controll
+            "[" "label" 5 5 30 10 "Ready" "]"
+            "[" "button" 40 5 30 10 "Step Over" "[" "StepOver" "]" "]"
+            "[" "button" 75 5 30 10 "Step Line" "[" "StepLine" "]" "]"
+            "[" "button" 110 5 30 10 "Step Into" "[" "StepInto" "]" "]"
+            "[" "button" 145 5 30 10 "Step Out" "[" "StepOut" "]" "]"
+            "[" "button" 180 5 30 10 "Continue" "[" "Continue" "]" "]"
+            "[" "button" 215 5 30 10 "Break" "[" "Break" "]" "]"
+        "]" "]"
+        "[" "box" 0 100 250 80 "[" # source code
+            "[" "label" 0 70 250 10 "Source code" "]"
+            "[" "label" 0 65 250 10 "Call stack" "]"
+            "[" "label" 0 34 250 30 "Source code (above)" "]"
+            "[" "label" 0 30 250 5 "Source code (commands)" "]"
+            "[" "label" 0 1 250 30 "Source code (bellow)" "]"
+        "]" "]"
+        "[" "box" 0 0 80 100 "[" #stack visualizer
+            "[" "label" 0 90 80 10 "Stack (top)" "]"
+            "[" "label" 0 10 80 80 "Stack (content)" "]"
+            "[" "label" 0 0 80 10 "Stack (bottom)" "]"
+        "]" "]"
+        "[" "box" 80 0 90 100 "[" #variable visualizer
+            "[" "label" 0 90 90 10 "Local variables" "]"
+            "[" "label" 0 0 90 90 "Variables (content)" "]"
+        "]" "]"
+        "[" "box" 170 0 80 100 "[" #list visualizer
+            "[" "label" 0 90 80 10 "Lists" "]"
+            "[" "label" 0 0 80 90 "Lists (content)" "]"
+        "]" "]"
+    "]" "]" @guiMakeListRecursive ->guiWindow
+    
+    <-guiWindow @guiShow
+    #blockend
+    
+    #blockstart # styling
+    #create some better graphics
+    "Call stack" @guiGetLabel "TextBind.prpl"
+    dup2 "TextRed"   196 SetScriptVar
+    dup2 "TextGreen" 196 SetScriptVar
+    dup2 "TextBlue"  255 SetScriptVar
+    dup2 "NeedsUpdate" 1 SetScriptVar
+    pop pop
+    
+    "Source code (above)" @guiGetLabel "TextBind.prpl"
+    dup2 "TextAlignment" "MiddleLeft" SetScriptVar
+    dup2 "NeedsUpdate" 1 SetScriptVar
+    pop pop
+    
+    255 ->s___hiRed 196 ->s___hiGreen 16 ->s___hiBlue
+    16 ->s___callRed 255 ->s___callGreen 64 ->s___callBlue
+    
+    "Source code (commands)" @guiGetLabel "TextBind.prpl"
+    dup2 "TextAlignment" "MiddleLeft" SetScriptVar
+    dup2 "TextRed"   <-s___hiRed   SetScriptVar
+    dup2 "TextGreen" <-s___hiGreen SetScriptVar
+    dup2 "TextBlue"  <-s___hiBlue  SetScriptVar
+    dup2 "NeedsUpdate" 1 SetScriptVar
+    pop pop
+    
+    "Source code (bellow)" @guiGetLabel "TextBind.prpl"
+    dup2 "TextAlignment" "MiddleLeft" SetScriptVar
+    dup2 "NeedsUpdate" 1 SetScriptVar
+    pop pop
+    
+    "Variables (content)" @guiGetLabel "TextBind.prpl"
+    dup2 "TextAlignment" "MiddleLeft" SetScriptVar
+    dup2 "NeedsUpdate" 1 SetScriptVar
+    pop pop
+    #blockend
+    
+    1 ->s___line #current code line
+    0 ->s___col #current code column (command on line)
+    
+    <-StartInDebugMode neq0 ->s___mode #execution mode
+    #/*
+#    0 - normal execution
+#    1 - halt execution (paused in debugger)
+#    2 - step into
+#    3 - step over
+#    4 - step line
+#    5 - step out
+#    6 - inside step over or out
+#    7 - inside step line
+#    #*/
+    
+    @debuggerDrawContent
+    
+    CreateList ->debuggerCallStack # top - most recent function
+    
+    "                                  " dup dup dup dup dup Concat Concat Concat Concat Concat ->s___spaceFiller #30 spaces replicated 6 times to enforce formatting
+endonce
+
+
+
+
+###########################################################
+#                   DEBUGGER CODE START                   #
+###########################################################
+#blockstart
+#DebuggerGeneratedCodeStart
+
+#This will be replaced by the compiled code
+
+#DebuggerGeneratedCodeEnd
+#blockend
+###########################################################
+#                    DEBUGGER CODE END                    #
+###########################################################
+
+
+
+
+#debugger functions
+
+# line col type - shouldExecute
+:debuggerIntercept #[ int int int - bool ]
+#blockstart
+    ->s___type ->s___col ->s___line
+    <-s___mode not if #normal execution
+        return
+    endif
+    <-s___mode 1 eq if #halt execution
+        @debuggerDrawContent
+        while <-s___mode 1 eq repeat
+            1 Delay
+            @guiCheckInput
+        endwhile
+        
+        #better to copy-paste than to call again
+        <-s___mode not if #normal execution
+            return
+        endif
+    endif
+    #move states 6 and 7 up to speed up execution during SKIP sections
+    <-s___mode 6 eq if # inside step over or out
+        <-debuggerCallStack GetListCount <-f___targetDepth lte if
+            1 ->s___mode #halt on the current command
+            <-s___line <-s___col <-s___type @debuggerIntercept return #re-run recursively
+        else
+            return #do nothing and return
+        endif
+    endif
+    <-s___mode 7 eq if # inside step line
+        <-debuggerCallStack GetListCount <-f___targetDepth lte <-s___line <-f___targetLine neq and if
+            1 ->s___mode #halt on the current command
+            <-s___line <-s___col <-s___type @debuggerIntercept return #re-run recursively
+        else
+            return #do nothing and return
+        endif
+    endif
+    <-s___mode 2 eq if # step into
+        1 ->s___mode return #halt after stepping into
+    endif
+    <-s___mode 3 eq if # step over
+        <-debuggerCallStack GetListCount ->f___targetDepth
+        6 ->s___mode return # inside step over
+    endif
+    <-s___mode 4 eq if # step line
+        <-s___line ->f___targetLine
+        <-debuggerCallStack GetListCount ->f___targetDepth
+        7 ->s___mode return #set mode to inside step line
+    endif
+    <-s___mode 5 eq if # step out
+        <-debuggerCallStack GetListCount 0 gt if #return or isn't in a function
+            <-debuggerCallStack GetListCount 1 sub ->f___targetDepth
+            6 ->s___mode return # inside step out
+        else
+            1 ->s___mode return # just halt on the next command
+        endif
+    endif
+#blockend
+
+
+:debuggerInspect # [ - ]
+    #stop the execution and show debugger
+    1 ->s___mode
+    
+    
+:debuggerDrawContent # [ - ]
+#blockstart
+    #source code
+    "Source code" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" "Source code " <-s___line " " <-s___col Concat Concat Concat SetScriptVar
+                                                    "NeedsUpdate" 1 SetScriptVar
+    
+    #source code above
+    <-s___spaceFiller LF Concat #leave on stack
+    <-s___line <-s___line 6 sub do
+        I 0 gt if
+            I @debuggerFormatLine "  " Concat Concat
+            "debugger__line" I Concat <-! Concat
+        endif
+        LF Concat
+    loop
+    ->f2___text
+    "Source code (above)" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" <-f2___text SetScriptVar
+                                                            "NeedsUpdate" 1 SetScriptVar
+    
+    # source code commands
+    <-s___spaceFiller LF Concat <-s___line @debuggerFormatLine Concat " " Concat
+    "debugger__commands" <-s___line Concat <-! ->f2___commands
+    <-f2___commands GetListCount 0 do
+        I <-s___col eq if
+            " *" Concat <-f2___commands[I] Concat "*" Concat
+        else
+            " " Concat <-f2___commands[I] Concat
+        endif
+    loop
+    LF Concat
+    ->f2___text
+    "Source code (commands)" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" <-f2___text SetScriptVar
+                                                        <-s___type 1 eq if
+                                                            dup2 "TextRed"   <-s___callRed   SetScriptVar
+                                                            dup2 "TextGreen" <-s___callGreen SetScriptVar
+                                                            dup2 "TextBlue"  <-s___callBlue  SetScriptVar
+                                                        else
+                                                            dup2 "TextRed"   <-s___hiRed   SetScriptVar
+                                                            dup2 "TextGreen" <-s___hiGreen SetScriptVar
+                                                            dup2 "TextBlue"  <-s___hiBlue  SetScriptVar
+                                                        endif
+                                                        "NeedsUpdate" 1 SetScriptVar
+    
+    #source code below
+    <-s___spaceFiller LF Concat #leave on stack
+    <-s___line 7 add <-s___line 1 add do
+        I <-debugger__lines lte if
+            I @debuggerFormatLine "  " Concat Concat
+            "debugger__line" I Concat <-! Concat
+        endif
+        LF Concat
+    loop
+    ->f2___text
+    "Source code (bellow)" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" <-f2___text SetScriptVar
+                                                            "NeedsUpdate" 1 SetScriptVar
+    
+    #call stack
+    "Call stack: main"
+    <-debuggerCallStack GetListCount 0 do
+        " @" Concat <-debuggerCallStack[I] concat
+    loop
+    ->f2___callStack
+    "Call stack" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" <-f2___callStack SetScriptVar
+                                                   "NeedsUpdate" 1 SetScriptVar
+    
+    #display stack
+    CreateList ->f2___stackCopy
+    <-f2___stackCopy PrependStackToList #this will consume the stack
+    <-f2___stackCopy @guiDumpList #restore the stack
+    
+    ""
+    <-f2___stackCopy GetListCount 0 do
+        I 0 gt if
+            LF Concat
+        endif
+        <-f2___stackCopy[<-f2___stackCopy GetListCount I sub 1 sub] @debuggerToString Concat
+    loop
+    ->f2___stackDump
+    "Stack (content)" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" <-f2___stackDump SetScriptVar
+                                                        "NeedsUpdate" 1 SetScriptVar
+
+    #display variables
+    ""
+    <-invokeUsedVariables GetListCount 0 do
+        <-invokeUsedVariables[I] -?! if
+            <-invokeUsedVariables[I] ": " <-invokeUsedVariables[I] <-! @debuggerToString Concat Concat Concat
+            LF Concat
+        endif
+    loop
+    ->f2___variablesDump
+    "Variables (content)" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" <-f2___variablesDump SetScriptVar
+                                                            "NeedsUpdate" 1 SetScriptVar
+
+    #display lists
+    ""
+    <-listRegistry GetListCount 0 do
+        <-listRegistry[I] @getListById @debuggerToString Concat
+        LF Concat
+    loop
+    ->f2___listsDump
+    "Lists (content)" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" <-f2___listsDump SetScriptVar
+                                                        "NeedsUpdate" 1 SetScriptVar
+#blockend
+
+
+#adds leaning zeros to line number
+:debuggerFormatLine # [ int - line ]    
+dup 0 lte if
+    pop "000" return #no lines below 0
+endif
+dup 10 lt if
+    "00" swap Concat return
+endif
+dup 100 lt if
+    "0" swap Concat return
+endif
+#leave the original number on stack
+
+    
+#helper functions
+:debuggerToString # [ value - string ]
+    dup GetType "INT" eq if
+        "int " swap Concat return
+    endif
+    dup GetType "FLOAT" eq if
+        "float " swap Concat return
+    endif
+    dup GetType "STRING" eq if
+        DoubleQuote swap Concat DoubleQuote Concat
+        dup StringLength <-MaxStringLength gt if
+            dup 0 <-MaxStringLength 10 sub SubString "..." Concat DoubleQuote Concat " (" Concat swap StringLength Concat ")" Concat #list string
+        endif
+        "string " swap Concat return
+    endif
+    dup GetType "LIST" eq if
+        dup dup #list list list
+        "List#" swap @getListId Concat ": " Concat swap Concat #list listString
+        dup StringLength <-MaxStringLength gt if #list listString
+            0 <-MaxStringLength 10 sub SubString "...] (" Concat swap GetListCount Concat ")" Concat #listString
+        else #list listString
+            swap pop  #listString
+        endif
+    endif
+    # just leave the original value as it is on stack otherwise
+    
+    
+#event listeners
+:guiEventDispatch # [ ... string - ]
+    dup "StepOver" eq if
+        pop <-s___mode 1 eq if 3 ->s___mode endif return
+    endif
+    dup "StepLine" eq if
+        pop <-s___mode 1 eq if 4 ->s___mode endif return
+    endif
+    dup "StepInto" eq if
+        pop <-s___mode 1 eq if 2 ->s___mode endif return
+    endif
+    dup "StepOut" eq if
+        pop <-s___mode 1 eq if 5 ->s___mode endif return
+    endif
+    dup "Continue" eq if
+        pop <-s___mode 1 eq if 0 ->s___mode endif return
+    endif
+    dup "Break" eq if
+        pop 1 ->s___mode return
+    endif
+    "Unhadled dispatch:" swap Trace2
+# -- Functions from 'c:\Users\Karel\Documents\My Games\particlefleet\editor\lib\OnKeyDown.prpl+' -- #
+
+
+#A library calling "onKeyDown" on key down.
+
+:onKeyDownCheck # [ - ]
+
+"None" GetKeyDown if
+    "None" @onKeyDown
+endif
+
+"Backspace" GetKeyDown if
+    "Backspace" @onKeyDown
+endif
+
+"Delete" GetKeyDown if
+    "Delete" @onKeyDown
+endif
+
+"Tab" GetKeyDown if
+    "Tab" @onKeyDown
+endif
+
+"Clear" GetKeyDown if
+    "Clear" @onKeyDown
+endif
+
+"Return" GetKeyDown if
+    "Return" @onKeyDown
+endif
+
+"Pause" GetKeyDown if
+    "Pause" @onKeyDown
+endif
+
+"Escape" GetKeyDown if
+    "Escape" @onKeyDown
+endif
+
+"Space" GetKeyDown if
+    "Space" @onKeyDown
+endif
+
+"Keypad0" GetKeyDown if
+    "Keypad0" @onKeyDown
+endif
+
+"Keypad1" GetKeyDown if
+    "Keypad1" @onKeyDown
+endif
+
+"Keypad2" GetKeyDown if
+    "Keypad2" @onKeyDown
+endif
+
+"Keypad3" GetKeyDown if
+    "Keypad3" @onKeyDown
+endif
+
+"Keypad4" GetKeyDown if
+    "Keypad4" @onKeyDown
+endif
+
+"Keypad5" GetKeyDown if
+    "Keypad5" @onKeyDown
+endif
+
+"Keypad6" GetKeyDown if
+    "Keypad6" @onKeyDown
+endif
+
+"Keypad7" GetKeyDown if
+    "Keypad7" @onKeyDown
+endif
+
+"Keypad8" GetKeyDown if
+    "Keypad8" @onKeyDown
+endif
+
+"Keypad9" GetKeyDown if
+    "Keypad9" @onKeyDown
+endif
+
+"KeypadPeriod" GetKeyDown if
+    "KeypadPeriod" @onKeyDown
+endif
+
+"KeypadDivide" GetKeyDown if
+    "KeypadDivide" @onKeyDown
+endif
+
+"KeypadMultiply" GetKeyDown if
+    "KeypadMultiply" @onKeyDown
+endif
+
+"KeypadMinus" GetKeyDown if
+    "KeypadMinus" @onKeyDown
+endif
+
+"KeypadPlus" GetKeyDown if
+    "KeypadPlus" @onKeyDown
+endif
+
+"KeypadEnter" GetKeyDown if
+    "KeypadEnter" @onKeyDown
+endif
+
+"KeypadEquals" GetKeyDown if
+    "KeypadEquals" @onKeyDown
+endif
+
+"UpArrow" GetKeyDown if
+    "UpArrow" @onKeyDown
+endif
+
+"DownArrow" GetKeyDown if
+    "DownArrow" @onKeyDown
+endif
+
+"RightArrow" GetKeyDown if
+    "RightArrow" @onKeyDown
+endif
+
+"LeftArrow" GetKeyDown if
+    "LeftArrow" @onKeyDown
+endif
+
+"Insert" GetKeyDown if
+    "Insert" @onKeyDown
+endif
+
+"Home" GetKeyDown if
+    "Home" @onKeyDown
+endif
+
+"End" GetKeyDown if
+    "End" @onKeyDown
+endif
+
+"PageUp" GetKeyDown if
+    "PageUp" @onKeyDown
+endif
+
+"PageDown" GetKeyDown if
+    "PageDown" @onKeyDown
+endif
+
+"F1" GetKeyDown if
+    "F1" @onKeyDown
+endif
+
+"F2" GetKeyDown if
+    "F2" @onKeyDown
+endif
+
+"F3" GetKeyDown if
+    "F3" @onKeyDown
+endif
+
+"F4" GetKeyDown if
+    "F4" @onKeyDown
+endif
+
+"F5" GetKeyDown if
+    "F5" @onKeyDown
+endif
+
+"F6" GetKeyDown if
+    "F6" @onKeyDown
+endif
+
+"F7" GetKeyDown if
+    "F7" @onKeyDown
+endif
+
+"F8" GetKeyDown if
+    "F8" @onKeyDown
+endif
+
+"F9" GetKeyDown if
+    "F9" @onKeyDown
+endif
+
+"F10" GetKeyDown if
+    "F10" @onKeyDown
+endif
+
+"F11" GetKeyDown if
+    "F11" @onKeyDown
+endif
+
+"F12" GetKeyDown if
+    "F12" @onKeyDown
+endif
+
+"F13" GetKeyDown if
+    "F13" @onKeyDown
+endif
+
+"F14" GetKeyDown if
+    "F14" @onKeyDown
+endif
+
+"F15" GetKeyDown if
+    "F15" @onKeyDown
+endif
+
+"Alpha0" GetKeyDown if
+    "Alpha0" @onKeyDown
+endif
+
+"Alpha1" GetKeyDown if
+    "Alpha1" @onKeyDown
+endif
+
+"Alpha2" GetKeyDown if
+    "Alpha2" @onKeyDown
+endif
+
+"Alpha3" GetKeyDown if
+    "Alpha3" @onKeyDown
+endif
+
+"Alpha4" GetKeyDown if
+    "Alpha4" @onKeyDown
+endif
+
+"Alpha5" GetKeyDown if
+    "Alpha5" @onKeyDown
+endif
+
+"Alpha6" GetKeyDown if
+    "Alpha6" @onKeyDown
+endif
+
+"Alpha7" GetKeyDown if
+    "Alpha7" @onKeyDown
+endif
+
+"Alpha8" GetKeyDown if
+    "Alpha8" @onKeyDown
+endif
+
+"Alpha9" GetKeyDown if
+    "Alpha9" @onKeyDown
+endif
+
+"Exclaim" GetKeyDown if
+    "Exclaim" @onKeyDown
+endif
+
+"DoubleQuote" GetKeyDown if
+    "DoubleQuote" @onKeyDown
+endif
+
+"Hash" GetKeyDown if
+    "Hash" @onKeyDown
+endif
+
+"Dollar" GetKeyDown if
+    "Dollar" @onKeyDown
+endif
+
+"Ampersand" GetKeyDown if
+    "Ampersand" @onKeyDown
+endif
+
+"Quote" GetKeyDown if
+    "Quote" @onKeyDown
+endif
+
+"LeftParen" GetKeyDown if
+    "LeftParen" @onKeyDown
+endif
+
+"RightParen" GetKeyDown if
+    "RightParen" @onKeyDown
+endif
+
+"Asterisk" GetKeyDown if
+    "Asterisk" @onKeyDown
+endif
+
+"Plus" GetKeyDown if
+    "Plus" @onKeyDown
+endif
+
+"Comma" GetKeyDown if
+    "Comma" @onKeyDown
+endif
+
+"Minus" GetKeyDown if
+    "Minus" @onKeyDown
+endif
+
+"Period" GetKeyDown if
+    "Period" @onKeyDown
+endif
+
+"Slash" GetKeyDown if
+    "Slash" @onKeyDown
+endif
+
+"Colon" GetKeyDown if
+    "Colon" @onKeyDown
+endif
+
+"Semicolon" GetKeyDown if
+    "Semicolon" @onKeyDown
+endif
+
+"Less" GetKeyDown if
+    "Less" @onKeyDown
+endif
+
+"Equals" GetKeyDown if
+    "Equals" @onKeyDown
+endif
+
+"Greater" GetKeyDown if
+    "Greater" @onKeyDown
+endif
+
+"Question" GetKeyDown if
+    "Question" @onKeyDown
+endif
+
+"At" GetKeyDown if
+    "At" @onKeyDown
+endif
+
+"LeftBracket" GetKeyDown if
+    "LeftBracket" @onKeyDown
+endif
+
+"Backslash" GetKeyDown if
+    "Backslash" @onKeyDown
+endif
+
+"RightBracket" GetKeyDown if
+    "RightBracket" @onKeyDown
+endif
+
+"Caret" GetKeyDown if
+    "Caret" @onKeyDown
+endif
+
+"Underscore" GetKeyDown if
+    "Underscore" @onKeyDown
+endif
+
+"BackQuote" GetKeyDown if
+    "BackQuote" @onKeyDown
+endif
+
+"A" GetKeyDown if
+    "A" @onKeyDown
+endif
+
+"B" GetKeyDown if
+    "B" @onKeyDown
+endif
+
+"C" GetKeyDown if
+    "C" @onKeyDown
+endif
+
+"D" GetKeyDown if
+    "D" @onKeyDown
+endif
+
+"E" GetKeyDown if
+    "E" @onKeyDown
+endif
+
+"F" GetKeyDown if
+    "F" @onKeyDown
+endif
+
+"G" GetKeyDown if
+    "G" @onKeyDown
+endif
+
+"H" GetKeyDown if
+    "H" @onKeyDown
+endif
+
+"I" GetKeyDown if
+    "I" @onKeyDown
+endif
+
+"J" GetKeyDown if
+    "J" @onKeyDown
+endif
+
+"K" GetKeyDown if
+    "K" @onKeyDown
+endif
+
+"L" GetKeyDown if
+    "L" @onKeyDown
+endif
+
+"M" GetKeyDown if
+    "M" @onKeyDown
+endif
+
+"N" GetKeyDown if
+    "N" @onKeyDown
+endif
+
+"O" GetKeyDown if
+    "O" @onKeyDown
+endif
+
+"P" GetKeyDown if
+    "P" @onKeyDown
+endif
+
+"Q" GetKeyDown if
+    "Q" @onKeyDown
+endif
+
+"R" GetKeyDown if
+    "R" @onKeyDown
+endif
+
+"S" GetKeyDown if
+    "S" @onKeyDown
+endif
+
+"T" GetKeyDown if
+    "T" @onKeyDown
+endif
+
+"U" GetKeyDown if
+    "U" @onKeyDown
+endif
+
+"V" GetKeyDown if
+    "V" @onKeyDown
+endif
+
+"W" GetKeyDown if
+    "W" @onKeyDown
+endif
+
+"X" GetKeyDown if
+    "X" @onKeyDown
+endif
+
+"Y" GetKeyDown if
+    "Y" @onKeyDown
+endif
+
+"Z" GetKeyDown if
+    "Z" @onKeyDown
+endif
+
+"Numlock" GetKeyDown if
+    "Numlock" @onKeyDown
+endif
+
+"CapsLock" GetKeyDown if
+    "CapsLock" @onKeyDown
+endif
+
+"ScrollLock" GetKeyDown if
+    "ScrollLock" @onKeyDown
+endif
+
+"RightShift" GetKeyDown if
+    "RightShift" @onKeyDown
+endif
+
+"LeftShift" GetKeyDown if
+    "LeftShift" @onKeyDown
+endif
+
+"RightControl" GetKeyDown if
+    "RightControl" @onKeyDown
+endif
+
+"LeftControl" GetKeyDown if
+    "LeftControl" @onKeyDown
+endif
+
+"RightAlt" GetKeyDown if
+    "RightAlt" @onKeyDown
+endif
+
+"LeftAlt" GetKeyDown if
+    "LeftAlt" @onKeyDown
+endif
+
+"LeftCommand" GetKeyDown if
+    "LeftCommand" @onKeyDown
+endif
+
+"LeftApple" GetKeyDown if
+    "LeftApple" @onKeyDown
+endif
+
+"LeftWindows" GetKeyDown if
+    "LeftWindows" @onKeyDown
+endif
+
+"RightCommand" GetKeyDown if
+    "RightCommand" @onKeyDown
+endif
+
+"RightApple" GetKeyDown if
+    "RightApple" @onKeyDown
+endif
+
+"RightWindows" GetKeyDown if
+    "RightWindows" @onKeyDown
+endif
+
+"AltGr" GetKeyDown if
+    "AltGr" @onKeyDown
+endif
+
+"Help" GetKeyDown if
+    "Help" @onKeyDown
+endif
+
+"Print" GetKeyDown if
+    "Print" @onKeyDown
+endif
+
+"SysReq" GetKeyDown if
+    "SysReq" @onKeyDown
+endif
+
+"Break" GetKeyDown if
+    "Break" @onKeyDown
+endif
+
+"Menu" GetKeyDown if
+    "Menu" @onKeyDown
+endif
+
+"Mouse0" GetKeyDown if
+    "Mouse0" @onKeyDown
+endif
+
+"Mouse1" GetKeyDown if
+    "Mouse1" @onKeyDown
+endif
+
+"Mouse2" GetKeyDown if
+    "Mouse2" @onKeyDown
+endif
+
+"Mouse3" GetKeyDown if
+    "Mouse3" @onKeyDown
+endif
+
+"Mouse4" GetKeyDown if
+    "Mouse4" @onKeyDown
+endif
+
+"Mouse5" GetKeyDown if
+    "Mouse5" @onKeyDown
+endif
+
+"Mouse6" GetKeyDown if
+    "Mouse6" @onKeyDown
+endif
+
+
+
+
+# -- Functions from 'c:\Users\Karel\Documents\My Games\particlefleet\editor\lib\GUI.prpl+' -- #
+ #check input every frame
+
+
+
+
+:guiCheckInput
+#Listen for mouse clicks
+<-f7___mouseWasDown not 0 GetMouseButton dup ->f7___mouseWasDown and if
+    #TraceStack
+    "Command:" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" "Command:" SetScriptVar
+                                                 "NeedsUpdate" 1 SetScriptVar
+    0 ->s1___selectedTextField
+    GetMousePosition ->f7___y ->f7___x
+    <-f7___x Self GetUnitPixelCoordX sub <-f7___y Self GetUnitPixelCoordY sub <-s1___activeWindow @guiClickFind
+    #TraceStack
+endif
+
+
+#Keyboard listener
+<-s1___selectedTextField 0 gt if
+    @onKeyDownCheck
+endif
+
+
+
+
+####################################################################
+#          Event handler dispatch - implement on you own           #
+####################################################################
+
+#:guiEventDispatch # [ ... string - ]
+#    dup "InputFocus" eq if
+#        pop @inputFocus return
+#    endif
+#    dup "InputEnter" eq if
+#        pop @inputEnter return
+#    endif
+#    "Unhadled dispatch:" swap Trace2
+
+
+
+
+#On key down:
+:onKeyDown # [ string - ]
+->f8___key
+#<+key "pressed" Trace2
+<-f8___key @guiFindKey dup "" neq if
+    ->f8___key
+else
+    pop #remove the duplicated foun key
+    "-A-B-C-D-E-F-G-H-I-J-K-L-M-N-O-P-Q-R-S-T-U-V-W-X-Y-Z-" "-" <-f8___key "-" concat concat "" StringReplace StringLength 53 eq if
+        #the key is not contained in the string, return
+        return
+    endif
+    "LeftShift" GetKey "RightShift" GetKey or not if
+        <-f8___key ToLower ->f8___key
+    endif
+endif
+
+<-f8___key "Enter" eq if
+    <-s1___selectedTextFieldName "InputEnter" @guiEventDispatch
+    return
+endif
+
+<-s1___selectedTextField "TextBind.prpl" "TextToShow" GetScriptVar ->f8___text
+<-f8___key "Backspace" eq if
+    <-f8___text 0 <-f8___text StringLength 1 sub SubString ->f8___text
+else
+    <-f8___text <-f8___key concat ->f8___text
+endif
+<-s1___selectedTextField "TextBind.prpl" dup2 "TextToShow" <-f8___text SetScriptVar
+                                         "NeedsUpdate" 1 SetScriptVar
+
+
+
+
+:guiFindKey # [ string - string ]
+->f9___key
+<-guiCurrentKeyboard dup GetListCount 0 do
+    dup[I] ->f9___list
+    <-f9___list[1] <-f9___key eq if
+        1 ->f9___success
+        <-f9___list GetListCount 2 do
+            <-f9___list[I] GetKey not if
+                0 ->f9___success
+                break
+            endif
+        loop
+        <-f9___success if
+            pop <-f9___list[0] return
+        endif
+    endif
+loop
+pop "" return
+
+
+
+
+:guiShow #[ list - ]
+#save active window
+dup ->s1___activeWindow
+
+#delete all old text-binds
+"TextBindCoreId" Self GETCORESWITHVAR 0 do
+    0 DestroyUnit
+loop
+
+#remove images, they will be re-generated
+Self RemoveImages
+
+#now draw the GUI
+@guiDrawElements
+
+
+
+
+#blockstart #drawing
+#draws elements [ rootElement - ]
+:guiDrawElements #[ list - ]
+0 0 100 4 @guiMakeList ->f11___list # [e1, x1, y1, d1, e2, x2, y2, d2, ...]
+0 ->f11___i4
+100 ->f11___depth
+while <-f11___i4 <-f11___list GetListCount lt repeat
+    <-f11___list[<-f11___i4] ->f11___el
+    <-f11___list[<-f11___i4 1 add] <-f11___el[1] add ->f11___x
+    <-f11___list[<-f11___i4 2 add] <-f11___el[2] add ->f11___y
+    <-f11___list[<-f11___i4 3 add] ->f11___depth
+    
+    <-f11___depth <-f11___x <-f11___y <-f11___el @guiDrawImage
+    <-f11___el[0] "box" eq <-f11___el[0] "mainbox" eq or if
+        <-f11___el[5] dup GetListCount 0 do
+            dup[I] <-f11___list swap AppendToList
+            <-f11___list <-f11___x AppendToList
+            <-f11___list <-f11___y AppendToList
+            <-f11___list <-f11___depth 5 sub AppendToList
+        loop
+        pop
+    endif
+    <-f11___i4 4 add ->f11___i4
+endwhile
+
+
+
+
+:guiDrawImage #[ int float float list - ]
+#get position and size
+->f12___el <-f12___el[3] ->f12___width <-f12___el[4] ->f12___height
+<-f12___height 2.0 div add ->f12___y <-f12___width 2.0 div add ->f12___x ->f12___depth
+
+<-f12___el[0] "label" neq if
+    #get square
+    <-f12___el[0] "mainbox" eq if 
+    "guifill"        <-f12___imgCount 1 add dup ->f12___imgCount concat ->f12___fillName endif
+    "guibordertop"   <-f12___imgCount 1 add dup ->f12___imgCount concat ->f12___borderNameTop
+    "guiborderright" <-f12___imgCount 1 add dup ->f12___imgCount concat ->f12___borderNameRight
+    "guiborderdown"  <-f12___imgCount 1 add dup ->f12___imgCount concat ->f12___borderNameDown
+    "guiborderleft"  <-f12___imgCount 1 add dup ->f12___imgCount concat ->f12___borderNameLeft
+   #guilefttop"     <+imgCount 1 add dup +>imgCount concat +>borderNameLeftTop
+   #guirighttop"    <+imgCount 1 add dup +>imgCount concat +>borderNameRightTop
+   #guileftdown"    <+imgCount 1 add dup +>imgCount concat +>borderNameLeftDown
+   #guirightdown"   <+imgCount 1 add dup +>imgCount concat +>borderNameRightDown
+
+    <-f12___el[0] "mainbox" eq if
+    Self <-f12___fillName            <-ImgSquareFull SetImage endif
+    Self <-f12___borderNameTop       <-ImgSquareFull SetImage
+    Self <-f12___borderNameRight     <-ImgSquareFull SetImage
+    Self <-f12___borderNameDown      <-ImgSquareFull SetImage
+    Self <-f12___borderNameLeft      <-ImgSquareFull SetImage
+   #Self <+borderNameLeftTop   <-ImgSquareFull SetImage
+   #Self <+borderNameRightTop  <-ImgSquareFull SetImage
+   #Self <+borderNameLeftDown  <-ImgSquareFull SetImage
+   #Self <+borderNameRightDown <-ImgSquareFull SetImage
+
+    #set colors, pos and whatnot
+    <-f12___el[0] "mainbox" eq if
+    Self <-f12___fillName            <-guiFillRed   <-guiFillGreen   <-guiFillBlue   255 SetImageColor endif
+    Self <-f12___borderNameTop       <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
+    Self <-f12___borderNameRight     <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
+    Self <-f12___borderNameDown      <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
+    Self <-f12___borderNameLeft      <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
+   #Self <+borderNameLeftTop   <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
+   #Self <+borderNameRightTop  <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
+   #Self <+borderNameLeftDown  <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
+   #Self <+borderNameRightDown <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
+
+    <-f12___x <-f12___width  2.0 div add ->f12___xpw
+    <-f12___x <-f12___width  2.0 div sub ->f12___xmw
+    <-f12___y <-f12___height 2.0 div add ->f12___yph
+    <-f12___y <-f12___height 2.0 div sub ->f12___ymh
+    
+    <-f12___el[0] "mainbox" eq if
+    Self <-f12___fillName            <-f12___x <-f12___y     <-f12___depth SetImagePosition endif
+    Self <-f12___borderNameTop       <-f12___x <-f12___yph   <-f12___depth 1 sub SetImagePosition
+    Self <-f12___borderNameRight     <-f12___xpw <-f12___y   <-f12___depth 1 sub SetImagePosition
+    Self <-f12___borderNameDown      <-f12___x <-f12___ymh   <-f12___depth 1 sub SetImagePosition
+    Self <-f12___borderNameLeft      <-f12___xmw <-f12___y   <-f12___depth 1 sub SetImagePosition
+   #Self <+borderNameLeftTop   <+xmw <+yph <+depth 1 sub SetImagePosition
+   #Self <+borderNameRightTop  <+xpw <+yph <+depth 1 sub SetImagePosition
+   #Self <+borderNameLeftDown  <+xmw <+ymh <+depth 1 sub SetImagePosition
+   #Self <+borderNameRightDown <+xpw <+ymh <+depth 1 sub SetImagePosition
+   
+    <-f12___width  12.0 div 0.08333333333 add ->f12___w # 1 / 12
+    <-f12___height 12.0 div 0.08333333333 add ->f12___h
+
+    <-f12___el[0] "mainbox" eq if
+    Self <-f12___fillName            <-f12___w <-f12___h                     SetImageScale endif
+    Self <-f12___borderNameTop       <-f12___w 0.08333333333           SetImageScale # 1 / 12
+    Self <-f12___borderNameRight     0.08333333333 <-f12___h           SetImageScale
+    Self <-f12___borderNameDown      <-f12___w 0.08333333333           SetImageScale
+    Self <-f12___borderNameLeft      0.08333333333 <-f12___h           SetImageScale
+   #Self <+borderNameLeftTop   0.05892556509 0.05892556509 SetImageScale # sqrt(2)/2 /12
+   #Self <+borderNameRightTop  0.05892556509 0.05892556509 SetImageScale
+   #Self <+borderNameLeftDown  0.05892556509 0.05892556509 SetImageScale
+   #Self <+borderNameRightDown 0.05892556509 0.05892556509 SetImageScale
+    
+   #Self <+borderNameLeftTop   0.785398 SetImageRotation
+   #Self <+borderNameRightTop  0.785398 SetImageRotation
+   #Self <+borderNameLeftDown  0.785398 SetImageRotation
+   #Self <+borderNameRightDown 0.785398 SetImageRotation
+endif
+
+<-f12___el[0] "label" eq <-f12___el[0] "button" eq <-f12___el[0] "input" eq or or if
+    "PRPLCORE" 0 0 CreateUnit ->f12___textUnit
+    <-f12___textUnit "TextBind.prpl" AddScriptToUnit
+    <-f12___textUnit "TextBind.prpl" "TextBindCoreId" Self SetScriptVar
+    <-f12___textUnit "TextBind.prpl" "TextToShow" <-f12___el[5] SetScriptVar
+    <-f12___textUnit "TextBind.prpl" "TextX" <-f12___x 2 sub SetScriptVar
+    <-f12___textUnit "TextBind.prpl" "TextY" <-f12___y 2 sub SetScriptVar
+endif
+
+<-f12___el[0] "input" eq if
+    <-f12___el[5] <-f12___textUnit @guiRegisterInput
+    <-f12___textUnit "TextBind.prpl" dup2 "TextToShow" "" SetScriptVar
+endif
+
+<-f12___el[0] "label" eq if
+    <-f12___el[5] <-f12___textUnit @guiRegisterLabel
+endif
+
+
+#blockend
+
+
+
+
+#blockstart #click handlers
+
+
+
+#starts with mouse position relative to the core [x y element]
+:guiClickFind # [ float float list - ]
+->f13___e ->f13___y ->f13___x <-f13___e <-f13___x <-f13___y 3 @guiMakeList ->f13___list # [e1, x1, y1, e2, x2, y2, ...]
+0 ->f13___i3
+while <-f13___i3 <-f13___list GetListCount lt repeat
+    <-f13___list[<-f13___i3] ->f13___el
+    <-f13___list[<-f13___i3 1 add] <-f13___el[1] sub ->f13___mx
+    <-f13___list[<-f13___i3 2 add] <-f13___el[2] sub ->f13___my
+    
+    <-f13___mx 0 gte <-f13___my 0 gte <-f13___mx <-f13___el[3] lt <-f13___my <-f13___el[4] lt and and and if
+        <-f13___el[0] "box" eq <-f13___el[0] "mainbox" eq or if
+            <-f13___el[5] dup GetListCount 0 do
+                dup[I] <-f13___list swap AppendToList
+                <-f13___list <-f13___mx AppendToList
+                <-f13___list <-f13___my AppendToList
+            loop
+            pop
+        endif
+        <-f13___el[0] "button" eq if
+            <-f13___el[6] @guiDumpList @guiEventDispatch
+            return
+        endif
+        <-f13___el[0] "input" eq if
+            <-f13___el[5] ->s1___selectedTextFieldName
+            <-f13___el[5] @guiGetInput ->s1___selectedTextField
+            <-f13___el[5] "InputFocus" @guiEventDispatch
+            return
+        endif
+    endif
+    
+    <-f13___i3 3 add ->f13___i3
+endwhile
+
+
+
+
+#registers input [ name textBindUid ]
+:guiRegisterInput # [ string int - ]
+swap "f14___" swap Concat ->!
+
+:guiGetInput # [ string - int ]
+#sharenamespace
+"f14___" swap Concat <-!
+
+#registers label [ name textBindUid ]
+:guiRegisterLabel # [ string int - ]
+swap "f15___" swap Concat ->!
+
+:guiGetLabel # [ string - int ]
+#sharenamespace
+"f15___" swap Concat <-!
+
+
+
+#blockend
+
+
+
+
+#makes list from N arguments, ex: 1 2 3 3 @guiMakeList -> [1, 2, 3]
+:guiMakeList # [ ... int - list ]
+CreateList ->f16___list 
+0 do
+    <-f16___list swap PrependToList
+loop
+<-f16___list #return
+
+
+
+
+#dumps list onto stack in order (last item will be on top)
+:guiDumpList # [ list - ... ]
+dup GetListCount 0 do
+    dup[I] swap
+loop
+pop
+
+
+
+
+# makes list recurively with { elems... "]" format
+:guiMakeListRecursive # [ string ... string - list]
+CreateList ->f18___currentList
+CreateList ->f18___listStack #stack of all lists except current list
+
+dup "]" neq if
+    "Warning: expecting ']' on top of the stack." Trace
+    <-f18___currentList return
+else
+    pop
+endif
+
+while StackSize 0 gt repeat
+    dup dup GetType "STRING" eq swap "]" eq and if
+        pop
+        <-f18___listStack <-f18___currentList PrependToList
+        CreateList ->f18___currentList
+    else dup dup GetType "STRING" eq swap "[" eq and if
+        pop
+        <-f18___listStack GetListCount 0 gt if
+            <-f18___listStack[0] <-f18___currentList PrependToList
+            <-f18___listStack[0] ->f18___currentList
+            <-f18___listStack 0 RemoveListElement
+        else
+            <-f18___currentList return
+        endif
+    else
+        <-f18___currentList swap PrependToList
+    endif
+    endif
+endwhile
+
+"Error: malformed list notation format, entire stack was destroyed" Trace
+<-f18___currentList
+
+# -- Functions from 'c:\Users\Karel\Documents\My Games\particlefleet\editor\lib\Invoke.prpl+' -- #
+
+
+
+:invokeCustomFunctionA
+"Function" "A" "Called"
+
+:invokeCustomFunctionB
+swap Concat
+
+:invokeCustomFunctionC
+"Hello world" Trace
+
+
+
+
+######################################################################
+#         Add all functions you want to call with invoke here        #
+######################################################################
+
+#name includes the @
+:invokeUserFunction # [ ? string - ? ]
+ToLower
+dup "@invokeCustomfunctiona" eq if
+    pop @invokeCustomFunctionA return
+endif
+dup "@invokeCustomfunctionb" eq if
+    pop @invokeCustomFunctionB return
+endif
+dup "@invokeCustomfunctionc" eq if
+    pop @invokeCustomFunctionC return
+endif
+"User function no found:" swap Trace2
+
+
+
+
+######################################################################
+#                Do not change anything after this line              #
+######################################################################
+
+:invokeRegisterVariable # [ string - ]
+->f23___varName
+<-invokeUsedVariables dup GetListCount 0 do
+    dup[I] <-f23___varName eq if
+        pop return #variable already registerer
+    endif
+loop
+<-f23___varName AppendToList
+
+
+
+
+#tries to invoke variable command and pushes 'success' on top of the stack
+:tryInvokeVariable # [ value? string - value? bool ]
+dup "->" StartsWith if
+    StackSize 2 gte if # if stack has at least 2 elements (varable name and value) write
+        "->" "" StringReplace dup @invokeRegisterVariable ->! 1 return
+    else # else get rid of the varname and return success
+        pop 1 return
+    endif
+endif
+dup "<-" StartsWith if
+    "<-" "" StringReplace <-! 1 return
+endif
+dup "-?" StartsWith if
+    "-?" "" StringReplace -?! 1 return
+endif
+dup "--" StartsWith if
+    "--" "" StringReplace --! 1 return
+endif
+pop 0 return
+
+
+
+
+:tryInvokeCommand
+ToUpper
+
+dup "CLEARGLOBALS" eq if
+    pop CLEARGLOBALS 1 return
+endif
+#blockstart 
+dup "CLEARLOCALS" eq if
+    pop @invokeClearLocals 1 return
+endif
+dup "INVOCATIONCOUNT" eq if
+    pop INVOCATIONCOUNT 1 return
+endif
+dup "DELAY" eq if
+    pop DELAY 1 return
+endif
+dup "RANDINT" eq if
+    pop RANDINT 1 return
+endif
+dup "RANDFLOAT" eq if
+    pop RANDFLOAT 1 return
+endif
+dup "DUP" eq if
+    pop DUP 1 return
+endif
+dup "DUP2" eq if
+    pop DUP2 1 return
+endif
+dup "SWAP" eq if
+    pop SWAP 1 return
+endif
+dup "POP" eq if
+    pop POP 1 return
+endif
+dup "CLEARSTACK" eq if
+    pop CLEARSTACK 1 return
+endif
+dup "STACKSIZE" eq if
+    pop STACKSIZE 1 return
+endif
+dup "ASINT" eq if
+    pop ASINT 1 return
+endif
+dup "ASFLOAT" eq if
+    pop ASFLOAT 1 return
+endif
+dup "GT" eq if
+    pop GT 1 return
+endif
+dup "GTE" eq if
+    pop GTE 1 return
+endif
+dup "LT" eq if
+    pop LT 1 return
+endif
+dup "LTE" eq if
+    pop LTE 1 return
+endif
+dup "EQ" eq if
+    pop EQ 1 return
+endif
+dup "NEQ" eq if
+    pop NEQ 1 return
+endif
+dup "EQ0" eq if
+    pop EQ0 1 return
+endif
+dup "NEQ0" eq if
+    pop NEQ0 1 return
+endif
+dup "ADD" eq if
+    pop ADD 1 return
+endif
+dup "SUB" eq if
+    pop SUB 1 return
+endif
+dup "MUL" eq if
+    pop MUL 1 return
+endif
+dup "DIV" eq if
+    pop DIV 1 return
+endif
+dup "MOD" eq if
+    pop MOD 1 return
+endif
+dup "ABS" eq if
+    pop ABS 1 return
+endif
+dup "ROUND" eq if
+    pop ROUND 1 return
+endif
+dup "NEG" eq if
+    pop NEG 1 return
+endif
+dup "SIN" eq if
+    pop SIN 1 return
+endif
+dup "COS" eq if
+    pop COS 1 return
+endif
+dup "TAN" eq if
+    pop TAN 1 return
+endif
+dup "ASIN" eq if
+    pop ASIN 1 return
+endif
+dup "ACOS" eq if
+    pop ACOS 1 return
+endif
+dup "ATAN" eq if
+    pop ATAN 1 return
+endif
+dup "ATAN2" eq if
+    pop ATAN2 1 return
+endif
+dup "PI" eq if
+    pop PI 1 return
+endif
+dup "TAU" eq if
+    pop TAU 1 return
+endif
+dup "TWOPI" eq if
+    pop TWOPI 1 return
+endif
+dup "HALFPI" eq if
+    pop HALFPI 1 return
+endif
+dup "QUARTERPI" eq if
+    pop QUARTERPI 1 return
+endif
+dup "E" eq if
+    pop E 1 return
+endif
+dup "RAD2DEG" eq if
+    pop RAD2DEG 1 return
+endif
+dup "DEG2RAD" eq if
+    pop DEG2RAD 1 return
+endif
+dup "SIGNALGENERATOR" eq if
+    pop SIGNALGENERATOR 1 return
+endif
+dup "POW" eq if
+    pop POW 1 return
+endif
+dup "SQRT" eq if
+    pop SQRT 1 return
+endif
+dup "LOG" eq if
+    pop LOG 1 return
+endif
+dup "LN" eq if
+    pop LN 1 return
+endif
+dup "LOG10" eq if
+    pop LOG10 1 return
+endif
+dup "MIN" eq if
+    pop MIN 1 return
+endif
+dup "MAX" eq if
+    pop MAX 1 return
+endif
+dup "FLOOR" eq if
+    pop FLOOR 1 return
+endif
+dup "CEIL" eq if
+    pop CEIL 1 return
+endif
+dup "APPROXIMATELY" eq if
+    pop APPROXIMATELY 1 return
+endif
+dup "AVG2" eq if
+    pop AVG2 1 return
+endif
+dup "AND" eq if
+    pop AND 1 return
+endif
+dup "OR" eq if
+    pop OR 1 return
+endif
+dup "XOR" eq if
+    pop XOR 1 return
+endif
+dup "NOT" eq if
+    pop NOT 1 return
+endif
+dup "TRUE" eq if
+    pop TRUE 1 return
+endif
+dup "FALSE" eq if
+    pop FALSE 1 return
+endif
+dup "DOUBLEQUOTE" eq if
+    pop DOUBLEQUOTE 1 return
+endif
+dup "CR" eq if
+    pop CR 1 return
+endif
+dup "LF" eq if
+    pop LF 1 return
+endif
+dup "GETTYPE" eq if
+    pop GETTYPE 1 return
+endif
+dup "CREATELIST" eq if
+    pop CREATELIST 1 return
+endif
+dup "CREATELISTSTARTINGSIZE" eq if
+    pop CREATELISTSTARTINGSIZE 1 return
+endif
+dup "GETLISTELEMENT" eq if
+    pop GETLISTELEMENT 1 return
+endif
+dup "SETLISTELEMENT" eq if
+    pop SETLISTELEMENT 1 return
+endif
+dup "SETLISTELEMENTRPN" eq if
+    pop SETLISTELEMENTRPN 1 return
+endif
+dup "APPENDTOLIST" eq if
+    pop APPENDTOLIST 1 return
+endif
+dup "PREPENDTOLIST" eq if
+    pop PREPENDTOLIST 1 return
+endif
+dup "APPENDSTACKTOLIST" eq if
+    pop APPENDSTACKTOLIST 1 return
+endif
+dup "PREPENDSTACKTOLIST" eq if
+    pop PREPENDSTACKTOLIST 1 return
+endif
+dup "INSERTLISTELEMENT" eq if
+    pop INSERTLISTELEMENT 1 return
+endif
+dup "REMOVELISTELEMENT" eq if
+    pop REMOVELISTELEMENT 1 return
+endif
+dup "GETLISTCOUNT" eq if
+    pop GETLISTCOUNT 1 return
+endif
+dup "COPYLIST" eq if
+    pop COPYLIST 1 return
+endif
+dup "DEEPCOPYLIST" eq if
+    pop DEEPCOPYLIST 1 return
+endif
+dup "GETKEY" eq if
+    pop GETKEY 1 return
+endif
+dup "GETKEYDOWN" eq if
+    pop GETKEYDOWN 1 return
+endif
+dup "GETKEYUP" eq if
+    pop GETKEYUP 1 return
+endif
+dup "GETMOUSEBUTTON" eq if
+    pop GETMOUSEBUTTON 1 return
+endif
+dup "GETMOUSEBUTTONDOWN" eq if
+    pop GETMOUSEBUTTONDOWN 1 return
+endif
+dup "GETMOUSEBUTTONUP" eq if
+    pop GETMOUSEBUTTONUP 1 return
+endif
+dup "GETMOUSEPOSITION" eq if
+    pop GETMOUSEPOSITION 1 return
+endif
+dup "GETMOUSESCREENPOSITION" eq if
+    pop GETMOUSESCREENPOSITION 1 return
+endif
+dup "GETMOUSESCREENPIXELPOSITION" eq if
+    pop GETMOUSESCREENPIXELPOSITION 1 return
+endif
+dup "GETMOUSECELL" eq if
+    pop GETMOUSECELL 1 return
+endif
+dup "RESETGAMETIME" eq if
+    pop RESETGAMETIME 1 return
+endif
+dup "SETGAMETIME" eq if
+    pop SETGAMETIME 1 return
+endif
+dup "SETGAMETIMEFRAMES" eq if
+    pop SETGAMETIMEFRAMES 1 return
+endif
+dup "GETGAMETIMEFRAMES" eq if
+    pop GETGAMETIMEFRAMES 1 return
+endif
+dup "PAUSEGAME" eq if
+    pop PAUSEGAME 1 return
+endif
+dup "UNPAUSEGAME" eq if
+    pop UNPAUSEGAME 1 return
+endif
+dup "OPERATEWHILEPAUSED" eq if
+    pop OPERATEWHILEPAUSED 1 return
+endif
+dup "ISPAUSED" eq if
+    pop ISPAUSED 1 return
+endif
+dup "USERCANCELED" eq if
+    pop USERCANCELED 1 return
+endif
+dup "DISTANCE" eq if
+    pop DISTANCE 1 return
+endif
+dup "SHORTESTANGLE" eq if
+    pop SHORTESTANGLE 1 return
+endif
+dup "CONCAT" eq if
+    pop CONCAT 1 return
+endif
+dup "SUBSTRING" eq if
+    pop SUBSTRING 1 return
+endif
+dup "STARTSWITH" eq if
+    pop STARTSWITH 1 return
+endif
+dup "ENDSWITH" eq if
+    pop ENDSWITH 1 return
+endif
+dup "SPLIT" eq if
+    pop SPLIT 1 return
+endif
+dup "STRINGTOLIST" eq if
+    pop STRINGTOLIST 1 return
+endif
+dup "STRINGLENGTH" eq if
+    pop STRINGLENGTH 1 return
+endif
+dup "TOUPPER" eq if
+    pop TOUPPER 1 return
+endif
+dup "TOLOWER" eq if
+    pop TOLOWER 1 return
+endif
+dup "STRINGREPLACE" eq if
+    pop STRINGREPLACE 1 return
+endif
+dup "MAPWIDTH" eq if
+    pop MAPWIDTH 1 return
+endif
+dup "MAPHEIGHT" eq if
+    pop MAPHEIGHT 1 return
+endif
+dup "MAPCELLWIDTH" eq if
+    pop MAPCELLWIDTH 1 return
+endif
+dup "MAPCELLHEIGHT" eq if
+    pop MAPCELLHEIGHT 1 return
+endif
+dup "SCREENWIDTH" eq if
+    pop SCREENWIDTH 1 return
+endif
+dup "SCREENHEIGHT" eq if
+    pop SCREENHEIGHT 1 return
+endif
+dup "RANDXCOORD" eq if
+    pop RANDXCOORD 1 return
+endif
+dup "RANDYCOORD" eq if
+    pop RANDYCOORD 1 return
+endif
+dup "RANDCOORDS" eq if
+    pop RANDCOORDS 1 return
+endif
+dup "RANDCOORDSINRANGE" eq if
+    pop RANDCOORDSINRANGE 1 return
+endif
+dup "CURRENTCOORDS" eq if
+    pop CURRENTCOORDS 1 return
+endif
+dup "CURRENTX" eq if
+    pop CURRENTX 1 return
+endif
+dup "CURRENTY" eq if
+    pop CURRENTY 1 return
+endif
+dup "SETUNITCURRENTCOORDS" eq if
+    pop SETUNITCURRENTCOORDS 1 return
+endif
+dup "SETUNITCURRENTX" eq if
+    pop SETUNITCURRENTX 1 return
+endif
+dup "SETUNITCURRENTY" eq if
+    pop SETUNITCURRENTY 1 return
+endif
+dup "SETCURRENTCOORDS" eq if
+    pop SETCURRENTCOORDS 1 return
+endif
+dup "SETCURRENTX" eq if
+    pop SETCURRENTX 1 return
+endif
+dup "SETCURRENTY" eq if
+    pop SETCURRENTY 1 return
+endif
+dup "CURRENTPIXELCOORDS" eq if
+    pop CURRENTPIXELCOORDS 1 return
+endif
+dup "GETUNITTRANSFORMPOSITION" eq if
+    pop GETUNITTRANSFORMPOSITION 1 return
+endif
+dup "SETSCREENMODE" eq if
+    pop SETSCREENMODE 1 return
+endif
+dup "SETSCREENCOORDS" eq if
+    pop SETSCREENCOORDS 1 return
+endif
+dup "SETSCREENCOORDX" eq if
+    pop SETSCREENCOORDX 1 return
+endif
+dup "SETSCREENCOORDY" eq if
+    pop SETSCREENCOORDY 1 return
+endif
+dup "SETSCREENPIXELCOORDS" eq if
+    pop SETSCREENPIXELCOORDS 1 return
+endif
+dup "SETSCREENPIXELCOORDX" eq if
+    pop SETSCREENPIXELCOORDX 1 return
+endif
+dup "SETSCREENPIXELCOORDY" eq if
+    pop SETSCREENPIXELCOORDY 1 return
+endif
+dup "GETBUILDSLOTSCREENCOORDS" eq if
+    pop GETBUILDSLOTSCREENCOORDS 1 return
+endif
+dup "GETCONTROLPANELBUTTONSCREENCOORDS" eq if
+    pop GETCONTROLPANELBUTTONSCREENCOORDS 1 return
+endif
+dup "GETTECHPANELVISIBLE" eq if
+    pop GETTECHPANELVISIBLE 1 return
+endif
+dup "SETTECHPANELVISIBLE" eq if
+    pop SETTECHPANELVISIBLE 1 return
+endif
+dup "SETUNITSELECTABLE" eq if
+    pop SETUNITSELECTABLE 1 return
+endif
+dup "CELLTOPIXEL" eq if
+    pop CELLTOPIXEL 1 return
+endif
+dup "PIXELTOCELL" eq if
+    pop PIXELTOCELL 1 return
+endif
+dup "CREATEEFFECT" eq if
+    pop CREATEEFFECT 1 return
+endif
+dup "DESTROYEFFECT" eq if
+    pop DESTROYEFFECT 1 return
+endif
+dup "GETALLUNITSINRANGE" eq if
+    pop GETALLUNITSINRANGE 1 return
+endif
+dup "GETALLSHIPSINRANGE" eq if
+    pop GETALLSHIPSINRANGE 1 return
+endif
+dup "GETNEARESTSHIPINRANGE" eq if
+    pop GETNEARESTSHIPINRANGE 1 return
+endif
+dup "GETCORESWITHVAR" eq if
+    pop GETCORESWITHVAR 1 return
+endif
+dup "ADDSCRIPTTOUNIT" eq if
+    pop ADDSCRIPTTOUNIT 1 return
+endif
+dup "SETSCRIPTVAR" eq if
+    pop SETSCRIPTVAR 1 return
+endif
+dup "GETSCRIPTVAR" eq if
+    pop GETSCRIPTVAR 1 return
+endif
+dup "SETIMAGE" eq if
+    pop SETIMAGE 1 return
+endif
+dup "REMOVEIMAGES" eq if
+    pop REMOVEIMAGES 1 return
+endif
+dup "SETIMAGECOLOR" eq if
+    pop SETIMAGECOLOR 1 return
+endif
+dup "SETIMAGEROTATION" eq if
+    pop SETIMAGEROTATION 1 return
+endif
+dup "SETIMAGEPOSITION" eq if
+    pop SETIMAGEPOSITION 1 return
+endif
+dup "SETIMAGEPOSITIONX" eq if
+    pop SETIMAGEPOSITIONX 1 return
+endif
+dup "SETIMAGEPOSITIONY" eq if
+    pop SETIMAGEPOSITIONY 1 return
+endif
+dup "SETIMAGEPOSITIONZ" eq if
+    pop SETIMAGEPOSITIONZ 1 return
+endif
+dup "SETIMAGELAYER" eq if
+    pop SETIMAGELAYER 1 return
+endif
+dup "SETIMAGEORDER" eq if
+    pop SETIMAGEORDER 1 return
+endif
+dup "SETIMAGESCALE" eq if
+    pop SETIMAGESCALE 1 return
+endif
+dup "SETIMAGESCALEX" eq if
+    pop SETIMAGESCALEX 1 return
+endif
+dup "SETIMAGESCALEY" eq if
+    pop SETIMAGESCALEY 1 return
+endif
+dup "GETIMAGECOLOR" eq if
+    pop GETIMAGECOLOR 1 return
+endif
+dup "GETIMAGEROTATION" eq if
+    pop GETIMAGEROTATION 1 return
+endif
+dup "GETIMAGEPOSITION" eq if
+    pop GETIMAGEPOSITION 1 return
+endif
+dup "GETIMAGEPOSITIONX" eq if
+    pop GETIMAGEPOSITIONX 1 return
+endif
+dup "GETIMAGEPOSITIONY" eq if
+    pop GETIMAGEPOSITIONY 1 return
+endif
+dup "GETIMAGEPOSITIONZ" eq if
+    pop GETIMAGEPOSITIONZ 1 return
+endif
+dup "GETIMAGELAYER" eq if
+    pop GETIMAGELAYER 1 return
+endif
+dup "GETIMAGEORDER" eq if
+    pop GETIMAGEORDER 1 return
+endif
+dup "GETIMAGESCALE" eq if
+    pop GETIMAGESCALE 1 return
+endif
+dup "GETIMAGESCALEX" eq if
+    pop GETIMAGESCALEX 1 return
+endif
+dup "GETIMAGESCALEY" eq if
+    pop GETIMAGESCALEY 1 return
+endif
+dup "WINMISSION" eq if
+    pop WINMISSION 1 return
+endif
+dup "FAILMISSION" eq if
+    pop FAILMISSION 1 return
+endif
+dup "SETFAILONHQLOSS" eq if
+    pop SETFAILONHQLOSS 1 return
+endif
+dup "GETFAILONHQLOSS" eq if
+    pop GETFAILONHQLOSS 1 return
+endif
+dup "SETHQJUMPTIME" eq if
+    pop SETHQJUMPTIME 1 return
+endif
+dup "SETSHOWSPECIALENDING" eq if
+    pop SETSHOWSPECIALENDING 1 return
+endif
+dup "PLAYSOUND" eq if
+    pop PLAYSOUND 1 return
+endif
+dup "PLAYSOUNDWITHVOLUME" eq if
+    pop PLAYSOUNDWITHVOLUME 1 return
+endif
+dup "SETTEXT" eq if
+    pop SETTEXT 1 return
+endif
+dup "SETTEXTCOLOR" eq if
+    pop SETTEXTCOLOR 1 return
+endif
+dup "SETTEXTSIZE" eq if
+    pop SETTEXTSIZE 1 return
+endif
+dup "SETTEXTX" eq if
+    pop SETTEXTX 1 return
+endif
+dup "SETTEXTY" eq if
+    pop SETTEXTY 1 return
+endif
+dup "SETTEXTROTATION" eq if
+    pop SETTEXTROTATION 1 return
+endif
+dup "SETTEXTORDER" eq if
+    pop SETTEXTORDER 1 return
+endif
+dup "SETTEXTALIGNMENT" eq if
+    pop SETTEXTALIGNMENT 1 return
+endif
+dup "SETTEXTPIVOTX" eq if
+    pop SETTEXTPIVOTX 1 return
+endif
+dup "SETTEXTPIVOTY" eq if
+    pop SETTEXTPIVOTY 1 return
+endif
+dup "SHOWCONVERSATION" eq if
+    pop SHOWCONVERSATION 1 return
+endif
+dup "SHOWCONVERSATIONNOPAUSE" eq if
+    pop SHOWCONVERSATIONNOPAUSE 1 return
+endif
+dup "SHOWCONVERSATIONAUTOMODE" eq if
+    pop SHOWCONVERSATIONAUTOMODE 1 return
+endif
+dup "CLOSECONVERSATION" eq if
+    pop CLOSECONVERSATION 1 return
+endif
+dup "ADDCONVERSATIONMESSAGE" eq if
+    pop ADDCONVERSATIONMESSAGE 1 return
+endif
+dup "CLEARCONVERSATION" eq if
+    pop CLEARCONVERSATION 1 return
+endif
+dup "DESTROYCONVERSATION" eq if
+    pop DESTROYCONVERSATION 1 return
+endif
+dup "SHOWMESSAGE" eq if
+    pop SHOWMESSAGE 1 return
+endif
+dup "SHOWMESSAGEDISMISSIBLE" eq if
+    pop SHOWMESSAGEDISMISSIBLE 1 return
+endif
+dup "WASMESSAGEDISMISSED" eq if
+    pop WASMESSAGEDISMISSED 1 return
+endif
+dup "CONVERSATIONSHOWING" eq if
+    pop CONVERSATIONSHOWING 1 return
+endif
+dup "SPECIFICCONVERSATIONSHOWING" eq if
+    pop SPECIFICCONVERSATIONSHOWING 1 return
+endif
+dup "CREATEINDICATORARROW" eq if
+    pop CREATEINDICATORARROW 1 return
+endif
+dup "DESTROYINDICATORARROW" eq if
+    pop DESTROYINDICATORARROW 1 return
+endif
+dup "SETINDICATORARROWPOSITION" eq if
+    pop SETINDICATORARROWPOSITION 1 return
+endif
+dup "SETINDICATORARROWROTATION" eq if
+    pop SETINDICATORARROWROTATION 1 return
+endif
+dup "SETINDICATORARROWCOLOR" eq if
+    pop SETINDICATORARROWCOLOR 1 return
+endif
+dup "SELF" eq if
+    pop SELF 1 return
+endif
+dup "GETSHIPATTRIBUTE" eq if
+    pop GETSHIPATTRIBUTE 1 return
+endif
+dup "SETSHIPATTRIBUTE" eq if
+    pop SETSHIPATTRIBUTE 1 return
+endif
+dup "GETATTRIBUTE" eq if
+    pop GETATTRIBUTE 1 return
+endif
+dup "SETATTRIBUTE" eq if
+    pop SETATTRIBUTE 1 return
+endif
+dup "GETUNITTYPE" eq if
+    pop GETUNITTYPE 1 return
+endif
+dup "SETTIMER0" eq if
+    pop SETTIMER0 1 return
+endif
+dup "SETTIMER1" eq if
+    pop SETTIMER1 1 return
+endif
+dup "SETTIMER2" eq if
+    pop SETTIMER2 1 return
+endif
+dup "SETTIMER3" eq if
+    pop SETTIMER3 1 return
+endif
+dup "GETTIMER0" eq if
+    pop GETTIMER0 1 return
+endif
+dup "GETTIMER1" eq if
+    pop GETTIMER1 1 return
+endif
+dup "GETTIMER2" eq if
+    pop GETTIMER2 1 return
+endif
+dup "GETTIMER3" eq if
+    pop GETTIMER3 1 return
+endif
+dup "ISEDITMODE" eq if
+    pop ISEDITMODE 1 return
+endif
+dup "DEBUG" eq if
+    pop DEBUG 1 return
+endif
+dup "TRACE" eq if
+    pop TRACE 1 return
+endif
+dup "TRACE2" eq if
+    pop TRACE2 1 return
+endif
+dup "TRACE3" eq if
+    pop TRACE3 1 return
+endif
+dup "TRACE4" eq if
+    pop TRACE4 1 return
+endif
+dup "TRACE5" eq if
+    pop TRACE5 1 return
+endif
+dup "TRACEALL" eq if
+    pop TRACEALL 1 return
+endif
+dup "TRACEALLSP" eq if
+    pop TRACEALLSP 1 return
+endif
+dup "TRACESTACK" eq if
+    pop TRACESTACK 1 return
+endif
+dup "CLEARTRACELOG" eq if
+    pop CLEARTRACELOG 1 return
+endif
+dup "GETUPDATECOUNT" eq if
+    pop GETUPDATECOUNT 1 return
+endif
+dup "PRINT" eq if
+    pop PRINT 1 return
+endif
+dup "PRINT2" eq if
+    pop PRINT2 1 return
+endif
+dup "PRINT3" eq if
+    pop PRINT3 1 return
+endif
+dup "PRINT4" eq if
+    pop PRINT4 1 return
+endif
+dup "PRINT5" eq if
+    pop PRINT5 1 return
+endif
+dup "PRINTALL" eq if
+    pop PRINTALL 1 return
+endif
+dup "PRINTALLSP" eq if
+    pop PRINTALLSP 1 return
+endif
+dup "PRINTSTACK" eq if
+    pop PRINTSTACK 1 return
+endif
+dup "NULLCOMMAND" eq if
+    pop NULLCOMMAND 1 return
+endif
+dup "CONST_LATHETARGETS" eq if
+    pop CONST_LATHETARGETS 1 return
+endif
+dup "CONST_CREATEENERGYSOURCEWHENDESTROYED" eq if
+    pop CONST_CREATEENERGYSOURCEWHENDESTROYED 1 return
+endif
+dup "CONST_CREATEAMPGEMWHENDESTROYED" eq if
+    pop CONST_CREATEAMPGEMWHENDESTROYED 1 return
+endif
+dup "CONST_ISENEMY" eq if
+    pop CONST_ISENEMY 1 return
+endif
+dup "CONST_GROWSTRUC" eq if
+    pop CONST_GROWSTRUC 1 return
+endif
+dup "CONST_CREATEFOOTPRINT" eq if
+    pop CONST_CREATEFOOTPRINT 1 return
+endif
+dup "CONST_MISSIONGOAL" eq if
+    pop CONST_MISSIONGOAL 1 return
+endif
+dup "CONST_TAKEMAPSPACE" eq if
+    pop CONST_TAKEMAPSPACE 1 return
+endif
+dup "CONST_ISBUILDING" eq if
+    pop CONST_ISBUILDING 1 return
+endif
+dup "CONST_ISDESTROYED" eq if
+    pop CONST_ISDESTROYED 1 return
+endif
+dup "CONST_SHIP_ISENEMY" eq if
+    pop CONST_SHIP_ISENEMY 1 return
+endif
+dup "CONST_SHIP_HULLSIZE" eq if
+    pop CONST_SHIP_HULLSIZE 1 return
+endif
+dup "CONST_SHIP_HULLBUILT" eq if
+    pop CONST_SHIP_HULLBUILT 1 return
+endif
+dup "CONST_SHIP_CMCOST" eq if
+    pop CONST_SHIP_CMCOST 1 return
+endif
+dup "CONST_SHIP_CMBUILTAMT" eq if
+    pop CONST_SHIP_CMBUILTAMT 1 return
+endif
+dup "CONST_SHIP_ISCONNECTEDTOENERGYMINE" eq if
+    pop CONST_SHIP_ISCONNECTEDTOENERGYMINE 1 return
+endif
+dup "CONST_COORDX" eq if
+    pop CONST_COORDX 1 return
+endif
+dup "CONST_COORDY" eq if
+    pop CONST_COORDY 1 return
+endif
+dup "CONST_PIXELCOORDX" eq if
+    pop CONST_PIXELCOORDX 1 return
+endif
+dup "CONST_PIXELCOORDY" eq if
+    pop CONST_PIXELCOORDY 1 return
+endif
+dup "CONST_RECEIVESPACKETS" eq if
+    pop CONST_RECEIVESPACKETS 1 return
+endif
+dup "SIGNAL_NONE" eq if
+    pop SIGNAL_NONE 1 return
+endif
+dup "SIGNAL_SINE" eq if
+    pop SIGNAL_SINE 1 return
+endif
+dup "SIGNAL_SQUARE" eq if
+    pop SIGNAL_SQUARE 1 return
+endif
+dup "SIGNAL_TRIANGLE" eq if
+    pop SIGNAL_TRIANGLE 1 return
+endif
+dup "SIGNAL_SAWTOOTH" eq if
+    pop SIGNAL_SAWTOOTH 1 return
+endif
+dup "SIGNAL_RANDOM" eq if
+    pop SIGNAL_RANDOM 1 return
+endif
+dup "SIGNAL_CONSTANT" eq if
+    pop SIGNAL_CONSTANT 1 return
+endif
+dup "ISUNIT" eq if
+    pop ISUNIT 1 return
+endif
+dup "SETUNITISGOAL" eq if
+    pop SETUNITISGOAL 1 return
+endif
+dup "GETUNITISGOAL" eq if
+    pop GETUNITISGOAL 1 return
+endif
+dup "CREATEUNIT" eq if
+    pop CREATEUNIT 1 return
+endif
+dup "DESTROYUNIT" eq if
+    pop DESTROYUNIT 1 return
+endif
+dup "UNITISDESTROYED" eq if
+    pop UNITISDESTROYED 1 return
+endif
+dup "INITCANNONSHOT" eq if
+    pop INITCANNONSHOT 1 return
+endif
+dup "INITMISSILE" eq if
+    pop INITMISSILE 1 return
+endif
+dup "MOVESHIP" eq if
+    pop MOVESHIP 1 return
+endif
+dup "ROTATESHIPTOCELL" eq if
+    pop ROTATESHIPTOCELL 1 return
+endif
+dup "ROTATESHIPTOPIXEL" eq if
+    pop ROTATESHIPTOPIXEL 1 return
+endif
+dup "ROTATESHIP" eq if
+    pop ROTATESHIP 1 return
+endif
+dup "ROTATESHIPDEGREES" eq if
+    pop ROTATESHIPDEGREES 1 return
+endif
+dup "GETSHIPHULLSECTION" eq if
+    pop GETSHIPHULLSECTION 1 return
+endif
+dup "GETSHIPHULLSECTIONBUILT" eq if
+    pop GETSHIPHULLSECTIONBUILT 1 return
+endif
+dup "DELETESHIPFROMSLOT" eq if
+    pop DELETESHIPFROMSLOT 1 return
+endif
+dup "GETSHIPFROMSLOT" eq if
+    pop GETSHIPFROMSLOT 1 return
+endif
+dup "GETSLOTFROMSHIP" eq if
+    pop GETSLOTFROMSHIP 1 return
+endif
+dup "GETSHIPNAMEFROMSLOT" eq if
+    pop GETSHIPNAMEFROMSLOT 1 return
+endif
+dup "GETSHIPSLOTCOUNT" eq if
+    pop GETSHIPSLOTCOUNT 1 return
+endif
+dup "ADDSTOCKSHIPTOINVENTORY" eq if
+    pop ADDSTOCKSHIPTOINVENTORY 1 return
+endif
+dup "ADDCUSTOMSHIPTOINVENTORY" eq if
+    pop ADDCUSTOMSHIPTOINVENTORY 1 return
+endif
+dup "ADDGAMEEVENT" eq if
+    pop ADDGAMEEVENT 1 return
+endif
+dup "ADDGAMEEVENTATCELL" eq if
+    pop ADDGAMEEVENTATCELL 1 return
+endif
+dup "ADDGAMEEVENTATPIXEL" eq if
+    pop ADDGAMEEVENTATPIXEL 1 return
+endif
+dup "SETGAMEEVENTFADETIME" eq if
+    pop SETGAMEEVENTFADETIME 1 return
+endif
+dup "SETGAMEEVENTMESSAGE" eq if
+    pop SETGAMEEVENTMESSAGE 1 return
+endif
+dup "SETGAMEEVENTTYPE" eq if
+    pop SETGAMEEVENTTYPE 1 return
+endif
+dup "GETLANDCOUNT" eq if
+    pop GETLANDCOUNT 1 return
+endif
+dup "GETENEMYMIRECOUNT" eq if
+    pop GETENEMYMIRECOUNT 1 return
+endif
+dup "GETMIRECOUNT" eq if
+    pop GETMIRECOUNT 1 return
+endif
+dup "GETENERGYSOURCECOUNT" eq if
+    pop GETENERGYSOURCECOUNT 1 return
+endif
+dup "GETENERGYSOURCES" eq if
+    pop GETENERGYSOURCES 1 return
+endif
+dup "GETRANDOMENERGYSOURCE" eq if
+    pop GETRANDOMENERGYSOURCE 1 return
+endif
+dup "GETGLOBALSTOREDENERGY" eq if
+    pop GETGLOBALSTOREDENERGY 1 return
+endif
+dup "SETGLOBALSTOREDENERGY" eq if
+    pop SETGLOBALSTOREDENERGY 1 return
+endif
+dup "GETAMPGEMCOUNT" eq if
+    pop GETAMPGEMCOUNT 1 return
+endif
+dup "SETAMPGEMCOUNT" eq if
+    pop SETAMPGEMCOUNT 1 return
+endif
+dup "GETMAXBLUEEMERGENT" eq if
+    pop GETMAXBLUEEMERGENT 1 return
+endif
+dup "GETMAXREDEMERGENT" eq if
+    pop GETMAXREDEMERGENT 1 return
+endif
+dup "GETBLUEEMERGENTRATE" eq if
+    pop GETBLUEEMERGENTRATE 1 return
+endif
+dup "GETREDEMERGENTRATE" eq if
+    pop GETREDEMERGENTRATE 1 return
+endif
+dup "SETMAXBLUEEMERGENT" eq if
+    pop SETMAXBLUEEMERGENT 1 return
+endif
+dup "SETMAXREDEMERGENT" eq if
+    pop SETMAXREDEMERGENT 1 return
+endif
+dup "SETBLUEEMERGENTRATE" eq if
+    pop SETBLUEEMERGENTRATE 1 return
+endif
+dup "SETREDEMERGENTRATE" eq if
+    pop SETREDEMERGENTRATE 1 return
+endif
+dup "CREATEEMERGENT" eq if
+    pop CREATEEMERGENT 1 return
+endif
+dup "GETTECHAVAILABILITY" eq if
+    pop GETTECHAVAILABILITY 1 return
+endif
+dup "GETALLOWSHIPAMP" eq if
+    pop GETALLOWSHIPAMP 1 return
+endif
+dup "SETTECHAVAILABILITY" eq if
+    pop SETTECHAVAILABILITY 1 return
+endif
+dup "SETALLOWSHIPAMP" eq if
+    pop SETALLOWSHIPAMP 1 return
+endif
+dup "SETHULLBUILDRATEMOD" eq if
+    pop SETHULLBUILDRATEMOD 1 return
+endif
+dup "SETPICKUPTYPE" eq if
+    pop SETPICKUPTYPE 1 return
+endif
+dup "SETDOPPELBEHAVIOR" eq if
+    pop SETDOPPELBEHAVIOR 1 return
+endif
+dup "SETDOPPELHOMECELL" eq if
+    pop SETDOPPELHOMECELL 1 return
+endif
+dup "DESTROYPARTICLE" eq if
+    pop DESTROYPARTICLE 1 return
+endif
+dup "DESTROYBOND" eq if
+    pop DESTROYBOND 1 return
+endif
+dup "CREATEPARTICLE" eq if
+    pop CREATEPARTICLE 1 return
+endif
+dup "PARTICLEEXISTS" eq if
+    pop PARTICLEEXISTS 1 return
+endif
+dup "GETOWNEDPARTICLECOUNT" eq if
+    pop GETOWNEDPARTICLECOUNT 1 return
+endif
+dup "CREATEBOND" eq if
+    pop CREATEBOND 1 return
+endif
+dup "BONDEXISTS" eq if
+    pop BONDEXISTS 1 return
+endif
+dup "GETPARTICLESINRANGE" eq if
+    pop GETPARTICLESINRANGE 1 return
+endif
+dup "GETPARTICLESINRADIUS" eq if
+    pop GETPARTICLESINRADIUS 1 return
+endif
+dup "GETPARTICLECOUNTINRADIUS" eq if
+    pop GETPARTICLECOUNTINRADIUS 1 return
+endif
+dup "GETNEARESTTARGET" eq if
+    pop GETNEARESTTARGET 1 return
+endif
+dup "DAMAGEPARTICLE" eq if
+    pop DAMAGEPARTICLE 1 return
+endif
+dup "ISEMERGENT" eq if
+    pop ISEMERGENT 1 return
+endif
+dup "ISHULL" eq if
+    pop ISHULL 1 return
+endif
+dup "ISPARTICLE" eq if
+    pop ISPARTICLE 1 return
+endif
+dup "ISOMNI" eq if
+    pop ISOMNI 1 return
+endif
+dup "GETPARTICLEPOSITION" eq if
+    pop GETPARTICLEPOSITION 1 return
+endif
+dup "SETPARTICLEPOSITION" eq if
+    pop SETPARTICLEPOSITION 1 return
+endif
+dup "TELEPORTPARTICLE" eq if
+    pop TELEPORTPARTICLE 1 return
+endif
+dup "FINDPARTICLETARGET" eq if
+    pop FINDPARTICLETARGET 1 return
+endif
+dup "GETPARTICLEMAXSPEED" eq if
+    pop GETPARTICLEMAXSPEED 1 return
+endif
+dup "GETPARTICLEMAXAGE" eq if
+    pop GETPARTICLEMAXAGE 1 return
+endif
+dup "GETPARTICLEMAXDISTANCE" eq if
+    pop GETPARTICLEMAXDISTANCE 1 return
+endif
+dup "GETPARTICLEHEALTH" eq if
+    pop GETPARTICLEHEALTH 1 return
+endif
+dup "GETPARTICLEDESTROYATEDGE" eq if
+    pop GETPARTICLEDESTROYATEDGE 1 return
+endif
+dup "GETPARTICLEMASS" eq if
+    pop GETPARTICLEMASS 1 return
+endif
+dup "GETPARTICLEDRAG" eq if
+    pop GETPARTICLEDRAG 1 return
+endif
+dup "GETPARTICLEIMMEDIATEFORCE" eq if
+    pop GETPARTICLEIMMEDIATEFORCE 1 return
+endif
+dup "GETPARTICLETARGET" eq if
+    pop GETPARTICLETARGET 1 return
+endif
+dup "GETPARTICLETARGETATTRACTIONINTERVAL" eq if
+    pop GETPARTICLETARGETATTRACTIONINTERVAL 1 return
+endif
+dup "GETPARTICLETARGETATTRACTIONFORCE" eq if
+    pop GETPARTICLETARGETATTRACTIONFORCE 1 return
+endif
+dup "GETPARTICLESAMEINTERACTION" eq if
+    pop GETPARTICLESAMEINTERACTION 1 return
+endif
+dup "GETPARTICLEMOTION" eq if
+    pop GETPARTICLEMOTION 1 return
+endif
+dup "GETPARTICLEHASTELEPORTED" eq if
+    pop GETPARTICLEHASTELEPORTED 1 return
+endif
+dup "SETPARTICLEMAXSPEED" eq if
+    pop SETPARTICLEMAXSPEED 1 return
+endif
+dup "SETPARTICLEMAXAGE" eq if
+    pop SETPARTICLEMAXAGE 1 return
+endif
+dup "SETPARTICLEMAXDISTANCE" eq if
+    pop SETPARTICLEMAXDISTANCE 1 return
+endif
+dup "SETPARTICLEHEALTH" eq if
+    pop SETPARTICLEHEALTH 1 return
+endif
+dup "SETPARTICLEDESTROYATEDGE" eq if
+    pop SETPARTICLEDESTROYATEDGE 1 return
+endif
+dup "SETPARTICLEMASS" eq if
+    pop SETPARTICLEMASS 1 return
+endif
+dup "SETPARTICLEDRAG" eq if
+    pop SETPARTICLEDRAG 1 return
+endif
+dup "SETPARTICLEIMMEDIATEFORCE" eq if
+    pop SETPARTICLEIMMEDIATEFORCE 1 return
+endif
+dup "SETPARTICLETARGET" eq if
+    pop SETPARTICLETARGET 1 return
+endif
+dup "SETPARTICLETARGETATTRACTIONINTERVAL" eq if
+    pop SETPARTICLETARGETATTRACTIONINTERVAL 1 return
+endif
+dup "SETPARTICLETARGETATTRACTIONFORCE" eq if
+    pop SETPARTICLETARGETATTRACTIONFORCE 1 return
+endif
+dup "SETPARTICLESAMEINTERACTION" eq if
+    pop SETPARTICLESAMEINTERACTION 1 return
+endif
+dup "SETPARTICLEMOTION" eq if
+    pop SETPARTICLEMOTION 1 return
+endif
+dup "SETPARTICLEFORCEPARAMS" eq if
+    pop SETPARTICLEFORCEPARAMS 1 return
+endif
+dup "GETPARTICLEFORCEPARAMS" eq if
+    pop GETPARTICLEFORCEPARAMS 1 return
+endif
+dup "SETPARTICLEFORCEDIRECTIONRELATIVEPARTICLE" eq if
+    pop SETPARTICLEFORCEDIRECTIONRELATIVEPARTICLE 1 return
+endif
+dup "SETPARTICLEFORCESPEEDLIMIT" eq if
+    pop SETPARTICLEFORCESPEEDLIMIT 1 return
+endif
+dup "SETPARTICLEINTERACTDELAY" eq if
+    pop SETPARTICLEINTERACTDELAY 1 return
+endif
+dup "GETPARTICLEINTERACTDELAY" eq if
+    pop GETPARTICLEINTERACTDELAY 1 return
+endif
+dup "SETPARTICLERETURNWHENRECALLED" eq if
+    pop SETPARTICLERETURNWHENRECALLED 1 return
+endif
+dup "SETUNITRECALLCHILDPARTICLES" eq if
+    pop SETUNITRECALLCHILDPARTICLES 1 return
+endif
+dup "SETBONDMOVEMENTPARAMS" eq if
+    pop SETBONDMOVEMENTPARAMS 1 return
+endif
+dup "GETBONDMOVEMENTPARAMS" eq if
+    pop GETBONDMOVEMENTPARAMS 1 return
+endif
+dup "GETBONDLENGTH" eq if
+    pop GETBONDLENGTH 1 return
+endif
+dup "SETBONDLENGTH" eq if
+    pop SETBONDLENGTH 1 return
+endif
+dup "GETALLCONNECTEDPARTICLES" eq if
+    pop GETALLCONNECTEDPARTICLES 1 return
+endif
+dup "GETALLCONNECTEDPARTICLECOUNT" eq if
+    pop GETALLCONNECTEDPARTICLECOUNT 1 return
+endif
+dup "GETALLCONNECTEDBONDS" eq if
+    pop GETALLCONNECTEDBONDS 1 return
+endif
+dup "GETALLCONNECTEDBONDCOUNT" eq if
+    pop GETALLCONNECTEDBONDCOUNT 1 return
+endif
+dup "SETFIELDCELL" eq if
+    pop SETFIELDCELL 1 return
+endif
+dup "CLEARALLFIELDS" eq if
+    pop CLEARALLFIELDS 1 return
+endif
+dup "ISHQPRESENT" eq if
+    pop ISHQPRESENT 1 return
+endif
+dup "GETHQS" eq if
+    pop GETHQS 1 return
+endif
+dup "GETLAND" eq if
+    pop GETLAND 1 return
+endif
+dup "SETLAND" eq if
+    pop SETLAND 1 return
+endif
+dup "SETLANDBULK" eq if
+    pop SETLANDBULK 1 return
+endif
+dup "GETMIRE" eq if
+    pop GETMIRE 1 return
+endif
+dup "SETMIRE" eq if
+    pop SETMIRE 1 return
+endif
+dup "MIRELAND" eq if
+    pop MIRELAND 1 return
+endif
+dup "MIRELAND2" eq if
+    pop MIRELAND2 1 return
+endif
+dup "GETBLUEPLASMADECAYMAX" eq if
+    pop GETBLUEPLASMADECAYMAX 1 return
+endif
+dup "GETREDPLASMADECAYMAX" eq if
+    pop GETREDPLASMADECAYMAX 1 return
+endif
+dup "SETBLUEPLASMADECAYMAX" eq if
+    pop SETBLUEPLASMADECAYMAX 1 return
+endif
+dup "SETREDPLASMADECAYMAX" eq if
+    pop SETREDPLASMADECAYMAX 1 return
+endif
+dup "GETPLASMA" eq if
+    pop GETPLASMA 1 return
+endif
+dup "GETPLASMADECAY" eq if
+    pop GETPLASMADECAY 1 return
+endif
+dup "SETPLASMA" eq if
+    pop SETPLASMA 1 return
+endif
+dup "SETPLASMABULK" eq if
+    pop SETPLASMABULK 1 return
+endif
+dup "GROWSTRUC" eq if
+    pop GROWSTRUC 1 return
+endif
+dup "GETSTRUC" eq if
+    pop GETSTRUC 1 return
+endif
+dup "GETSTRUCBUILT" eq if
+    pop GETSTRUCBUILT 1 return
+endif
+dup "SETSTRUC" eq if
+    pop SETSTRUC 1 return
+endif
+dup "SETSTRUCBULK" eq if
+    pop SETSTRUCBULK 1 return
+endif
+dup "SETEMITTERPARTICLETYPE" eq if
+    pop SETEMITTERPARTICLETYPE 1 return
+endif
+dup "SETEMITTERPRODUCTIONINTERVAL" eq if
+    pop SETEMITTERPRODUCTIONINTERVAL 1 return
+endif
+dup "SETEMITTERMAXPARTICLES" eq if
+    pop SETEMITTERMAXPARTICLES 1 return
+endif
+dup "SETEMITTERMAXTIME" eq if
+    pop SETEMITTERMAXTIME 1 return
+endif
+dup "SETEMITTERMAXDISTANCE" eq if
+    pop SETEMITTERMAXDISTANCE 1 return
+endif
+dup "SETEMITTERMAXPARTICLESPEED" eq if
+    pop SETEMITTERMAXPARTICLESPEED 1 return
+endif
+dup "SETEMITTERPARTICLEHEALTH" eq if
+    pop SETEMITTERPARTICLEHEALTH 1 return
+endif
+dup "SETEMITTERTARGETPROBABILITY" eq if
+    pop SETEMITTERTARGETPROBABILITY 1 return
+endif
+dup "SETEMITTEREMITTERTARGETPROBABILITY" eq if
+    pop SETEMITTEREMITTERTARGETPROBABILITY 1 return
+endif
+dup "SETEMITTERRECALLRANGE" eq if
+    pop SETEMITTERRECALLRANGE 1 return
+endif
+dup "SETEMITTERDESTROYEATEDGE" eq if
+    pop SETEMITTERDESTROYEATEDGE 1 return
+endif
+dup "SETEMITTERDESTROYATEDGE" eq if
+    pop SETEMITTERDESTROYATEDGE 1 return
+endif
+dup "SETEMITTERENEMYPATTERN" eq if
+    pop SETEMITTERENEMYPATTERN 1 return
+endif
+dup "SETEMITTERBONDDISTANCE" eq if
+    pop SETEMITTERBONDDISTANCE 1 return
+endif
+dup "SETEMITTERBONDSTIFFNESS" eq if
+    pop SETEMITTERBONDSTIFFNESS 1 return
+endif
+dup "SETEMITTERMINCHAINLENGTH" eq if
+    pop SETEMITTERMINCHAINLENGTH 1 return
+endif
+dup "SETEMITTERMAXCHAINLENGTH" eq if
+    pop SETEMITTERMAXCHAINLENGTH 1 return
+endif
+dup "SETEMITTERSHAPESIZE" eq if
+    pop SETEMITTERSHAPESIZE 1 return
+endif
+dup "GETEMITTERPARTICLETYPE" eq if
+    pop GETEMITTERPARTICLETYPE 1 return
+endif
+dup "GETEMITTERPRODUCTIONINTERVAL" eq if
+    pop GETEMITTERPRODUCTIONINTERVAL 1 return
+endif
+dup "GETEMITTERMAXPARTICLES" eq if
+    pop GETEMITTERMAXPARTICLES 1 return
+endif
+dup "GETEMITTERMAXTIME" eq if
+    pop GETEMITTERMAXTIME 1 return
+endif
+dup "GETEMITTERMAXDISTANCE" eq if
+    pop GETEMITTERMAXDISTANCE 1 return
+endif
+dup "GETEMITTERMAXPARTICLESPEED" eq if
+    pop GETEMITTERMAXPARTICLESPEED 1 return
+endif
+dup "GETEMITTERPARTICLEHEALTH" eq if
+    pop GETEMITTERPARTICLEHEALTH 1 return
+endif
+dup "GETEMITTERTARGETPROBABILITY" eq if
+    pop GETEMITTERTARGETPROBABILITY 1 return
+endif
+dup "GETEMITTEREMITTERTARGETPROBABILITY" eq if
+    pop GETEMITTEREMITTERTARGETPROBABILITY 1 return
+endif
+dup "GETEMITTERRECALLRANGE" eq if
+    pop GETEMITTERRECALLRANGE 1 return
+endif
+dup "GETEMITTERDESTROYEATEDGE" eq if
+    pop GETEMITTERDESTROYEATEDGE 1 return
+endif
+dup "GETEMITTERDESTROYATEDGE" eq if
+    pop GETEMITTERDESTROYATEDGE 1 return
+endif
+dup "GETEMITTERENEMYPATTERN" eq if
+    pop GETEMITTERENEMYPATTERN 1 return
+endif
+dup "GETEMITTERBONDDISTANCE" eq if
+    pop GETEMITTERBONDDISTANCE 1 return
+endif
+dup "GETEMITTERBONDSTIFFNESS" eq if
+    pop GETEMITTERBONDSTIFFNESS 1 return
+endif
+dup "GETEMITTERMINCHAINLENGTH" eq if
+    pop GETEMITTERMINCHAINLENGTH 1 return
+endif
+dup "GETEMITTERMAXCHAINLENGTH" eq if
+    pop GETEMITTERMAXCHAINLENGTH 1 return
+endif
+dup "GETEMITTERSHAPESIZE" eq if
+    pop GETEMITTERSHAPESIZE 1 return
+endif
+dup "SETENERGYSOURCERATE" eq if
+    pop SETENERGYSOURCERATE 1 return
+endif
+dup "SETENERGYSOURCERANGE" eq if
+    pop SETENERGYSOURCERANGE 1 return
+endif
+dup "SETENERGYSOURCEGROWENEMYENERGYMINE" eq if
+    pop SETENERGYSOURCEGROWENEMYENERGYMINE 1 return
+endif
+dup "GETENERGYSOURCERATE" eq if
+    pop GETENERGYSOURCERATE 1 return
+endif
+dup "GETENERGYSOURCERANGE" eq if
+    pop GETENERGYSOURCERANGE 1 return
+endif
+dup "GETENERGYSOURCEGROWENEMYENERGYMINE" eq if
+    pop GETENERGYSOURCEGROWENEMYENERGYMINE 1 return
+endif
+dup "GETUNITLATHETARGETS" eq if
+    pop GETUNITLATHETARGETS 1 return
+endif
+dup "GETUNITCREATEENERGYSOURCEWHENDESTROYED" eq if
+    pop GETUNITCREATEENERGYSOURCEWHENDESTROYED 1 return
+endif
+dup "GETUNITISENEMY" eq if
+    pop GETUNITISENEMY 1 return
+endif
+dup "GETUNITGROWSTRUC" eq if
+    pop GETUNITGROWSTRUC 1 return
+endif
+dup "GETUNITCREATEAMPGEMWHENDESTROYED" eq if
+    pop GETUNITCREATEAMPGEMWHENDESTROYED 1 return
+endif
+dup "GETUNITCREATEFOOTPRINT" eq if
+    pop GETUNITCREATEFOOTPRINT 1 return
+endif
+dup "GETUNITMISSIONGOAL" eq if
+    pop GETUNITMISSIONGOAL 1 return
+endif
+dup "GETUNITTAKEMAPSPACE" eq if
+    pop GETUNITTAKEMAPSPACE 1 return
+endif
+dup "GETUNITISBUILDING" eq if
+    pop GETUNITISBUILDING 1 return
+endif
+dup "GETUNITISDESTROYED" eq if
+    pop GETUNITISDESTROYED 1 return
+endif
+dup "GETUNITCOORDS" eq if
+    pop GETUNITCOORDS 1 return
+endif
+dup "GETUNITCOORDX" eq if
+    pop GETUNITCOORDX 1 return
+endif
+dup "GETUNITCOORDY" eq if
+    pop GETUNITCOORDY 1 return
+endif
+dup "GETUNITPIXELCOORDS" eq if
+    pop GETUNITPIXELCOORDS 1 return
+endif
+dup "GETUNITPIXELCOORDX" eq if
+    pop GETUNITPIXELCOORDX 1 return
+endif
+dup "GETUNITPIXELCOORDY" eq if
+    pop GETUNITPIXELCOORDY 1 return
+endif
+dup "GETUNITRECEIVESPACKETS" eq if
+    pop GETUNITRECEIVESPACKETS 1 return
+endif
+dup "GETUNITHEALTH" eq if
+    pop GETUNITHEALTH 1 return
+endif
+dup "GETUNITMAXHEALTH" eq if
+    pop GETUNITMAXHEALTH 1 return
+endif
+dup "GETUNITENERGY" eq if
+    pop GETUNITENERGY 1 return
+endif
+dup "GETUNITMAXENERGY" eq if
+    pop GETUNITMAXENERGY 1 return
+endif
+dup "GETUNITHASHEALTHBAR" eq if
+    pop GETUNITHASHEALTHBAR 1 return
+endif
+dup "GETUNITHASENERGYBAR" eq if
+    pop GETUNITHASENERGYBAR 1 return
+endif
+dup "GETUNITENERGYPACKDELAY" eq if
+    pop GETUNITENERGYPACKDELAY 1 return
+endif
+dup "GETUNITPARTICLESDAMAGE" eq if
+    pop GETUNITPARTICLESDAMAGE 1 return
+endif
+dup "GETUNITSHIPHULLDAMAGES" eq if
+    pop GETUNITSHIPHULLDAMAGES 1 return
+endif
+dup "GETUNITMIREDAMAGES" eq if
+    pop GETUNITMIREDAMAGES 1 return
+endif
+dup "GETUNITMIREDAMAGEAMT" eq if
+    pop GETUNITMIREDAMAGEAMT 1 return
+endif
+dup "GETUNITLATHEDAMAGEAMT" eq if
+    pop GETUNITLATHEDAMAGEAMT 1 return
+endif
+dup "SETUNITLATHETARGETS" eq if
+    pop SETUNITLATHETARGETS 1 return
+endif
+dup "SETUNITCREATEENERGYSOURCEWHENDESTROYED" eq if
+    pop SETUNITCREATEENERGYSOURCEWHENDESTROYED 1 return
+endif
+dup "SETUNITISENEMY" eq if
+    pop SETUNITISENEMY 1 return
+endif
+dup "SETUNITGROWSTRUC" eq if
+    pop SETUNITGROWSTRUC 1 return
+endif
+dup "SETUNITCREATEAMPGEMWHENDESTROYED" eq if
+    pop SETUNITCREATEAMPGEMWHENDESTROYED 1 return
+endif
+dup "SETUNITCREATEFOOTPRINT" eq if
+    pop SETUNITCREATEFOOTPRINT 1 return
+endif
+dup "SETUNITMISSIONGOAL" eq if
+    pop SETUNITMISSIONGOAL 1 return
+endif
+dup "SETUNITTAKEMAPSPACE" eq if
+    pop SETUNITTAKEMAPSPACE 1 return
+endif
+dup "SETUNITISBUILDING" eq if
+    pop SETUNITISBUILDING 1 return
+endif
+dup "SETUNITCOORDS" eq if
+    pop SETUNITCOORDS 1 return
+endif
+dup "SETUNITCOORDX" eq if
+    pop SETUNITCOORDX 1 return
+endif
+dup "SETUNITCOORDY" eq if
+    pop SETUNITCOORDY 1 return
+endif
+dup "SETUNITPIXELCOORDS" eq if
+    pop SETUNITPIXELCOORDS 1 return
+endif
+dup "SETUNITPIXELCOORDX" eq if
+    pop SETUNITPIXELCOORDX 1 return
+endif
+dup "SETUNITPIXELCOORDY" eq if
+    pop SETUNITPIXELCOORDY 1 return
+endif
+dup "SETUNITRECEIVESPACKETS" eq if
+    pop SETUNITRECEIVESPACKETS 1 return
+endif
+dup "SETUNITHEALTH" eq if
+    pop SETUNITHEALTH 1 return
+endif
+dup "SETUNITMAXHEALTH" eq if
+    pop SETUNITMAXHEALTH 1 return
+endif
+dup "SETUNITENERGY" eq if
+    pop SETUNITENERGY 1 return
+endif
+dup "SETUNITMAXENERGY" eq if
+    pop SETUNITMAXENERGY 1 return
+endif
+dup "SETUNITHASHEALTHBAR" eq if
+    pop SETUNITHASHEALTHBAR 1 return
+endif
+dup "SETUNITHASENERGYBAR" eq if
+    pop SETUNITHASENERGYBAR 1 return
+endif
+dup "SETUNITENERGYPACKDELAY" eq if
+    pop SETUNITENERGYPACKDELAY 1 return
+endif
+dup "SETUNITPARTICLESDAMAGE" eq if
+    pop SETUNITPARTICLESDAMAGE 1 return
+endif
+dup "SETUNITSHIPHULLDAMAGES" eq if
+    pop SETUNITSHIPHULLDAMAGES 1 return
+endif
+dup "SETUNITMIREDAMAGES" eq if
+    pop SETUNITMIREDAMAGES 1 return
+endif
+dup "SETUNITMIREDAMAGEAMT" eq if
+    pop SETUNITMIREDAMAGEAMT 1 return
+endif
+dup "SETUNITLATHEDAMAGEAMT" eq if
+    pop SETUNITLATHEDAMAGEAMT 1 return
+endif
+dup "GETSHIPISDESTROYED" eq if
+    pop GETSHIPISDESTROYED 1 return
+endif
+dup "GETSHIPROTATION" eq if
+    pop GETSHIPROTATION 1 return
+endif
+dup "GETSHIPCOORDS" eq if
+    pop GETSHIPCOORDS 1 return
+endif
+dup "GETSHIPCOORDX" eq if
+    pop GETSHIPCOORDX 1 return
+endif
+dup "GETSHIPCOORDY" eq if
+    pop GETSHIPCOORDY 1 return
+endif
+dup "GETSHIPPIXELCOORDS" eq if
+    pop GETSHIPPIXELCOORDS 1 return
+endif
+dup "GETSHIPPIXELCOORDX" eq if
+    pop GETSHIPPIXELCOORDX 1 return
+endif
+dup "GETSHIPPIXELCOORDY" eq if
+    pop GETSHIPPIXELCOORDY 1 return
+endif
+dup "GETSHIPISENEMY" eq if
+    pop GETSHIPISENEMY 1 return
+endif
+dup "GETSHIPHULLSIZE" eq if
+    pop GETSHIPHULLSIZE 1 return
+endif
+dup "GETSHIPHULLBUILT" eq if
+    pop GETSHIPHULLBUILT 1 return
+endif
+dup "GETSHIPCMCOST" eq if
+    pop GETSHIPCMCOST 1 return
+endif
+dup "GETSHIPCMBUILTAMT" eq if
+    pop GETSHIPCMBUILTAMT 1 return
+endif
+dup "GETSHIPISCONNECTEDTOENERGYMINE" eq if
+    pop GETSHIPISCONNECTEDTOENERGYMINE 1 return
+endif
+dup "SETSHIPROTATION" eq if
+    pop SETSHIPROTATION 1 return
+endif
+dup "SETSHIPCOORDS" eq if
+    pop SETSHIPCOORDS 1 return
+endif
+dup "SETSHIPCOORDX" eq if
+    pop SETSHIPCOORDX 1 return
+endif
+dup "SETSHIPCOORDY" eq if
+    pop SETSHIPCOORDY 1 return
+endif
+dup "SETSHIPPIXELCOORDS" eq if
+    pop SETSHIPPIXELCOORDS 1 return
+endif
+dup "SETSHIPPIXELCOORDX" eq if
+    pop SETSHIPPIXELCOORDX 1 return
+endif
+dup "SETSHIPPIXELCOORDY" eq if
+    pop SETSHIPPIXELCOORDY 1 return
+endif
+dup "SETSHIPISENEMY" eq if
+    pop SETSHIPISENEMY 1 return
+endif
+dup "GETSHIPROTATIONDEGREES" eq if
+    pop GETSHIPROTATIONDEGREES 1 return
+endif
+dup "SETSHIPROTATIONDEGREES" eq if
+    pop SETSHIPROTATIONDEGREES 1 return
+endif
+dup "SETSHIPTHRUSTMULTIPLIER" eq if
+    pop SETSHIPTHRUSTMULTIPLIER 1 return
+endif
+dup "GETSHIPTHRUSTMULTIPLIER" eq if
+    pop GETSHIPTHRUSTMULTIPLIER 1 return
+endif
+dup "GETSHIPHASAMP" eq if
+    pop GETSHIPHASAMP 1 return
+endif
+dup "GETSHIPHULLWIDTH" eq if
+    pop GETSHIPHULLWIDTH 1 return
+endif
+dup "GETSHIPHULLHEIGHT" eq if
+    pop GETSHIPHULLHEIGHT 1 return
+endif
+dup "GETSHIPENERGY" eq if
+    pop GETSHIPENERGY 1 return
+endif
+dup "SETSHIPENERGY" eq if
+    pop SETSHIPENERGY 1 return
+endif
+dup "GETSHIPENERGYCAP" eq if
+    pop GETSHIPENERGYCAP 1 return
+endif
+dup "SETSHIPENERGYCAP" eq if
+    pop SETSHIPENERGYCAP 1 return
+endif
+dup "SETSHIPMODULESAMMO" eq if
+    pop SETSHIPMODULESAMMO 1 return
+endif
+#blockend
+dup "->!" eq if
+    pop dup @invokeRegisterVariable ->! 1 return
+endif
+dup "<-!" eq if
+    pop <-! 1 return
+endif
+dup "-?!" eq if
+    TraceStack
+    pop -?! 1 return
+endif
+dup "--!" eq if
+    pop --! 1 return
+endif
+
+pop 0 return
+
+
+
+
+#tries to invoke push of a string, int or float constant
+:tryInvokePush # [ string - value? bool ]
+#try parse as string
+dup dup DoubleQuote StartsWith swap DoubleQuote EndsWith and if
+    DoubleQuote "" StringReplace 1 return
+endif
+
+#dup "My word is" swap Trace2
+
+#try parse as number
+0 ->f26___value
+0 ->f26___float # position of the float point + 1
+dup StringLength 0 do
+    0 ->f26___valid
+    dup I 1 SubString #leave char on stack
+    #dup "My char is" swap Trace2
+    dup "0" eq if
+        <-f26___value 10 mul 0 add ->f26___value
+        1 ->f26___valid
+    endif
+    #blockstart
+    dup "1" eq if
+        <-f26___value 10 mul 1 add ->f26___value
+        1 ->f26___valid
+    endif
+    dup "2" eq if
+        <-f26___value 10 mul 2 add ->f26___value
+        1 ->f26___valid
+    endif
+    dup "3" eq if
+        <-f26___value 10 mul 3 add ->f26___value
+        1 ->f26___valid
+    endif
+    dup "4" eq if
+        <-f26___value 10 mul 4 add ->f26___value
+        1 ->f26___valid
+    endif
+    dup "5" eq if
+        <-f26___value 10 mul 5 add ->f26___value
+        1 ->f26___valid
+    endif
+    dup "6" eq if
+        <-f26___value 10 mul 6 add ->f26___value
+        1 ->f26___valid
+    endif
+    dup "7" eq if
+        <-f26___value 10 mul 7 add ->f26___value
+        1 ->f26___valid
+    endif
+    dup "8" eq if
+        <-f26___value 10 mul 8 add ->f26___value
+        1 ->f26___valid
+    endif
+    #blockend
+    dup "9" eq if
+        <-f26___value 10 mul 9 add ->f26___value
+        1 ->f26___valid
+    endif
+    dup "." eq if
+        <-f26___float 0 eq if
+            I 1 add ->f26___float
+            1 ->f26___valid
+        endif
+    endif
+    
+    pop #remove the char
+    <-f26___valid eq0 if
+        #dup "found invalid char:" swap Trace2
+        pop #remove the parsed word
+        0 return #return FAIL
+    endif
+loop
+
+<-f26___float 0 gt if
+    1 #leave exponent on stack
+    swap StringLength <-f26___float do
+        10 mul
+    loop
+    dup 1 eq if
+        #the decimal point is the last digit: invalid
+        pop #remove the exponent
+        0 return #return FAIL
+    endif
+    <-f26___value asfloat swap div ->f26___value
+else
+    pop #remove the word
+endif
+
+<-f26___value 1 return #return value and SUCCESS
+
+
+
+
+#invokes command
+:invoke # [ ? string - ? ]
+->f27___command
+<-f27___command "" eq if
+    return
+endif
+<-f27___command @tryInvokePush if
+    return
+endif
+<-f27___command @tryInvokeCommand if
+    return
+endif
+<-f27___command @tryInvokeVariable if
+    return
+endif
+<-f27___command "@" StartsWith if
+    <-f27___command @invokeUserFunction
+    return
+endif
+"Failed to invoke command:" <-f27___command Trace2
+
+
+
+:invokeClearLocals # [ - ]
+<-invokeUsedVariables dup GetListCount 0 do
+    dup[I] --!
+loop
+pop CreateList ->invokeUsedVariables #create a new list instead of clearing the curernt one?
+
+
+# -- Functions from 'c:\Users\Karel\Documents\My Games\particlefleet\editor\lib\ListRegistry.prpl+' -- #
+
+
+#tests in lists on the input are the very same list (not if they have the same content, as eq does)
+:listRefEquals # list list - bool
+    dup2 #l1 l2 l1 l2
+    GetListCount #l1 l2 l1 s
+    swap 0 AppendToList #l1+ ls2? s
+    swap GetListCount neq #l1+ r
+    swap dup GetListCount 1 sub RemoveListElement #r
+
+
+:getListId # list - int
+    <-listRegistry GetListCount 0 do
+        dup <-listRegistry[I] "f30___" swap Concat <-! @listRefEquals if
+            pop <-listRegistry[I] return
+        endif
+    loop
+    <-s4___nextFreeId "f30___" swap Concat ->! #save the list into a local variable
+    <-listRegistry <-s4___nextFreeId AppendToList #append the variable name into the registry
+    <-s4___nextFreeId dup 1 add ->s4___nextFreeId #increment the list id counter, but return the original value (dup)
+
+
+:getListById # int - list
+    #sharenamespace
+    dup "f30___" swap Concat -?! if
+        "f30___" swap Concat <-! return #return the lists if it exists
+    endif
+    "Warning: trying to get a lsit with non-existing ID:" swap Trace2
+    CreateList #return a new empty unregistered list
+    
+    
+    

@@ -753,13 +753,13 @@ public class ShipConstructorPanel extends JPanel {
             ProcessBuilder builder = null;
 
             if (OSValidator.isWindows()) {
-                builder = new ProcessBuilder("GZipExporter/PRPLDatGZip.exe",
+                builder = new ProcessBuilder("CsBin/PRPLDatGZip.exe",
                         file.getAbsolutePath(), datFile, "-b64");
             } else if (OSValidator.isUnix() || OSValidator.isSolaris()) {
-                builder = new ProcessBuilder("mono", "GZipExporter/PRPLDatGZip.exe",
+                builder = new ProcessBuilder("mono", "CsBin/PRPLDatGZip.exe",
                         file.getAbsolutePath(), datFile, "-b64");
             } else if (OSValidator.isMac()) {
-                builder = new ProcessBuilder("mono", "GZipExporter/PRPLDatGZip.exe",
+                builder = new ProcessBuilder("mono", "CsBin/PRPLDatGZip.exe",
                         file.getAbsolutePath(), datFile, "-b64");
             } else {
                 statusArea.setText("Conversion to .dat failed, Unknown OS: " + OSValidator.getOS());

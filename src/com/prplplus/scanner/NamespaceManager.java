@@ -2,25 +2,36 @@ package com.prplplus.scanner;
 
 import java.util.HashSet;
 
+import com.prplplus.Settings;
+
 public class NamespaceManager {
 
     //without underscore
     private HashSet<String> usedPrefixes = new HashSet<>();
 
-    public static final String PRPL_PREFIX = "prpl_plus__";
+    public static final String PRPL_PREFIX = "prpl_plus" + Settings.PREFIX_DELIM;
 
     {
-        usedPrefixes.add(PRPL_PREFIX.substring(0, PRPL_PREFIX.length() - 2));
+        usedPrefixes.add(PRPL_PREFIX.substring(0, PRPL_PREFIX.length() - Settings.PREFIX_DELIM.length()));
     }
 
     //returns unique prefix with underscore
-    public String getPrefixFor(String name) {
-        //String prefix = name; //
-        String prefix = "f";
+    public String getPrefixForScript(String name) {
+        return getPrefix("s");
+    }
 
+    public String getPrefixForMain(String name) {
+        return getPrefix("m");
+    }
+
+    public String getPrefixForFunc(String name) {
+        return getPrefix("f");
+    }
+
+    private String getPrefix(String prefix) {
         if (!usedPrefixes.contains(prefix)) {
             usedPrefixes.add(prefix);
-            return prefix + "__";
+            return prefix + Settings.PREFIX_DELIM;
         }
 
         int i = 0;
@@ -30,6 +41,6 @@ public class NamespaceManager {
 
         usedPrefixes.add(prefix + i);
 
-        return prefix + i + "__";
+        return prefix + i + Settings.PREFIX_DELIM;
     }
 }

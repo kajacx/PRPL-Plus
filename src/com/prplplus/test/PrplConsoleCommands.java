@@ -1,22 +1,263 @@
 package com.prplplus.test;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class PrplConsoleCommands {
+    public static final boolean testMode = true;
+
     public static final String wikiUrl = "https://knucklecracker.com/wiki/doku.php?id=prpl:prplreference";
+    public static final String wikiBaseUrl = "https://knucklecracker.com";
+
+    public static final boolean useCache = true;
+    public static final String seriablizedPath = "wiki_serialized.dat";
+
+    private static Queue<Runnable> queue = new ConcurrentLinkedQueue<>();
 
     public static void main(String[] args) throws Exception {
-        URL url = new URL(wikiUrl);
-        //InputStream is = url.openStream(); // throws an IOException
+        List<ProcessedTable> tables = loadTables();
 
-        Document doc = Jsoup.parse(url, 2000);
+        System.out.println("CreateList ~>wikiTables");
+        System.out.println();
+        tables.forEach(PrplConsoleCommands::printTable);
+    }
 
-        Elements els = doc.select("table.columns-plugin");
-        System.out.println(els);
+    public static void printTable(ProcessedTable table) {
+        String tableName = table.tableName.replaceAll("[/ ]", "");
+        System.out.format("<~wikiTables \"%s\" AppendToList%n", tableName);
+        System.out.format("CreateList ~>wikiTable%s%n", tableName);
+        System.out.format("%n");
+        for (Command command : table.commands) {
+            System.out.format("    CreateList%n");
+            System.out.format("        dup \"%s\" AppendToList%n", command.name);
+            System.out.format("        dup \"%s\" AppendToList%n", command.input);
+            System.out.format("        dup \"%s\" AppendToList%n", command.output);
+            System.out.format("        dup \"%s\" AppendToList%n", command.notation);
+            System.out.format("        dup %s AppendToList%n", fullyEncodePrplString(command.description));
+            System.out.format("        dup %s AppendToList%n", fullyEncodePrplString(command.examples));
+            System.out.format("    <~wikiTable%s swap AppendToList %n", tableName);
+            System.out.format("    %n");
+        }
+    }
+
+    public static String fullyEncodePrplString(String string) {
+        StringBuilder builder = new StringBuilder();
+
+        int i = 0;
+        String[] lines = string.split("\r?\n");
+        for (String line : lines) {
+
+            if (i > 0) {
+                builder.append(" LF Concat ");
+            }
+
+            int j = 0;
+            String[] words = line.split("\"");
+            for (String word : words) {
+                if (j > 0) {
+                    builder.append(" DoubleQuote Concat ");
+                }
+                builder.append('"').append(word).append('"');
+                if (j > 0) {
+                    builder.append(" Concat");
+                }
+                j++;
+            }
+
+            if (i > 0) {
+                builder.append(" Concat");
+            }
+
+            i++;
+        }
+
+        return builder.toString();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<ProcessedTable> loadTables() throws Exception {
+        List<ProcessedTable> tables = null;
+
+        if (useCache) {
+            try {
+                ObjectInputStream ois = new ObjectInputStream(new FileInputStream(seriablizedPath));
+                tables = (List<ProcessedTable>) ois.readObject();
+                ois.close();
+            } catch (IOException ex) {
+                ex.printStackTrace(System.out);
+            }
+        }
+
+        if (tables == null) {
+
+            URL url = new URL(wikiUrl);
+            //InputStream is = url.openStream(); // throws an IOException
+
+            Document doc = Jsoup.parse(url, 2000);
+
+            //Elements els = doc.select("table tr td a");
+            //System.out.println(els);
+
+            Elements tableEls = doc.select("table.inline");
+            tables = new ArrayList<>();
+            for (Element table : tableEls) {
+                tables.add(processTable(table));
+            }
+
+            if (!testMode) {
+                testMax = queue.size();
+            }
+
+            Thread[] workers = new Thread[12];
+            for (int i = 0; i < workers.length; i++) {
+                workers[i] = new Thread(() -> {
+                    Runnable job;
+                    while ((job = queue.poll()) != null) {
+                        job.run();
+                    }
+                });
+            }
+
+            for (int i = 0; i < workers.length; i++) {
+                workers[i].start();
+            }
+
+            for (int i = 0; i < workers.length; i++) {
+                workers[i].join();
+            }
+
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(seriablizedPath));
+            oos.writeObject(tables);
+            oos.close();
+        }
+
+        return tables;
+    }
+
+    public static ProcessedTable processTable(Element table) {
+        ProcessedTable result = new ProcessedTable();
+
+        result.tableName = table.select("thead tr th").text();
+
+        for (Element link : table.select("tbody tr td a")) {
+            final Command command = new Command();
+            final String href = link.attr("href");
+            result.commands.add(command);
+            queue.add(() -> fillCommand(href, command));
+        }
+
+        return result;
+    }
+
+    private static int testMax = 12;
+    private static AtomicInteger testCur = new AtomicInteger();
+
+    public static void fillCommand(final String link, final Command command) {
+        if (!testMode || testCur.get() < testMax) {
+            System.out.format("Parsing %d out of %d%n", testCur.incrementAndGet(), testMax);
+            try {
+                URL url = new URL(wikiBaseUrl + link);
+                Document doc = Jsoup.parse(url, 2000);
+
+                command.name = doc.select("h2.sectionedit1").text();
+
+                command.input = doc.select("td.col0").text();
+                command.output = doc.select("td.col1").text();
+                command.notation = doc.select("td.col2").text();
+
+                command.description = doc.select("h4#description+div").text();
+                command.examples = doc.select("h4#examples+div").text().replace("\t", "    "); //because f**k tabs, that's why
+
+            } catch (IOException e) {
+                e.printStackTrace(System.out);
+            }
+        } else {
+            command.name = link;
+        }
+    }
+
+    static class ProcessedTable implements Serializable {
+        public String tableName;
+        public List<Command> commands = new ArrayList<>(); //concurrent, because values will be inserted from multiple threads
+
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append("ProcessedTable [");
+            if (tableName != null) {
+                builder.append("tableName=");
+                builder.append(tableName);
+                builder.append(", ");
+            }
+            if (commands != null) {
+                builder.append("commands=");
+                builder.append(commands);
+            }
+            builder.append("]");
+            return builder.toString();
+        }
+
+    }
+
+    static class Command implements Serializable {
+        public String name;
+        public String input;
+        public String output;
+        public String notation;
+        public String description;
+        public String examples;
+
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append("Command [");
+            if (name != null) {
+                builder.append("name=");
+                builder.append(name);
+                builder.append(", ");
+            }
+            if (input != null) {
+                builder.append("input=");
+                builder.append(input);
+                builder.append(", ");
+            }
+            if (output != null) {
+                builder.append("output=");
+                builder.append(output);
+                builder.append(", ");
+            }
+            if (notation != null) {
+                builder.append("notation=");
+                builder.append(notation);
+                builder.append(", ");
+            }
+            if (description != null) {
+                builder.append("description=");
+                builder.append(description);
+                builder.append(", ");
+            }
+            if (examples != null) {
+                builder.append("examples=");
+                builder.append(examples);
+            }
+            builder.append("]");
+            return builder.toString();
+        }
     }
 }
 

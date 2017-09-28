@@ -26,28 +26,34 @@ import com.prplplus.Settings;
 public class MainFrame extends JFrame {
     private static final long serialVersionUID = -3729420411039341803L;
 
-    public static final String version = "v0.2.2";
+    public static final String version = "v0.3.0";
     public static final String title = "PRPL Toolset";
     public static final String contact = "kajacx@gmail.com";
 
-    private static boolean openShipBuild = true;
+    private static int defaultTab = 2; //0 - PRPL+, 1 - Ship builder, 2 - Debugger
+
+    public static MainFrame instance;
 
     public static void main(String[] args) {
         processArgs(args);
 
         SwingUtilities.invokeLater(() -> {
             MainFrame frame = new MainFrame();
+            instance = frame;
             frame.setVisible(true);
         });
     }
 
     private static void processArgs(String[] args) {
         for (String arg : args) {
-            if (arg.equalsIgnoreCase("-forceExport")) {
+            if (arg.equalsIgnoreCase("--forceExport")) {
                 Settings.enableForceExport = true;
             }
-            if (arg.equalsIgnoreCase("-shipBuild")) {
-                openShipBuild = true;
+            if (arg.equalsIgnoreCase("--shipBuild")) {
+                defaultTab = 1;
+            }
+            if (arg.equalsIgnoreCase("--debugger")) {
+                defaultTab = 2;
             }
         }
     }
@@ -71,6 +77,10 @@ public class MainFrame extends JFrame {
         tabs.addTab("Ship Construct", constIcon, constPanel, "Build large ships up to size "
                 + Settings.MAX_SIZE + "x" + Settings.MAX_SIZE);
 
+        ImageIcon debuggerIcon = new ImageIcon("img/icons/debugger.png");
+        DebuggerPanel debuggerPanel = new DebuggerPanel();
+        tabs.addTab("Debugger", debuggerIcon, debuggerPanel, "Debug your PRPL code step-by-step");
+
         KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
         manager.addKeyEventDispatcher(new MyDispatcher());
 
@@ -84,9 +94,7 @@ public class MainFrame extends JFrame {
             pack(); //need to call pack() twice because of broken tab pane
         }
 
-        if (openShipBuild) {
-            tabs.setSelectedIndex(1);
-        }
+        tabs.setSelectedIndex(defaultTab);
 
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);

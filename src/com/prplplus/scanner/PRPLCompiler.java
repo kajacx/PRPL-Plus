@@ -41,12 +41,14 @@ public class PRPLCompiler {
     private void include(String fname, Symbol symbol, boolean relativePath) {
 
         try {
-            File importFile;
-            if (relativePath) {
-                String parentFile = new File(symbol.fileFrom).getParentFile().getAbsolutePath();
-                importFile = new File(parentFile + "/" + fname);
-            } else {
-                importFile = new File(Settings.WORK_IN + "/editor/" + fname);
+            File importFile = new File(fname);
+            if (!importFile.isAbsolute()) {
+                if (relativePath) {
+                    String parentFile = new File(symbol.fileFrom).getParentFile().getAbsolutePath();
+                    importFile = new File(parentFile + "/" + fname);
+                } else {
+                    importFile = new File(Settings.WORK_IN + "/editor/" + fname);
+                }
             }
 
             if (!importFile.exists()) {
@@ -94,8 +96,8 @@ public class PRPLCompiler {
         int parDepth = 0;
         boolean ignoreNextLPar = false;
 
-        String scriptNamespace = manager.getPrefixFor("script");
-        String functNamespace = manager.getPrefixFor("main");
+        String scriptNamespace = manager.getPrefixForScript(lexer.getFilename());
+        String functNamespace = manager.getPrefixForMain(lexer.getFilename());
         boolean isInFunction = false;
 
         lexer.setScriptNamespace(scriptNamespace);
@@ -172,7 +174,7 @@ public class PRPLCompiler {
 
                     isInFunction = true;
                     if (!lexer.peekNextUseful().isShareNamespace()) {
-                        functNamespace = manager.getPrefixFor(funcSym.functionName);
+                        functNamespace = manager.getPrefixForFunc(funcSym.functionName);
                     }
                 }
                 writer.print(curSymbol.text);

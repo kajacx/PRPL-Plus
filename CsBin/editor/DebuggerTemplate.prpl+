@@ -1,0 +1,357 @@
+# --Debugger-- 9/16/2017 7:17:21 PM
+
+$StartInDebugMode:1 #will freeze code execution and show debugger on the first command
+$MaxStringLength:40 #how many characters can a string (or a serialized list) have before it's trimmed down when displaying
+
+%include "c:/Users/Karel/Documents/My Games/particlefleet/editor/lib/GUI.prpl+"
+%include "c:/Users/Karel/Documents/My Games/particlefleet/editor/lib/Invoke.prpl+" # invoke in not really needed (except for used variable registry), but meh
+%include "c:/Users/Karel/Documents/My Games/particlefleet/editor/lib/ListRegistry.prpl+"
+
+once
+    %blockstart #GUI window definition
+    { "mainbox" 12 -10 250 200 { #main window
+        { "box" 0 180 250 20 { # satus & controll
+            { "label" 5 5 30 10 "Ready" }
+            { "button" 40 5 30 10 "Step Over" { "StepOver" } }
+            { "button" 75 5 30 10 "Step Line" { "StepLine" } }
+            { "button" 110 5 30 10 "Step Into" { "StepInto" } }
+            { "button" 145 5 30 10 "Step Out" { "StepOut" } }
+            { "button" 180 5 30 10 "Continue" { "Continue" } }
+            { "button" 215 5 30 10 "Break" { "Break" } }
+        } }
+        { "box" 0 100 250 80 { # source code
+            { "label" 0 70 250 10 "Source code" }
+            { "label" 0 65 250 10 "Call stack" }
+            { "label" 0 34 250 30 "Source code (above)" }
+            { "label" 0 30 250 5 "Source code (commands)" }
+            { "label" 0 1 250 30 "Source code (bellow)" }
+        } }
+        { "box" 0 0 80 100 { #stack visualizer
+            { "label" 0 90 80 10 "Stack (top)" }
+            { "label" 0 10 80 80 "Stack (content)" }
+            { "label" 0 0 80 10 "Stack (bottom)" }
+        } }
+        { "box" 80 0 90 100 { #variable visualizer
+            { "label" 0 90 90 10 "Local variables" }
+            { "label" 0 0 90 90 "Variables (content)" }
+        } }
+        { "box" 170 0 80 100 { #list visualizer
+            { "label" 0 90 80 10 "Lists" }
+            { "label" 0 0 80 90 "Lists (content)" }
+        } }
+    } } @guiMakeListRecursive ->guiWindow
+    
+    <-guiWindow @guiShow
+    %blockend
+    
+    %blockstart # styling
+    #create some better graphics
+    "Call stack" @guiGetLabel "TextBind.prpl"
+    dup2 "TextRed"   196 SetScriptVar
+    dup2 "TextGreen" 196 SetScriptVar
+    dup2 "TextBlue"  255 SetScriptVar
+    dup2 "NeedsUpdate" 1 SetScriptVar
+    pop pop
+    
+    "Source code (above)" @guiGetLabel "TextBind.prpl"
+    dup2 "TextAlignment" "MiddleLeft" SetScriptVar
+    dup2 "NeedsUpdate" 1 SetScriptVar
+    pop pop
+    
+    255 ~>hiRed 196 ~>hiGreen 16 ~>hiBlue
+    16 ~>callRed 255 ~>callGreen 64 ~>callBlue
+    
+    "Source code (commands)" @guiGetLabel "TextBind.prpl"
+    dup2 "TextAlignment" "MiddleLeft" SetScriptVar
+    dup2 "TextRed"   <~hiRed   SetScriptVar
+    dup2 "TextGreen" <~hiGreen SetScriptVar
+    dup2 "TextBlue"  <~hiBlue  SetScriptVar
+    dup2 "NeedsUpdate" 1 SetScriptVar
+    pop pop
+    
+    "Source code (bellow)" @guiGetLabel "TextBind.prpl"
+    dup2 "TextAlignment" "MiddleLeft" SetScriptVar
+    dup2 "NeedsUpdate" 1 SetScriptVar
+    pop pop
+    
+    "Variables (content)" @guiGetLabel "TextBind.prpl"
+    dup2 "TextAlignment" "MiddleLeft" SetScriptVar
+    dup2 "NeedsUpdate" 1 SetScriptVar
+    pop pop
+    %blockend
+    
+    1 ~>line #current code line
+    0 ~>col #current code column (command on line)
+    
+    <-StartInDebugMode neq0 ~>mode #execution mode
+    /*
+    0 - normal execution
+    1 - halt execution (paused in debugger)
+    2 - step into
+    3 - step over
+    4 - step line
+    5 - step out
+    6 - inside step over or out
+    7 - inside step line
+    */
+    
+    @debuggerDrawContent
+    
+    CreateList ->debuggerCallStack # top - most recent function
+    
+    "                                  " dup dup dup dup dup Concat Concat Concat Concat Concat ~>spaceFiller #30 spaces replicated 6 times to enforce formatting
+endonce
+
+
+
+
+###########################################################
+#                   DEBUGGER CODE START                   #
+###########################################################
+%blockstart
+#DebuggerGeneratedCodeStart
+
+#This will be replaced by the compiled code
+
+#DebuggerGeneratedCodeEnd
+%blockend
+###########################################################
+#                    DEBUGGER CODE END                    #
+###########################################################
+
+
+
+
+#debugger functions
+
+# line col type - shouldExecute
+:debuggerIntercept #[ int int int - bool ]
+%blockstart
+    ~>type ~>col ~>line
+    <~mode not if #normal execution
+        return
+    endif
+    <~mode 1 eq if #halt execution
+        @debuggerDrawContent
+        while <~mode 1 eq repeat
+            1 Delay
+            @guiCheckInput
+        endwhile
+        
+        #better to copy-paste than to call again
+        <~mode not if #normal execution
+            return
+        endif
+    endif
+    #move states 6 and 7 up to speed up execution during SKIP sections
+    <~mode 6 eq if # inside step over or out
+        <-debuggerCallStack GetListCount <+targetDepth lte if
+            1 ~>mode #halt on the current command
+            <~line <~col <~type @debuggerIntercept return #re-run recursively
+        else
+            return #do nothing and return
+        endif
+    endif
+    <~mode 7 eq if # inside step line
+        <-debuggerCallStack GetListCount <+targetDepth lte <~line <+targetLine neq and if
+            1 ~>mode #halt on the current command
+            <~line <~col <~type @debuggerIntercept return #re-run recursively
+        else
+            return #do nothing and return
+        endif
+    endif
+    <~mode 2 eq if # step into
+        1 ~>mode return #halt after stepping into
+    endif
+    <~mode 3 eq if # step over
+        <-debuggerCallStack GetListCount +>targetDepth
+        6 ~>mode return # inside step over
+    endif
+    <~mode 4 eq if # step line
+        <~line +>targetLine
+        <-debuggerCallStack GetListCount +>targetDepth
+        7 ~>mode return #set mode to inside step line
+    endif
+    <~mode 5 eq if # step out
+        <-debuggerCallStack GetListCount 0 gt if #return or isn't in a function
+            <-debuggerCallStack GetListCount 1 sub +>targetDepth
+            6 ~>mode return # inside step out
+        else
+            1 ~>mode return # just halt on the next command
+        endif
+    endif
+%blockend
+
+
+:debuggerInspect # [ - ]
+    #stop the execution and show debugger
+    1 ~>mode
+    
+    
+:debuggerDrawContent # [ - ]
+%blockstart
+    #source code
+    "Source code" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" "Source code " <~line " " <~col Concat Concat Concat SetScriptVar
+                                                    "NeedsUpdate" 1 SetScriptVar
+    
+    #source code above
+    <~spaceFiller LF Concat #leave on stack
+    <~line <~line 6 sub do
+        I 0 gt if
+            I @debuggerFormatLine "  " Concat Concat
+            "debugger__line" I Concat <-! Concat
+        endif
+        LF Concat
+    loop
+    +>text
+    "Source code (above)" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" <+text SetScriptVar
+                                                            "NeedsUpdate" 1 SetScriptVar
+    
+    # source code commands
+    <~spaceFiller LF Concat <~line @debuggerFormatLine Concat " " Concat
+    "debugger__commands" <~line Concat <-! +>commands
+    <+commands GetListCount 0 do
+        I <~col eq if
+            " *" Concat <+commands[I] Concat "*" Concat
+        else
+            " " Concat <+commands[I] Concat
+        endif
+    loop
+    LF Concat
+    +>text
+    "Source code (commands)" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" <+text SetScriptVar
+                                                        <~type 1 eq if
+                                                            dup2 "TextRed"   <~callRed   SetScriptVar
+                                                            dup2 "TextGreen" <~callGreen SetScriptVar
+                                                            dup2 "TextBlue"  <~callBlue  SetScriptVar
+                                                        else
+                                                            dup2 "TextRed"   <~hiRed   SetScriptVar
+                                                            dup2 "TextGreen" <~hiGreen SetScriptVar
+                                                            dup2 "TextBlue"  <~hiBlue  SetScriptVar
+                                                        endif
+                                                        "NeedsUpdate" 1 SetScriptVar
+    
+    #source code below
+    <~spaceFiller LF Concat #leave on stack
+    <~line 7 add <~line 1 add do
+        I <-debugger__lines lte if
+            I @debuggerFormatLine "  " Concat Concat
+            "debugger__line" I Concat <-! Concat
+        endif
+        LF Concat
+    loop
+    +>text
+    "Source code (bellow)" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" <+text SetScriptVar
+                                                            "NeedsUpdate" 1 SetScriptVar
+    
+    #call stack
+    "Call stack: main"
+    <-debuggerCallStack GetListCount 0 do
+        " @" Concat <-debuggerCallStack[I] concat
+    loop
+    +>callStack
+    "Call stack" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" <+callStack SetScriptVar
+                                                   "NeedsUpdate" 1 SetScriptVar
+    
+    #display stack
+    CreateList +>stackCopy
+    <+stackCopy PrependStackToList #this will consume the stack
+    <+stackCopy @guiDumpList #restore the stack
+    
+    ""
+    <+stackCopy GetListCount 0 do
+        I 0 gt if
+            LF Concat
+        endif
+        <+stackCopy[<+stackCopy GetListCount I sub 1 sub] @debuggerToString Concat
+    loop
+    +>stackDump
+    "Stack (content)" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" <+stackDump SetScriptVar
+                                                        "NeedsUpdate" 1 SetScriptVar
+
+    #display variables
+    ""
+    <-invokeUsedVariables GetListCount 0 do
+        <-invokeUsedVariables[I] -?! if
+            <-invokeUsedVariables[I] ": " <-invokeUsedVariables[I] <-! @debuggerToString Concat Concat Concat
+            LF Concat
+        endif
+    loop
+    +>variablesDump
+    "Variables (content)" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" <+variablesDump SetScriptVar
+                                                            "NeedsUpdate" 1 SetScriptVar
+
+    #display lists
+    ""
+    <-listRegistry GetListCount 0 do
+        <-listRegistry[I] @getListById @debuggerToString Concat
+        LF Concat
+    loop
+    +>listsDump
+    "Lists (content)" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" <+listsDump SetScriptVar
+                                                        "NeedsUpdate" 1 SetScriptVar
+%blockend
+
+
+#adds leaning zeros to line number
+:debuggerFormatLine # [ int - line ]    
+dup 0 lte if
+    pop "000" return #no lines below 0
+endif
+dup 10 lt if
+    "00" swap Concat return
+endif
+dup 100 lt if
+    "0" swap Concat return
+endif
+#leave the original number on stack
+
+    
+#helper functions
+:debuggerToString # [ value - string ]
+    dup GetType "INT" eq if
+        "int " swap Concat return
+    endif
+    dup GetType "FLOAT" eq if
+        "float " swap Concat return
+    endif
+    dup GetType "STRING" eq if
+        DoubleQuote swap Concat DoubleQuote Concat
+        dup StringLength <-MaxStringLength gt if
+            dup 0 <-MaxStringLength 10 sub SubString "..." Concat DoubleQuote Concat " (" Concat swap StringLength Concat ")" Concat #list string
+        endif
+        "string " swap Concat return
+    endif
+    dup GetType "LIST" eq if
+        dup dup #list list list
+        "List#" swap @getListId Concat ": " Concat swap Concat #list listString
+        dup StringLength <-MaxStringLength gt if #list listString
+            0 <-MaxStringLength 10 sub SubString "...] (" Concat swap GetListCount Concat ")" Concat #listString
+        else #list listString
+            swap pop  #listString
+        endif
+    endif
+    # just leave the original value as it is on stack otherwise
+    
+    
+#event listeners
+:guiEventDispatch # [ ... string - ]
+    dup "StepOver" eq if
+        pop <~mode 1 eq if 3 ~>mode endif return
+    endif
+    dup "StepLine" eq if
+        pop <~mode 1 eq if 4 ~>mode endif return
+    endif
+    dup "StepInto" eq if
+        pop <~mode 1 eq if 2 ~>mode endif return
+    endif
+    dup "StepOut" eq if
+        pop <~mode 1 eq if 5 ~>mode endif return
+    endif
+    dup "Continue" eq if
+        pop <~mode 1 eq if 0 ~>mode endif return
+    endif
+    dup "Break" eq if
+        pop 1 ~>mode return
+    endif
+    "Unhadled dispatch:" swap Trace2

@@ -43,7 +43,7 @@ public class CompilerPanel extends JPanel {
 
         ErrorHandler.errorSink = this;
 
-        autoCompileTimer = new Timer(2000, e -> scanAndCompile(false));
+        autoCompileTimer = new Timer(1000, e -> scanAndCompile(false));
         autoCompileTimer.setRepeats(true);
 
         compiler = new GlobalCompiler();
@@ -65,7 +65,7 @@ public class CompilerPanel extends JPanel {
         showDisplay.addActionListener(e -> display.setVisible(true));
         topBar.add(showDisplay);
 
-        JCheckBox autoCompile = new JCheckBox("Compile every 2 seconds");
+        JCheckBox autoCompile = new JCheckBox("Compile every second");
         autoCompile.addActionListener(e -> {
             if (autoCompile.isSelected())
                 autoCompileTimer.start();

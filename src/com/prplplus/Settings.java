@@ -21,6 +21,8 @@ public class Settings {
 
     public static int MAX_SIZE = 128;
 
+    public static String PREFIX_DELIM = "__";
+
     /**
      * enables force export, which fakes the ship size to be larger than it actually is
      * settable via a -forceExport argument
@@ -38,6 +40,7 @@ public class Settings {
             MAX_SIZE = readInt(props, "maxSize", 128);
             MAX_SIZE = Math.min(Math.max(35, MAX_SIZE), 128);
             WORK_IN = props.getProperty("PFDirectory", WORK_IN);
+            PREFIX_DELIM = props.getProperty("PrefixDelimitier", PREFIX_DELIM);
             if (WORK_IN.equals("default")) {
                 WORK_IN = Utils.getPFLocalFilesFolder();
             }

@@ -1,0 +1,63 @@
+$TextBindCoreId:-1
+$TextToShow:"Test-change-this"
+$TextX:0.0
+$TextY:0.0
+
+$TextRed:255
+$TextGreen:255
+$TextBlue:255
+
+$TextAlignment:"MiddleCenter"
+$TextPivotX:-10000.1
+$TextPivotY:-10000.1
+
+$NeedsUpdate:1
+
+#/*
+#UpperLeft,
+#UpperCenter,
+#UpperRight,
+#MiddleLeft,
+#MiddleCenter,
+#MiddleRight,
+#LowerLeft,
+#LowerCenter,
+#LowerRight
+#*/
+
+once
+    0 ->update
+    @init
+endonce
+
+<-NeedsUpdate <-update eq0 or if
+    0 ->NeedsUpdate
+    30 60 RandInt ->update # sleep 1-2 seconds randomly, to not update all at the same time and lag the game
+    
+    <-TextBindCoreId UnitIsDestroyed if
+        Self 0 DestroyUnit
+    else
+        <-TextToShow SetText
+        <-TextRed <-TextGreen <-TextBlue 255 SetTextColor
+        <-TextAlignment SetTextAlignment
+        <-TextPivotX -10000.1 neq if <-TextPivotX SetTextPivotX endif
+        <-TextPivotY -10000.1 neq if <-TextPivotY SetTextPivotY endif
+        <-TextX <-TextBindCoreId GetUnitPixelCoordX add SetTextX
+        <-TextY <-TextBindCoreId GetUnitPixelCoordY add SetTextY
+    endif
+else 
+    <-update 1 sub ->update #this could be better optimized, but meh, too much work
+endif
+
+
+:awake
+    @init
+
+:gameLoaded
+    @init
+
+:init
+    Self CONST_TAKEMAPSPACE 0 SetAttribute
+    20 SetTextSize
+    1 OperateWhilePaused
+

@@ -1,4 +1,5 @@
 /bin/
 /deploy/
-/GZipExporter/
+/CsBin/*
+!/CsBin/editor/
 debug.log

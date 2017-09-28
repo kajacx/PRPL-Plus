@@ -1,0 +1,14 @@
+C:\kajacx\programming\CS\PF_MODS\DebugerCompiler\DebugerCompiler\bin\Debug\DebugerCompiler.exe.config
+C:\kajacx\programming\CS\PF_MODS\DebugerCompiler\DebugerCompiler\bin\Debug\DebugerCompiler.exe
+C:\kajacx\programming\CS\PF_MODS\DebugerCompiler\DebugerCompiler\bin\Debug\DebugerCompiler.pdb
+C:\kajacx\programming\CS\PF_MODS\DebugerCompiler\DebugerCompiler\obj\Debug\DebugerCompiler.csprojResolveAssemblyReference.cache
+C:\kajacx\programming\CS\PF_MODS\DebugerCompiler\DebugerCompiler\obj\Debug\DebugerCompiler.exe
+C:\kajacx\programming\CS\PF_MODS\DebugerCompiler\DebugerCompiler\obj\Debug\DebugerCompiler.pdb
+C:\kajacx\programming\CS\PF_MODS\DebugerCompiler\DebugerCompiler\bin\Debug\Assembly-CSharp.dll
+C:\kajacx\programming\eclipse\my-workplace\PRPL_Plus\CsSources\DebugerCompiler\DebugerCompiler\bin\Debug\DebugerCompiler.exe.config
+C:\kajacx\programming\eclipse\my-workplace\PRPL_Plus\CsSources\DebugerCompiler\DebugerCompiler\obj\Debug\DebugerCompiler.exe
+C:\kajacx\programming\eclipse\my-workplace\PRPL_Plus\CsSources\DebugerCompiler\DebugerCompiler\obj\Debug\DebugerCompiler.pdb
+C:\kajacx\programming\eclipse\my-workplace\PRPL_Plus\CsSources\DebugerCompiler\DebugerCompiler\bin\Debug\DebugerCompiler.exe
+C:\kajacx\programming\eclipse\my-workplace\PRPL_Plus\CsSources\DebugerCompiler\DebugerCompiler\bin\Debug\DebugerCompiler.pdb
+C:\kajacx\programming\eclipse\my-workplace\PRPL_Plus\CsSources\DebugerCompiler\DebugerCompiler\bin\Debug\Assembly-CSharp.dll
+C:\kajacx\programming\eclipse\my-workplace\PRPL_Plus\CsSources\DebugerCompiler\DebugerCompiler\obj\Debug\DebugerCompiler.csprojResolveAssemblyReference.cache
