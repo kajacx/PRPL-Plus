@@ -8,7 +8,7 @@ import com.prplplus.jflex.Symbol;
 public class SpecialSymbol extends Symbol {
 
     public static enum Type {
-        LOCAL_PREFIX, SEMI_GLOBAL_PREFIX, PRPL_PLUS_PREFIX, BLOCK_FOLD, INCLUDE, REL_INCLUDE, LIBRARY, SHARE_NAMESPACE, RECURSIVE
+        LOCAL_PREFIX, SEMI_GLOBAL_PREFIX, PRPL_PLUS_PREFIX, BLOCK_FOLD, INCLUDE, REL_INCLUDE, LIBRARY, SHARE_NAMESPACE
     }
 
     public Type type;
@@ -26,11 +26,6 @@ public class SpecialSymbol extends Symbol {
     @Override
     public boolean isShareNamespace() {
         return type == Type.SHARE_NAMESPACE;
-    }
-
-    @Override
-    public boolean isRecursionFlag() {
-        return type == Type.RECURSIVE;
     }
 
     @Override

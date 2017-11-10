@@ -17,13 +17,27 @@ namespace DebugerCompiler
 
             //string toCompile = @"c:\Users\Karel\Documents\My Games\particlefleet\editor\PRPL Console\scripts\TextBind.prpl";
             //string toCompile = @"c:\Users\Karel\Documents\My Games\particlefleet\editor\CannonspawnTest\scripts\SpawnCannonShot.prpl";
-            string toCompile = Console.ReadLine();
+            string toCompile = null;
+            bool detailedMode = false;
+            while (true)
+            {
+                string line = Console.ReadLine();
+                string[] parts = line.Split(new char[] { ':' }, 2);
+                if (parts[0].Equals("detailedMode"))
+                {
+                    detailedMode = parts[1].Equals("true");
+                }
+                if (parts[0].Equals("file"))
+                {
+                    toCompile = parts[1];
+                    break;
+                }
+            }
 
             string msg;
             Dictionary<string, CrplCore.Data> inputVar;
             List<CrplCore.Command> commands = commandsFromScript(toCompile, out msg, out inputVar);
             Console.WriteLine(msg);
-
 
             if (commands != null)
             {
@@ -99,8 +113,9 @@ namespace DebugerCompiler
                 Console.WriteLine("#Code execution");
                 int lineNumber = -1;
                 int index = 0;
-                foreach (var command in commands)
+                for (int i = 0; i < commands.Count; i++)
                 {
+                    CrplCore.Command command = commands[i];
                     if (command.lineNumber > lineNumber)
                     {
                         lineNumber = command.lineNumber;
@@ -112,9 +127,22 @@ namespace DebugerCompiler
                     }
 
                     // line index type @invoke command 
-                    Console.WriteLine("{0} {1} {2} @debuggerIntercept {3}", command.lineNumber, index, getTypeForCommand(command), getCommandExecuteText(command));
+                    if (detailedMode)
+                    {
+                        Console.WriteLine("{0} {1} {2} {3} @debuggerInterceptDetail {4}", command.lineNumber, index, getTypeForCommand(command), i > 0 ? getCommandDisplayText(commands[i-1]) : "\"\"", getCommandExecuteText(command));
+                    }
+                    else
+                    {
+                        Console.WriteLine("{0} {1} {2} @debuggerIntercept {3}", command.lineNumber, index, getTypeForCommand(command), getCommandExecuteText(command));
+                    }
                 }
-                Console.WriteLine("{0} {1} {2} @debuggerIntercept <-debuggerCallStack dup GetListCount 1 sub RemoveListElement", lines.Length + 1, 0, 2);
+                if (detailedMode)
+                {
+                    Console.WriteLine("{0} {1} {2} {3} @debuggerInterceptDetail <-debuggerCallStack dup GetListCount 1 sub RemoveListElement", lines.Length + 1, 0, 2, getCommandDisplayText(commands[commands.Count - 1]));
+                } else
+                {
+                    Console.WriteLine("{0} {1} {2} @debuggerIntercept <-debuggerCallStack dup GetListCount 1 sub RemoveListElement", lines.Length + 1, 0, 2);
+                }
             }
             else
             {

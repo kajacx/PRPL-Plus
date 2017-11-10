@@ -100,6 +100,11 @@ once
     CreateList ->debuggerCallStack # top - most recent function
     
     "                                  " dup dup dup dup dup Concat Concat Concat Concat Concat ~>spaceFiller #30 spaces replicated 6 times to enforce formatting
+    
+    CreateList ~>detailStackCommands
+    CreateList ~>detailStackSave
+    
+    0 ->debugger__lines #write whatever into this, it will be overriden anyway, jsut so PRPL+ doesnt complain
 endonce
 
 
@@ -124,8 +129,8 @@ endonce
 
 #debugger functions
 
-# line col type - shouldExecute
-:debuggerIntercept #[ int int int - bool ]
+# line col type -
+:debuggerIntercept #[ int int int - ]
 %blockstart
     ~>type ~>col ~>line
     <~mode not if #normal execution
@@ -180,6 +185,24 @@ endonce
             1 ~>mode return # just halt on the next command
         endif
     endif
+    
+# line col type command -
+:debuggerInterceptDetail # [ int int int string - ]
+    +>command +>c +>b +>a
+    CreateList dup +>list PrependStackToList <+list @guiDumpList #copy the stack into +list
+    <+list <~detailStackSave Trace2
+    0 #different, leave on stack
+    <+list GetListCount 0 do
+        <+list[I] <~detailStackSave[I] neq or
+        dup if
+            <+command ~>detailStackCommands[I]
+        endif
+    loop
+    pop
+    <~detailStackCommands Trace
+    <+list ~>detailStackSave
+    <+a <+b <+c @debuggerIntercept #continue with normal itercept
+
 %blockend
 
 
@@ -264,6 +287,9 @@ endonce
             LF Concat
         endif
         <+stackCopy[<+stackCopy GetListCount I sub 1 sub] @debuggerToString Concat
+        <~detailStackCommands GetListCount 0 gt if
+            " (" <~detailStackCommands[<+stackCopy GetListCount I sub 1 sub] ")" Concat Concat Concat
+        endif
     loop
     +>stackDump
     "Stack (content)" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" <+stackDump SetScriptVar

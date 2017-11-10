@@ -250,6 +250,11 @@ once
     CreateList ->debuggerCallStack # top - most recent function
     
     "                                  " dup dup dup dup dup Concat Concat Concat Concat Concat ->s___spaceFiller #30 spaces replicated 6 times to enforce formatting
+    
+    CreateList ->s___detailStackCommands
+    CreateList ->s___detailStackSave
+    
+    0 ->debugger__lines #write whatever into this, it will be overriden anyway, jsut so PRPL+ doesnt complain
 endonce
 
 
@@ -274,8 +279,8 @@ endonce
 
 #debugger functions
 
-# line col type - shouldExecute
-:debuggerIntercept #[ int int int - bool ]
+# line col type -
+:debuggerIntercept #[ int int int - ]
 #blockstart
     ->s___type ->s___col ->s___line
     <-s___mode not if #normal execution
@@ -330,6 +335,24 @@ endonce
             1 ->s___mode return # just halt on the next command
         endif
     endif
+    
+# line col type command -
+:debuggerInterceptDetail # [ int int int string - ]
+    ->f1___command ->f1___c ->f1___b ->f1___a
+    CreateList dup ->f1___list PrependStackToList <-f1___list @guiDumpList #copy the stack into +list
+    <-f1___list <-s___detailStackSave Trace2
+    0 #different, leave on stack
+    <-f1___list GetListCount 0 do
+        <-f1___list[I] <-s___detailStackSave[I] neq or
+        dup if
+            <-f1___command ->s___detailStackCommands[I]
+        endif
+    loop
+    pop
+    <-s___detailStackCommands Trace
+    <-f1___list ->s___detailStackSave
+    <-f1___a <-f1___b <-f1___c @debuggerIntercept #continue with normal itercept
+
 #blockend
 
 
@@ -353,23 +376,23 @@ endonce
         endif
         LF Concat
     loop
-    ->f2___text
-    "Source code (above)" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" <-f2___text SetScriptVar
+    ->f3___text
+    "Source code (above)" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" <-f3___text SetScriptVar
                                                             "NeedsUpdate" 1 SetScriptVar
     
     # source code commands
     <-s___spaceFiller LF Concat <-s___line @debuggerFormatLine Concat " " Concat
-    "debugger__commands" <-s___line Concat <-! ->f2___commands
-    <-f2___commands GetListCount 0 do
+    "debugger__commands" <-s___line Concat <-! ->f3___commands
+    <-f3___commands GetListCount 0 do
         I <-s___col eq if
-            " *" Concat <-f2___commands[I] Concat "*" Concat
+            " *" Concat <-f3___commands[I] Concat "*" Concat
         else
-            " " Concat <-f2___commands[I] Concat
+            " " Concat <-f3___commands[I] Concat
         endif
     loop
     LF Concat
-    ->f2___text
-    "Source code (commands)" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" <-f2___text SetScriptVar
+    ->f3___text
+    "Source code (commands)" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" <-f3___text SetScriptVar
                                                         <-s___type 1 eq if
                                                             dup2 "TextRed"   <-s___callRed   SetScriptVar
                                                             dup2 "TextGreen" <-s___callGreen SetScriptVar
@@ -390,8 +413,8 @@ endonce
         endif
         LF Concat
     loop
-    ->f2___text
-    "Source code (bellow)" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" <-f2___text SetScriptVar
+    ->f3___text
+    "Source code (bellow)" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" <-f3___text SetScriptVar
                                                             "NeedsUpdate" 1 SetScriptVar
     
     #call stack
@@ -399,24 +422,27 @@ endonce
     <-debuggerCallStack GetListCount 0 do
         " @" Concat <-debuggerCallStack[I] concat
     loop
-    ->f2___callStack
-    "Call stack" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" <-f2___callStack SetScriptVar
+    ->f3___callStack
+    "Call stack" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" <-f3___callStack SetScriptVar
                                                    "NeedsUpdate" 1 SetScriptVar
     
     #display stack
-    CreateList ->f2___stackCopy
-    <-f2___stackCopy PrependStackToList #this will consume the stack
-    <-f2___stackCopy @guiDumpList #restore the stack
+    CreateList ->f3___stackCopy
+    <-f3___stackCopy PrependStackToList #this will consume the stack
+    <-f3___stackCopy @guiDumpList #restore the stack
     
     ""
-    <-f2___stackCopy GetListCount 0 do
+    <-f3___stackCopy GetListCount 0 do
         I 0 gt if
             LF Concat
         endif
-        <-f2___stackCopy[<-f2___stackCopy GetListCount I sub 1 sub] @debuggerToString Concat
+        <-f3___stackCopy[<-f3___stackCopy GetListCount I sub 1 sub] @debuggerToString Concat
+        <-s___detailStackCommands GetListCount 0 gt if
+            " (" <-s___detailStackCommands[<-f3___stackCopy GetListCount I sub 1 sub] ")" Concat Concat Concat
+        endif
     loop
-    ->f2___stackDump
-    "Stack (content)" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" <-f2___stackDump SetScriptVar
+    ->f3___stackDump
+    "Stack (content)" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" <-f3___stackDump SetScriptVar
                                                         "NeedsUpdate" 1 SetScriptVar
 
     #display variables
@@ -427,8 +453,8 @@ endonce
             LF Concat
         endif
     loop
-    ->f2___variablesDump
-    "Variables (content)" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" <-f2___variablesDump SetScriptVar
+    ->f3___variablesDump
+    "Variables (content)" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" <-f3___variablesDump SetScriptVar
                                                             "NeedsUpdate" 1 SetScriptVar
 
     #display lists
@@ -437,8 +463,8 @@ endonce
         <-listRegistry[I] @getListById @debuggerToString Concat
         LF Concat
     loop
-    ->f2___listsDump
-    "Lists (content)" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" <-f2___listsDump SetScriptVar
+    ->f3___listsDump
+    "Lists (content)" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" <-f3___listsDump SetScriptVar
                                                         "NeedsUpdate" 1 SetScriptVar
 #blockend
 
@@ -1087,13 +1113,13 @@ endif
 
 :guiCheckInput
 #Listen for mouse clicks
-<-f7___mouseWasDown not 0 GetMouseButton dup ->f7___mouseWasDown and if
+<-f8___mouseWasDown not 0 GetMouseButton dup ->f8___mouseWasDown and if
     #TraceStack
     "Command:" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" "Command:" SetScriptVar
                                                  "NeedsUpdate" 1 SetScriptVar
     0 ->s1___selectedTextField
-    GetMousePosition ->f7___y ->f7___x
-    <-f7___x Self GetUnitPixelCoordX sub <-f7___y Self GetUnitPixelCoordY sub <-s1___activeWindow @guiClickFind
+    GetMousePosition ->f8___y ->f8___x
+    <-f8___x Self GetUnitPixelCoordX sub <-f8___y Self GetUnitPixelCoordY sub <-s1___activeWindow @guiClickFind
     #TraceStack
 endif
 
@@ -1124,52 +1150,52 @@ endif
 
 #On key down:
 :onKeyDown # [ string - ]
-->f8___key
+->f9___key
 #<+key "pressed" Trace2
-<-f8___key @guiFindKey dup "" neq if
-    ->f8___key
+<-f9___key @guiFindKey dup "" neq if
+    ->f9___key
 else
     pop #remove the duplicated foun key
-    "-A-B-C-D-E-F-G-H-I-J-K-L-M-N-O-P-Q-R-S-T-U-V-W-X-Y-Z-" "-" <-f8___key "-" concat concat "" StringReplace StringLength 53 eq if
+    "-A-B-C-D-E-F-G-H-I-J-K-L-M-N-O-P-Q-R-S-T-U-V-W-X-Y-Z-" "-" <-f9___key "-" concat concat "" StringReplace StringLength 53 eq if
         #the key is not contained in the string, return
         return
     endif
     "LeftShift" GetKey "RightShift" GetKey or not if
-        <-f8___key ToLower ->f8___key
+        <-f9___key ToLower ->f9___key
     endif
 endif
 
-<-f8___key "Enter" eq if
+<-f9___key "Enter" eq if
     <-s1___selectedTextFieldName "InputEnter" @guiEventDispatch
     return
 endif
 
-<-s1___selectedTextField "TextBind.prpl" "TextToShow" GetScriptVar ->f8___text
-<-f8___key "Backspace" eq if
-    <-f8___text 0 <-f8___text StringLength 1 sub SubString ->f8___text
+<-s1___selectedTextField "TextBind.prpl" "TextToShow" GetScriptVar ->f9___text
+<-f9___key "Backspace" eq if
+    <-f9___text 0 <-f9___text StringLength 1 sub SubString ->f9___text
 else
-    <-f8___text <-f8___key concat ->f8___text
+    <-f9___text <-f9___key concat ->f9___text
 endif
-<-s1___selectedTextField "TextBind.prpl" dup2 "TextToShow" <-f8___text SetScriptVar
+<-s1___selectedTextField "TextBind.prpl" dup2 "TextToShow" <-f9___text SetScriptVar
                                          "NeedsUpdate" 1 SetScriptVar
 
 
 
 
 :guiFindKey # [ string - string ]
-->f9___key
+->f10___key
 <-guiCurrentKeyboard dup GetListCount 0 do
-    dup[I] ->f9___list
-    <-f9___list[1] <-f9___key eq if
-        1 ->f9___success
-        <-f9___list GetListCount 2 do
-            <-f9___list[I] GetKey not if
-                0 ->f9___success
+    dup[I] ->f10___list
+    <-f10___list[1] <-f10___key eq if
+        1 ->f10___success
+        <-f10___list GetListCount 2 do
+            <-f10___list[I] GetKey not if
+                0 ->f10___success
                 break
             endif
         loop
-        <-f9___success if
-            pop <-f9___list[0] return
+        <-f10___success if
+            pop <-f10___list[0] return
         endif
     endif
 loop
@@ -1199,26 +1225,26 @@ Self RemoveImages
 #blockstart #drawing
 #draws elements [ rootElement - ]
 :guiDrawElements #[ list - ]
-0 0 100 4 @guiMakeList ->f11___list # [e1, x1, y1, d1, e2, x2, y2, d2, ...]
-0 ->f11___i4
-100 ->f11___depth
-while <-f11___i4 <-f11___list GetListCount lt repeat
-    <-f11___list[<-f11___i4] ->f11___el
-    <-f11___list[<-f11___i4 1 add] <-f11___el[1] add ->f11___x
-    <-f11___list[<-f11___i4 2 add] <-f11___el[2] add ->f11___y
-    <-f11___list[<-f11___i4 3 add] ->f11___depth
+0 0 100 4 @guiMakeList ->f12___list # [e1, x1, y1, d1, e2, x2, y2, d2, ...]
+0 ->f12___i4
+100 ->f12___depth
+while <-f12___i4 <-f12___list GetListCount lt repeat
+    <-f12___list[<-f12___i4] ->f12___el
+    <-f12___list[<-f12___i4 1 add] <-f12___el[1] add ->f12___x
+    <-f12___list[<-f12___i4 2 add] <-f12___el[2] add ->f12___y
+    <-f12___list[<-f12___i4 3 add] ->f12___depth
     
-    <-f11___depth <-f11___x <-f11___y <-f11___el @guiDrawImage
-    <-f11___el[0] "box" eq <-f11___el[0] "mainbox" eq or if
-        <-f11___el[5] dup GetListCount 0 do
-            dup[I] <-f11___list swap AppendToList
-            <-f11___list <-f11___x AppendToList
-            <-f11___list <-f11___y AppendToList
-            <-f11___list <-f11___depth 5 sub AppendToList
+    <-f12___depth <-f12___x <-f12___y <-f12___el @guiDrawImage
+    <-f12___el[0] "box" eq <-f12___el[0] "mainbox" eq or if
+        <-f12___el[5] dup GetListCount 0 do
+            dup[I] <-f12___list swap AppendToList
+            <-f12___list <-f12___x AppendToList
+            <-f12___list <-f12___y AppendToList
+            <-f12___list <-f12___depth 5 sub AppendToList
         loop
         pop
     endif
-    <-f11___i4 4 add ->f11___i4
+    <-f12___i4 4 add ->f12___i4
 endwhile
 
 
@@ -1226,70 +1252,70 @@ endwhile
 
 :guiDrawImage #[ int float float list - ]
 #get position and size
-->f12___el <-f12___el[3] ->f12___width <-f12___el[4] ->f12___height
-<-f12___height 2.0 div add ->f12___y <-f12___width 2.0 div add ->f12___x ->f12___depth
+->f13___el <-f13___el[3] ->f13___width <-f13___el[4] ->f13___height
+<-f13___height 2.0 div add ->f13___y <-f13___width 2.0 div add ->f13___x ->f13___depth
 
-<-f12___el[0] "label" neq if
+<-f13___el[0] "label" neq if
     #get square
-    <-f12___el[0] "mainbox" eq if 
-    "guifill"        <-f12___imgCount 1 add dup ->f12___imgCount concat ->f12___fillName endif
-    "guibordertop"   <-f12___imgCount 1 add dup ->f12___imgCount concat ->f12___borderNameTop
-    "guiborderright" <-f12___imgCount 1 add dup ->f12___imgCount concat ->f12___borderNameRight
-    "guiborderdown"  <-f12___imgCount 1 add dup ->f12___imgCount concat ->f12___borderNameDown
-    "guiborderleft"  <-f12___imgCount 1 add dup ->f12___imgCount concat ->f12___borderNameLeft
+    <-f13___el[0] "mainbox" eq if 
+    "guifill"        <-f13___imgCount 1 add dup ->f13___imgCount concat ->f13___fillName endif
+    "guibordertop"   <-f13___imgCount 1 add dup ->f13___imgCount concat ->f13___borderNameTop
+    "guiborderright" <-f13___imgCount 1 add dup ->f13___imgCount concat ->f13___borderNameRight
+    "guiborderdown"  <-f13___imgCount 1 add dup ->f13___imgCount concat ->f13___borderNameDown
+    "guiborderleft"  <-f13___imgCount 1 add dup ->f13___imgCount concat ->f13___borderNameLeft
    #guilefttop"     <+imgCount 1 add dup +>imgCount concat +>borderNameLeftTop
    #guirighttop"    <+imgCount 1 add dup +>imgCount concat +>borderNameRightTop
    #guileftdown"    <+imgCount 1 add dup +>imgCount concat +>borderNameLeftDown
    #guirightdown"   <+imgCount 1 add dup +>imgCount concat +>borderNameRightDown
 
-    <-f12___el[0] "mainbox" eq if
-    Self <-f12___fillName            <-ImgSquareFull SetImage endif
-    Self <-f12___borderNameTop       <-ImgSquareFull SetImage
-    Self <-f12___borderNameRight     <-ImgSquareFull SetImage
-    Self <-f12___borderNameDown      <-ImgSquareFull SetImage
-    Self <-f12___borderNameLeft      <-ImgSquareFull SetImage
+    <-f13___el[0] "mainbox" eq if
+    Self <-f13___fillName            <-ImgSquareFull SetImage endif
+    Self <-f13___borderNameTop       <-ImgSquareFull SetImage
+    Self <-f13___borderNameRight     <-ImgSquareFull SetImage
+    Self <-f13___borderNameDown      <-ImgSquareFull SetImage
+    Self <-f13___borderNameLeft      <-ImgSquareFull SetImage
    #Self <+borderNameLeftTop   <-ImgSquareFull SetImage
    #Self <+borderNameRightTop  <-ImgSquareFull SetImage
    #Self <+borderNameLeftDown  <-ImgSquareFull SetImage
    #Self <+borderNameRightDown <-ImgSquareFull SetImage
 
     #set colors, pos and whatnot
-    <-f12___el[0] "mainbox" eq if
-    Self <-f12___fillName            <-guiFillRed   <-guiFillGreen   <-guiFillBlue   255 SetImageColor endif
-    Self <-f12___borderNameTop       <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
-    Self <-f12___borderNameRight     <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
-    Self <-f12___borderNameDown      <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
-    Self <-f12___borderNameLeft      <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
+    <-f13___el[0] "mainbox" eq if
+    Self <-f13___fillName            <-guiFillRed   <-guiFillGreen   <-guiFillBlue   255 SetImageColor endif
+    Self <-f13___borderNameTop       <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
+    Self <-f13___borderNameRight     <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
+    Self <-f13___borderNameDown      <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
+    Self <-f13___borderNameLeft      <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
    #Self <+borderNameLeftTop   <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
    #Self <+borderNameRightTop  <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
    #Self <+borderNameLeftDown  <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
    #Self <+borderNameRightDown <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
 
-    <-f12___x <-f12___width  2.0 div add ->f12___xpw
-    <-f12___x <-f12___width  2.0 div sub ->f12___xmw
-    <-f12___y <-f12___height 2.0 div add ->f12___yph
-    <-f12___y <-f12___height 2.0 div sub ->f12___ymh
+    <-f13___x <-f13___width  2.0 div add ->f13___xpw
+    <-f13___x <-f13___width  2.0 div sub ->f13___xmw
+    <-f13___y <-f13___height 2.0 div add ->f13___yph
+    <-f13___y <-f13___height 2.0 div sub ->f13___ymh
     
-    <-f12___el[0] "mainbox" eq if
-    Self <-f12___fillName            <-f12___x <-f12___y     <-f12___depth SetImagePosition endif
-    Self <-f12___borderNameTop       <-f12___x <-f12___yph   <-f12___depth 1 sub SetImagePosition
-    Self <-f12___borderNameRight     <-f12___xpw <-f12___y   <-f12___depth 1 sub SetImagePosition
-    Self <-f12___borderNameDown      <-f12___x <-f12___ymh   <-f12___depth 1 sub SetImagePosition
-    Self <-f12___borderNameLeft      <-f12___xmw <-f12___y   <-f12___depth 1 sub SetImagePosition
+    <-f13___el[0] "mainbox" eq if
+    Self <-f13___fillName            <-f13___x <-f13___y     <-f13___depth SetImagePosition endif
+    Self <-f13___borderNameTop       <-f13___x <-f13___yph   <-f13___depth 1 sub SetImagePosition
+    Self <-f13___borderNameRight     <-f13___xpw <-f13___y   <-f13___depth 1 sub SetImagePosition
+    Self <-f13___borderNameDown      <-f13___x <-f13___ymh   <-f13___depth 1 sub SetImagePosition
+    Self <-f13___borderNameLeft      <-f13___xmw <-f13___y   <-f13___depth 1 sub SetImagePosition
    #Self <+borderNameLeftTop   <+xmw <+yph <+depth 1 sub SetImagePosition
    #Self <+borderNameRightTop  <+xpw <+yph <+depth 1 sub SetImagePosition
    #Self <+borderNameLeftDown  <+xmw <+ymh <+depth 1 sub SetImagePosition
    #Self <+borderNameRightDown <+xpw <+ymh <+depth 1 sub SetImagePosition
    
-    <-f12___width  12.0 div 0.08333333333 add ->f12___w # 1 / 12
-    <-f12___height 12.0 div 0.08333333333 add ->f12___h
+    <-f13___width  12.0 div 0.08333333333 add ->f13___w # 1 / 12
+    <-f13___height 12.0 div 0.08333333333 add ->f13___h
 
-    <-f12___el[0] "mainbox" eq if
-    Self <-f12___fillName            <-f12___w <-f12___h                     SetImageScale endif
-    Self <-f12___borderNameTop       <-f12___w 0.08333333333           SetImageScale # 1 / 12
-    Self <-f12___borderNameRight     0.08333333333 <-f12___h           SetImageScale
-    Self <-f12___borderNameDown      <-f12___w 0.08333333333           SetImageScale
-    Self <-f12___borderNameLeft      0.08333333333 <-f12___h           SetImageScale
+    <-f13___el[0] "mainbox" eq if
+    Self <-f13___fillName            <-f13___w <-f13___h                     SetImageScale endif
+    Self <-f13___borderNameTop       <-f13___w 0.08333333333           SetImageScale # 1 / 12
+    Self <-f13___borderNameRight     0.08333333333 <-f13___h           SetImageScale
+    Self <-f13___borderNameDown      <-f13___w 0.08333333333           SetImageScale
+    Self <-f13___borderNameLeft      0.08333333333 <-f13___h           SetImageScale
    #Self <+borderNameLeftTop   0.05892556509 0.05892556509 SetImageScale # sqrt(2)/2 /12
    #Self <+borderNameRightTop  0.05892556509 0.05892556509 SetImageScale
    #Self <+borderNameLeftDown  0.05892556509 0.05892556509 SetImageScale
@@ -1301,22 +1327,26 @@ endwhile
    #Self <+borderNameRightDown 0.785398 SetImageRotation
 endif
 
-<-f12___el[0] "label" eq <-f12___el[0] "button" eq <-f12___el[0] "input" eq or or if
-    "PRPLCORE" 0 0 CreateUnit ->f12___textUnit
-    <-f12___textUnit "TextBind.prpl" AddScriptToUnit
-    <-f12___textUnit "TextBind.prpl" "TextBindCoreId" Self SetScriptVar
-    <-f12___textUnit "TextBind.prpl" "TextToShow" <-f12___el[5] SetScriptVar
-    <-f12___textUnit "TextBind.prpl" "TextX" <-f12___x 2 sub SetScriptVar
-    <-f12___textUnit "TextBind.prpl" "TextY" <-f12___y 2 sub SetScriptVar
+<-f13___el[0] "label" eq <-f13___el[0] "button" eq <-f13___el[0] "input" eq or or if
+    "PRPLCORE" 0 0 CreateUnit ->f13___textUnit
+    <-f13___textUnit "TextBind.prpl" AddScriptToUnit
+    <-f13___textUnit "TextBind.prpl" "TextBindCoreId" Self SetScriptVar
+    <-f13___textUnit "TextBind.prpl" "TextToShow" <-f13___el[5] SetScriptVar
+    <-f13___textUnit "TextBind.prpl" "TextX" <-f13___x 2 sub SetScriptVar
+    <-f13___textUnit "TextBind.prpl" "TextY" <-f13___y 2 sub SetScriptVar
 endif
 
-<-f12___el[0] "input" eq if
-    <-f12___el[5] <-f12___textUnit @guiRegisterInput
-    <-f12___textUnit "TextBind.prpl" dup2 "TextToShow" "" SetScriptVar
+<-f13___el[0] "input" eq if
+    <-f13___el[5] <-f13___textUnit @guiRegisterInput
+    <-f13___textUnit "TextBind.prpl" dup2 "TextToShow" "" SetScriptVar
 endif
 
-<-f12___el[0] "label" eq if
-    <-f12___el[5] <-f12___textUnit @guiRegisterLabel
+<-f13___el[0] "label" eq if
+    <-f13___el[5] <-f13___textUnit @guiRegisterLabel
+endif
+
+<-f13___el[0] "button" eq if
+    <-f13___el[5] <-f13___textUnit @guiRegisterButton
 endif
 
 
@@ -1331,35 +1361,35 @@ endif
 
 #starts with mouse position relative to the core [x y element]
 :guiClickFind # [ float float list - ]
-->f13___e ->f13___y ->f13___x <-f13___e <-f13___x <-f13___y 3 @guiMakeList ->f13___list # [e1, x1, y1, e2, x2, y2, ...]
-0 ->f13___i3
-while <-f13___i3 <-f13___list GetListCount lt repeat
-    <-f13___list[<-f13___i3] ->f13___el
-    <-f13___list[<-f13___i3 1 add] <-f13___el[1] sub ->f13___mx
-    <-f13___list[<-f13___i3 2 add] <-f13___el[2] sub ->f13___my
+->f14___e ->f14___y ->f14___x <-f14___e <-f14___x <-f14___y 3 @guiMakeList ->f14___list # [e1, x1, y1, e2, x2, y2, ...]
+0 ->f14___i3
+while <-f14___i3 <-f14___list GetListCount lt repeat
+    <-f14___list[<-f14___i3] ->f14___el
+    <-f14___list[<-f14___i3 1 add] <-f14___el[1] sub ->f14___mx
+    <-f14___list[<-f14___i3 2 add] <-f14___el[2] sub ->f14___my
     
-    <-f13___mx 0 gte <-f13___my 0 gte <-f13___mx <-f13___el[3] lt <-f13___my <-f13___el[4] lt and and and if
-        <-f13___el[0] "box" eq <-f13___el[0] "mainbox" eq or if
-            <-f13___el[5] dup GetListCount 0 do
-                dup[I] <-f13___list swap AppendToList
-                <-f13___list <-f13___mx AppendToList
-                <-f13___list <-f13___my AppendToList
+    <-f14___mx 0 gte <-f14___my 0 gte <-f14___mx <-f14___el[3] lt <-f14___my <-f14___el[4] lt and and and if
+        <-f14___el[0] "box" eq <-f14___el[0] "mainbox" eq or if
+            <-f14___el[5] dup GetListCount 0 do
+                dup[I] <-f14___list swap AppendToList
+                <-f14___list <-f14___mx AppendToList
+                <-f14___list <-f14___my AppendToList
             loop
             pop
         endif
-        <-f13___el[0] "button" eq if
-            <-f13___el[6] @guiDumpList @guiEventDispatch
+        <-f14___el[0] "button" eq if
+            <-f14___el[6] @guiDumpList @guiEventDispatch
             return
         endif
-        <-f13___el[0] "input" eq if
-            <-f13___el[5] ->s1___selectedTextFieldName
-            <-f13___el[5] @guiGetInput ->s1___selectedTextField
-            <-f13___el[5] "InputFocus" @guiEventDispatch
+        <-f14___el[0] "input" eq if
+            <-f14___el[5] ->s1___selectedTextFieldName
+            <-f14___el[5] @guiGetInput ->s1___selectedTextField
+            <-f14___el[5] "InputFocus" @guiEventDispatch
             return
         endif
     endif
     
-    <-f13___i3 3 add ->f13___i3
+    <-f14___i3 3 add ->f14___i3
 endwhile
 
 
@@ -1367,19 +1397,27 @@ endwhile
 
 #registers input [ name textBindUid ]
 :guiRegisterInput # [ string int - ]
-swap "f14___" swap Concat ->!
+swap "f15___" swap Concat ->!
 
 :guiGetInput # [ string - int ]
 #sharenamespace
-"f14___" swap Concat <-!
+"f15___" swap Concat <-!
 
 #registers label [ name textBindUid ]
 :guiRegisterLabel # [ string int - ]
-swap "f15___" swap Concat ->!
+swap "f16___" swap Concat ->!
 
 :guiGetLabel # [ string - int ]
 #sharenamespace
-"f15___" swap Concat <-!
+"f16___" swap Concat <-!
+
+#registers button [ name textBindUid ]
+:guiRegisterButton # [ string int - ]
+swap "f17___" swap Concat ->!
+
+:guiGetButton # [ string - int ]
+#sharenamespace
+"f17___" swap Concat <-!
 
 
 
@@ -1390,11 +1428,11 @@ swap "f15___" swap Concat ->!
 
 #makes list from N arguments, ex: 1 2 3 3 @guiMakeList -> [1, 2, 3]
 :guiMakeList # [ ... int - list ]
-CreateList ->f16___list 
+CreateList ->f18___list 
 0 do
-    <-f16___list swap PrependToList
+    <-f18___list swap PrependToList
 loop
-<-f16___list #return
+<-f18___list #return
 
 
 
@@ -1411,12 +1449,12 @@ pop
 
 # makes list recurively with { elems... "]" format
 :guiMakeListRecursive # [ string ... string - list]
-CreateList ->f18___currentList
-CreateList ->f18___listStack #stack of all lists except current list
+CreateList ->f20___currentList
+CreateList ->f20___listStack #stack of all lists except current list
 
 dup "]" neq if
     "Warning: expecting ']' on top of the stack." Trace
-    <-f18___currentList return
+    <-f20___currentList return
 else
     pop
 endif
@@ -1424,25 +1462,25 @@ endif
 while StackSize 0 gt repeat
     dup dup GetType "STRING" eq swap "]" eq and if
         pop
-        <-f18___listStack <-f18___currentList PrependToList
-        CreateList ->f18___currentList
+        <-f20___listStack <-f20___currentList PrependToList
+        CreateList ->f20___currentList
     else dup dup GetType "STRING" eq swap "[" eq and if
         pop
-        <-f18___listStack GetListCount 0 gt if
-            <-f18___listStack[0] <-f18___currentList PrependToList
-            <-f18___listStack[0] ->f18___currentList
-            <-f18___listStack 0 RemoveListElement
+        <-f20___listStack GetListCount 0 gt if
+            <-f20___listStack[0] <-f20___currentList PrependToList
+            <-f20___listStack[0] ->f20___currentList
+            <-f20___listStack 0 RemoveListElement
         else
-            <-f18___currentList return
+            <-f20___currentList return
         endif
     else
-        <-f18___currentList swap PrependToList
+        <-f20___currentList swap PrependToList
     endif
     endif
 endwhile
 
-"Error: malformed list notation format, entire stack was destroyed" Trace
-<-f18___currentList
+"Error: malformed list notation format, the entire stack was destroyed!" Trace
+<-f20___currentList
 
 # -- Functions from 'c:\Users\Karel\Documents\My Games\particlefleet\editor\lib\Invoke.prpl+' -- #
 
@@ -1486,13 +1524,13 @@ endif
 ######################################################################
 
 :invokeRegisterVariable # [ string - ]
-->f23___varName
+->f25___varName
 <-invokeUsedVariables dup GetListCount 0 do
-    dup[I] <-f23___varName eq if
+    dup[I] <-f25___varName eq if
         pop return #variable already registerer
     endif
 loop
-<-f23___varName AppendToList
+<-f25___varName AppendToList
 
 
 
@@ -3213,72 +3251,72 @@ endif
 #dup "My word is" swap Trace2
 
 #try parse as number
-0 ->f26___value
-0 ->f26___float # position of the float point + 1
+0 ->f28___value
+0 ->f28___float # position of the float point + 1
 dup StringLength 0 do
-    0 ->f26___valid
+    0 ->f28___valid
     dup I 1 SubString #leave char on stack
     #dup "My char is" swap Trace2
     dup "0" eq if
-        <-f26___value 10 mul 0 add ->f26___value
-        1 ->f26___valid
+        <-f28___value 10 mul 0 add ->f28___value
+        1 ->f28___valid
     endif
     #blockstart
     dup "1" eq if
-        <-f26___value 10 mul 1 add ->f26___value
-        1 ->f26___valid
+        <-f28___value 10 mul 1 add ->f28___value
+        1 ->f28___valid
     endif
     dup "2" eq if
-        <-f26___value 10 mul 2 add ->f26___value
-        1 ->f26___valid
+        <-f28___value 10 mul 2 add ->f28___value
+        1 ->f28___valid
     endif
     dup "3" eq if
-        <-f26___value 10 mul 3 add ->f26___value
-        1 ->f26___valid
+        <-f28___value 10 mul 3 add ->f28___value
+        1 ->f28___valid
     endif
     dup "4" eq if
-        <-f26___value 10 mul 4 add ->f26___value
-        1 ->f26___valid
+        <-f28___value 10 mul 4 add ->f28___value
+        1 ->f28___valid
     endif
     dup "5" eq if
-        <-f26___value 10 mul 5 add ->f26___value
-        1 ->f26___valid
+        <-f28___value 10 mul 5 add ->f28___value
+        1 ->f28___valid
     endif
     dup "6" eq if
-        <-f26___value 10 mul 6 add ->f26___value
-        1 ->f26___valid
+        <-f28___value 10 mul 6 add ->f28___value
+        1 ->f28___valid
     endif
     dup "7" eq if
-        <-f26___value 10 mul 7 add ->f26___value
-        1 ->f26___valid
+        <-f28___value 10 mul 7 add ->f28___value
+        1 ->f28___valid
     endif
     dup "8" eq if
-        <-f26___value 10 mul 8 add ->f26___value
-        1 ->f26___valid
+        <-f28___value 10 mul 8 add ->f28___value
+        1 ->f28___valid
     endif
     #blockend
     dup "9" eq if
-        <-f26___value 10 mul 9 add ->f26___value
-        1 ->f26___valid
+        <-f28___value 10 mul 9 add ->f28___value
+        1 ->f28___valid
     endif
     dup "." eq if
-        <-f26___float 0 eq if
-            I 1 add ->f26___float
-            1 ->f26___valid
+        <-f28___float 0 eq if
+            I 1 add ->f28___float
+            1 ->f28___valid
         endif
     endif
     
     pop #remove the char
-    <-f26___valid eq0 if
+    <-f28___valid eq0 if
         #dup "found invalid char:" swap Trace2
         pop #remove the parsed word
         0 return #return FAIL
     endif
 loop
 
-<-f26___float 0 gt if
+<-f28___float 0 gt if
     1 #leave exponent on stack
-    swap StringLength <-f26___float do
+    swap StringLength <-f28___float do
         10 mul
     loop
     dup 1 eq if
@@ -3286,36 +3324,36 @@ loop
         pop #remove the exponent
         0 return #return FAIL
     endif
-    <-f26___value asfloat swap div ->f26___value
+    <-f28___value asfloat swap div ->f28___value
 else
     pop #remove the word
 endif
 
-<-f26___value 1 return #return value and SUCCESS
+<-f28___value 1 return #return value and SUCCESS
 
 
 
 
 #invokes command
 :invoke # [ ? string - ? ]
-->f27___command
-<-f27___command "" eq if
+->f29___command
+<-f29___command "" eq if
     return
 endif
-<-f27___command @tryInvokePush if
+<-f29___command @tryInvokePush if
     return
 endif
-<-f27___command @tryInvokeCommand if
+<-f29___command @tryInvokeCommand if
     return
 endif
-<-f27___command @tryInvokeVariable if
+<-f29___command @tryInvokeVariable if
     return
 endif
-<-f27___command "@" StartsWith if
-    <-f27___command @invokeUserFunction
+<-f29___command "@" StartsWith if
+    <-f29___command @invokeUserFunction
     return
 endif
-"Failed to invoke command:" <-f27___command Trace2
+"Failed to invoke command:" <-f29___command Trace2
 
 
 
@@ -3340,19 +3378,19 @@ pop CreateList ->invokeUsedVariables #create a new list instead of clearing the 
 
 :getListId # list - int
     <-listRegistry GetListCount 0 do
-        dup <-listRegistry[I] "f30___" swap Concat <-! @listRefEquals if
+        dup <-listRegistry[I] "f32___" swap Concat <-! @listRefEquals if
             pop <-listRegistry[I] return
         endif
     loop
-    <-s4___nextFreeId "f30___" swap Concat ->! #save the list into a local variable
+    <-s4___nextFreeId "f32___" swap Concat ->! #save the list into a local variable
     <-listRegistry <-s4___nextFreeId AppendToList #append the variable name into the registry
     <-s4___nextFreeId dup 1 add ->s4___nextFreeId #increment the list id counter, but return the original value (dup)
 
 
 :getListById # int - list
     #sharenamespace
-    dup "f30___" swap Concat -?! if
-        "f30___" swap Concat <-! return #return the lists if it exists
+    dup "f32___" swap Concat -?! if
+        "f32___" swap Concat <-! return #return the lists if it exists
     endif
     "Warning: trying to get a lsit with non-existing ID:" swap Trace2
     CreateList #return a new empty unregistered list

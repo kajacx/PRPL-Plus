@@ -19,12 +19,15 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.prplplus.Settings;
 import com.prplplus.debugger.DebuggerCompiler;
+import com.prplplus.debugger.DebuggerCompiler.DebuggerOptions;
 
 public class DebuggerPanel extends JPanel {
     private JPanel fileListPanel;
     private List<CompileFile> fileList = new ArrayList<>();
     private Timer autoCompileTimer;
     private JFileChooser fileChooser;
+
+    private JCheckBox detailedMode;
 
     private Color bgColor = new Color(208, 255, 192);
     private Color okColor = new Color(64, 192, 16);
@@ -73,6 +76,11 @@ public class DebuggerPanel extends JPanel {
         compileNow.addActionListener(e -> compileAll(true));
         topBar.add(compileNow);
 
+        detailedMode = new JCheckBox("Detailed mode", new DebuggerOptions().detailedMode);
+        detailedMode.setToolTipText("Display what command put what data on stack - this is quite ocmputionaly demanding");
+        detailedMode.setOpaque(false);
+        topBar.add(detailedMode);
+
         return topBar;
     }
 
@@ -102,7 +110,9 @@ public class DebuggerPanel extends JPanel {
         long stamp = System.currentTimeMillis();
         for (CompileFile file : fileList) {
             if (force || file.origFile.lastModified() > file.lastChecked) {
-                file.error = DebuggerCompiler.compile(file.origFile);
+                DebuggerOptions options = new DebuggerOptions();
+                options.setDetailedMode(detailedMode.isSelected());
+                file.error = DebuggerCompiler.compile(file.origFile, options);
                 if (file.error == null) {
                     file.fileStatus.setText("Compiled");
                     file.fileStatus.setForeground(okColor);

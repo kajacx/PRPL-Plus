@@ -26,7 +26,7 @@ public class DebuggerCompiler {
      * @param file file to be compiled
      * @return Error or null on success
      */
-    public static String compile(File file) {
+    public static String compile(File file, DebuggerOptions options) {
 
         Scanner scan = null;
         PrintWriter writer = null;
@@ -38,7 +38,7 @@ public class DebuggerCompiler {
             //get the compiled source
             String compiledSource;
             try {
-                compiledSource = getCompiledText(file);
+                compiledSource = getCompiledText(file, options);
             } catch (Exception ex) {
                 copyFile(new File(badCompilationPath), targetFile); //copy the original script, so that user gets the compile error in PRPL
                 throw ex;
@@ -129,12 +129,13 @@ public class DebuggerCompiler {
         }
     }
 
-    private static String getCompiledText(File file) throws Exception {
+    private static String getCompiledText(File file, DebuggerOptions options) throws Exception {
         Process proc = Runtime.getRuntime().exec(execPath);
 
-        //write the file path into the process
+        //write the options and file path into the process
         PrintWriter writer = new PrintWriter(proc.getOutputStream());
-        writer.println(file.getAbsolutePath());
+        writer.println("detailedMode:" + options.detailedMode);
+        writer.println("file:" + file.getAbsolutePath());
         writer.close();
 
         //read the compile result
@@ -157,8 +158,17 @@ public class DebuggerCompiler {
     }
 
     public static void main(String[] args) {
-        String result = DebuggerCompiler.compile(new File("c:\\Users\\Karel\\Documents\\My Games\\particlefleet\\editor\\CannonSpawnTest\\scripts\\SpawnCannonShot.prpl"));
+        String result = DebuggerCompiler.compile(new File("c:\\Users\\Karel\\Documents\\My Games\\particlefleet\\editor\\CannonSpawnTest\\scripts\\SpawnCannonShot.prpl"), new DebuggerOptions());
 
         System.out.println("Result: " + result);
+    }
+
+    public static class DebuggerOptions {
+        public boolean detailedMode = false;
+
+        public DebuggerOptions setDetailedMode(boolean detailedMode) {
+            this.detailedMode = detailedMode;
+            return this;
+        }
     }
 }

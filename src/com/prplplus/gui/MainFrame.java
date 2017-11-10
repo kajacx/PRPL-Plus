@@ -26,11 +26,11 @@ import com.prplplus.Settings;
 public class MainFrame extends JFrame {
     private static final long serialVersionUID = -3729420411039341803L;
 
-    public static final String version = "v0.3.0";
+    public static final String version = "v0.3.1";
     public static final String title = "PRPL Toolset";
     public static final String contact = "kajacx@gmail.com";
 
-    private static int defaultTab = 2; //0 - PRPL+, 1 - Ship builder, 2 - Debugger
+    private static int defaultTab = 0; //0 - PRPL+, 1 - Ship builder, 2 - Debugger, 3 - Osu!
 
     public static MainFrame instance;
 
@@ -49,11 +49,17 @@ public class MainFrame extends JFrame {
             if (arg.equalsIgnoreCase("--forceExport")) {
                 Settings.enableForceExport = true;
             }
+            if (arg.equalsIgnoreCase("--prpl")) {
+                defaultTab = 0;
+            }
             if (arg.equalsIgnoreCase("--shipBuild")) {
                 defaultTab = 1;
             }
             if (arg.equalsIgnoreCase("--debugger")) {
                 defaultTab = 2;
+            }
+            if (arg.equalsIgnoreCase("--osu")) {
+                defaultTab = 3;
             }
         }
     }
@@ -80,6 +86,10 @@ public class MainFrame extends JFrame {
         ImageIcon debuggerIcon = new ImageIcon("img/icons/debugger.png");
         DebuggerPanel debuggerPanel = new DebuggerPanel();
         tabs.addTab("Debugger", debuggerIcon, debuggerPanel, "Debug your PRPL code step-by-step");
+
+        /*ImageIcon osuIcon = new ImageIcon("img/icons/osu.png");
+        OsuPanel osuPanel = new OsuPanel();
+        tabs.addTab("Particle-su!", osuIcon, osuPanel, "Covnert an Osu! beatmap to a playable PF map");//*/
 
         KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
         manager.addKeyEventDispatcher(new MyDispatcher());

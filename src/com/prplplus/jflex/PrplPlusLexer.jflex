@@ -49,19 +49,6 @@ Identifier = [a-zA-Z_][0-9a-zA-Z_]*
 
 /*  ----  VARIABLES  ----  */
 
-/* Recursion-friendly variables */
-\<\'{Identifier}	{ return new VarSymbol(this, Operation.READ, Scope.RECURSION, false); }
-\'\>{Identifier}	{ return new VarSymbol(this, Operation.WRITE, Scope.RECURSION, false); }
-\'\?{Identifier}	{ return new VarSymbol(this, Operation.EXISTS, Scope.RECURSION, false); }
-\'\+{Identifier}	{ return new VarSymbol(this, Operation.DELETE, Scope.RECURSION, false); }
-
-/* Recursion-friendly variables with reference */
-"<'!"				{ return new VarSymbol(this, Operation.READ, Scope.RECURSION, true); }
-"'>!"				{ return new VarSymbol(this, Operation.WRITE, Scope.RECURSION, true); }
-"'?!"				{ return new VarSymbol(this, Operation.EXISTS, Scope.RECURSION, true); }
-"''!"				{ return new VarSymbol(this, Operation.DELETE, Scope.RECURSION, true); }
-"''?"				{ return new VarSymbol(this, Operation.DELETE, Scope.RECURSION, true); }
-
 /* Local variables */
 \<\+{Identifier}	{ return new VarSymbol(this, Operation.READ, Scope.LOCAL, false); }
 \+\>{Identifier}	{ return new VarSymbol(this, Operation.WRITE, Scope.LOCAL, false); }
@@ -124,8 +111,8 @@ Identifier = [a-zA-Z_][0-9a-zA-Z_]*
 "~~%"				{ return new SpecialSymbol(this, SpecialSymbol.Type.SEMI_GLOBAL_PREFIX); }
 "--%"				{ return new SpecialSymbol(this, SpecialSymbol.Type.PRPL_PLUS_PREFIX); }
 
-"{"                 { return SpecialSymbol.withText(this, "\"[\""); }
-"}"                 { return SpecialSymbol.withText(this, "\"]\""); }
+"{"                 { return SpecialSymbol.withText(this, "\"_PRPL_Plus_ListStart_\""); }
+"}"                 { return SpecialSymbol.withText(this, "@PRPL_Plus_MakeList"); }
 
 "%include"          { return new SpecialSymbol(this, SpecialSymbol.Type.INCLUDE); }
 "%relinclude"       { return new SpecialSymbol(this, SpecialSymbol.Type.REL_INCLUDE); }
@@ -133,7 +120,6 @@ Identifier = [a-zA-Z_][0-9a-zA-Z_]*
 "%blockstart"       { return new SpecialSymbol(this, SpecialSymbol.Type.BLOCK_FOLD); }
 "%blockend"         { return new SpecialSymbol(this, SpecialSymbol.Type.BLOCK_FOLD); }
 "%sharenamespace"   { return new SpecialSymbol(this, SpecialSymbol.Type.SHARE_NAMESPACE); }
-"%recursive"        { return new SpecialSymbol(this, SpecialSymbol.Type.SHARE_NAMESPACE); }
 
 
 

@@ -32,6 +32,7 @@ public class PRPLCompiler {
     private HashSet<String> openedScripts = new HashSet<>(); //import in progress; full path
 
     private HashMap<String, Variable> varaibleUsage = new HashMap<>();
+    private boolean needsListMaker = false;
 
     public PRPLCompiler(PrintWriter writer, String primaryFile) {
         this.writer = writer;
@@ -200,7 +201,6 @@ public class PRPLCompiler {
                 case SHARE_NAMESPACE:
                 case BLOCK_FOLD:
                 case LIBRARY:
-                case RECURSIVE:
                     writer.print("#" + curSymbol.text.substring(1));
                     if (lexer.peekNextUseful().line == curSymbol.line)
                         writer.println();
@@ -299,13 +299,19 @@ public class PRPLCompiler {
                     //don't bother with function namespace, first symbol is function definition anyway
                     continue;
                 } else {
-                    //work done
+                    //work done but cheack for add list
+                    if (needsListMaker) {
+                        addMakeListFunction();
+                    }
                     lexer.close();
                     checkVariableUsage();
                     break;
                 }
             }
 
+            if (curSymbol.text.equals("@PRPL_Plus_MakeList")) {
+                needsListMaker = true;
+            }
             writer.print(curSymbol.text); //just print text for everything else
         }
     }
@@ -366,5 +372,20 @@ public class PRPLCompiler {
                 ErrorHandler.reportError(ErrorType.VARIABLE_NEVER_WRITTEN_TO, v.symbol);
             }
         }
+    }
+
+    private void addMakeListFunction() {
+        String code = "\n\n:PRPL_Plus_MakeList\n" +
+                "CreateList #put an empty list on top of the stack\n" +
+                "while StackSize 0 gt repeat\n" +
+                "    swap\n" +
+                "    dup dup GetType \"STRING\" eq swap \"_PRPL_Plus_ListStart_\" eq and if\n" +
+                "        pop return\n" +
+                "    endif\n" +
+                "    dup2 PrependToList\n" +
+                "    pop\n" +
+                "endwhile\n" +
+                "\"Error: your list syntax was not correct and the entire stack was destroyed!\" Trace\n";
+        writer.print(code);
     }
 }
