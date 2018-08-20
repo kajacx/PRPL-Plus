@@ -21,7 +21,6 @@ import java.awt.event.MouseWheelListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +45,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.prplplus.Clipboard;
+import com.prplplus.MyWriter;
 import com.prplplus.OSValidator;
 import com.prplplus.Settings;
 import com.prplplus.Utils;
@@ -447,6 +447,7 @@ public class ShipConstructorPanel extends JPanel {
                 selectedModule = m;
                 shipRenderer.repaint();
             });
+            button.setToolTipText(m.toString());
             defaultModules.add(button);
         }
 
@@ -459,6 +460,7 @@ public class ShipConstructorPanel extends JPanel {
                 selectedMirror = MirrorManager.MIRROR_NONE;
                 shipRenderer.repaint();
             });
+            button.setToolTipText(m.toString());
             weaponModules.add(button);
         }
 
@@ -476,10 +478,9 @@ public class ShipConstructorPanel extends JPanel {
                     selectedModule = m;
                     selectedHull = -1;
                 });
-
+                button.setToolTipText(m.toString());
                 customModules.add(button);
             }
-
             tabs.addTab("Custom", customModules);
         }
 
@@ -735,13 +736,41 @@ public class ShipConstructorPanel extends JPanel {
 
         //export custom modules maker
         if (exporter.hasCustomModules()) {
-            String adder = file.getParentFile().getAbsolutePath() + "/" + nameField.getText().replaceAll("\\s+", "") + "Adder.prpl";
+            //normal module added
+            String adder = file.getParentFile().getAbsolutePath() + "/zz_adder_" + nameField.getText().replaceAll("\\s+", "") + ".prpl";
             try {
-                PrintStream stream = new PrintStream(new FileOutputStream(adder));
+                MyWriter stream = new MyWriter(new FileOutputStream(adder));
                 exporter.writeModuleAdder(stream);
             } catch (IOException e) {
                 e.printStackTrace(System.out);
                 statusArea.setText("Cannot create PRPL custom module adder");
+            }
+
+            //normal module added
+            String robot = file.getParentFile().getAbsolutePath() + "/zz_robot_" + nameField.getText().replaceAll("\\s+", "") + ".prpl";
+            try {
+                MyWriter stream = new MyWriter(new FileOutputStream(robot));
+                exporter.writeRobotModuleAdder(stream);
+            } catch (IOException e) {
+                e.printStackTrace(System.out);
+                statusArea.setText("Cannot create PRPL robot module adder");
+            }
+
+            //Static scritps
+            String cmDisplay = file.getParentFile().getAbsolutePath() + "/CmDisplay.prpl";
+            String shipModule = file.getParentFile().getAbsolutePath() + "/ShipModule.prpl";
+            try {
+                exporter.copyFileUsingStream(new File("CsBin/editor/CmDisplay.prpl"), new File(cmDisplay), true);
+                exporter.copyFileUsingStream(new File("CsBin/editor/ShipModule.prpl"), new File(shipModule), true);
+            } catch (IOException e) {
+                statusArea.setText("Cannot copy Static scripts");
+            }
+
+            try {
+                exporter.copyCustomModuleCreators(adder, robot, cmDisplay, shipModule);
+            } catch (IOException e) {
+                e.printStackTrace(System.out);
+                statusArea.setText("Cannot copy PRPL module adders into map folders");
             }
         }
 
@@ -1002,6 +1031,18 @@ public class ShipConstructorPanel extends JPanel {
             g.setColor(Color.BLACK);
 
             for (int i = 0; i <= MAX_SIZE; i++) {
+                if (Settings.colorGrid) {
+                    if (i % 64 == 0) {
+                        g.setColor(Color.CYAN);
+                    } else if (i % 16 == 0) {
+                        g.setColor(Color.BLUE);
+                        /*} else if (i % 4 == 0) {
+                        g.setColor(Color.GREEN);*/
+                    } else {
+                        g.setColor(Color.BLACK);
+                    }
+                }
+
                 g.drawLine(i * zoom, 0, i * zoom, MAX_SIZE * zoom);
                 g.drawLine(0, i * zoom, MAX_SIZE * zoom, i * zoom);
             }
@@ -1223,8 +1264,14 @@ public class ShipConstructorPanel extends JPanel {
             if (checkHull)
                 for (int i = module.x; i < module.x + module.module.width; i++) {
                     for (int j = module.y; j < module.y + module.module.height; j++) {
-                        if (hullSection[i * MAX_SIZE + j] != Hull.HULL_BLOCK) {
-                            return false;
+                        if (module.module.placeOnArmor) {
+                            if (hullSection[i * MAX_SIZE + j] == Hull.HULL_SPACE) {
+                                return false;
+                            }
+                        } else {
+                            if (hullSection[i * MAX_SIZE + j] != Hull.HULL_BLOCK) {
+                                return false;
+                            }
                         }
                     }
                 }
@@ -1696,7 +1743,7 @@ public class ShipConstructorPanel extends JPanel {
         }
 
         private int zoomIndex = 6;
-        private int[] zoomIndexTable = { 4, 6, 8, 11, 15, 21, 29, 42 };
+        private int[] zoomIndexTable = { 2, 4, 6, 8, 11, 15, 21, 29, 42 };
 
         private int zoom = zoomIndexTable[zoomIndex]; //number of pixels per 1 slot
 

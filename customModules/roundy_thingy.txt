@@ -2,4 +2,7 @@ name:Roundy Thingy
 width:3
 height:3
 imgName:roundy_thingy.png
+doesCollide:false
+buildCost:70
 scriptName:roundy_thingy.prpl
+saveToMaps:Map 1, Map 2

@@ -26,11 +26,11 @@ import com.prplplus.Settings;
 public class MainFrame extends JFrame {
     private static final long serialVersionUID = -3729420411039341803L;
 
-    public static final String version = "v0.3.1";
+    public static final String version = "v0.3.4";
     public static final String title = "PRPL Toolset";
     public static final String contact = "kajacx@gmail.com";
 
-    private static int defaultTab = 0; //0 - PRPL+, 1 - Ship builder, 2 - Debugger, 3 - Osu!
+    private static int defaultTab = 1; //0 - PRPL+, 1 - Ship builder, 2 - Debugger, 3 - Osu!
 
     public static MainFrame instance;
 
@@ -60,6 +60,12 @@ public class MainFrame extends JFrame {
             }
             if (arg.equalsIgnoreCase("--osu")) {
                 defaultTab = 3;
+            }
+            if (arg.equalsIgnoreCase("--1024")) {
+                Settings.MAX_SIZE = 1024;
+            }
+            if (arg.equalsIgnoreCase("--colorGrid")) {
+                Settings.colorGrid = true;
             }
         }
     }

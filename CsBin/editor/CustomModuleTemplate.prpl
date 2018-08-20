@@ -1,0 +1,55 @@
+#A bacis custom module tamplate, that rotates with the ship, sets transparency, and cahrges with energy
+
+$EnergyNeeded:20 #total energy needed
+$EnergyCooldown:15 #consume 1 energy every X frames (1 second = 30 frames)
+$Image:"Custom0_128"
+
+once
+    Self "ShipModule.prpl" "Ship" GetScriptVar ->sid
+    <-sid GetShipIsEnemy ->Enemy
+    
+    Self "main" <-Image SetImage
+    Self "main" Self "ShipModule.prpl" "width" GetScriptVar 3.0 div Self "ShipModule.prpl" "height" GetScriptVar 3.0 div SetImageScale #1 scale = 3 cells
+    
+    0 OperateWhilePaused
+    
+    0 ->energy
+    0 ->cooldown
+endonce
+
+Self "ShipModule.prpl" "ShipAngle" GetScriptVar ->angle # in radians, 0 = facing right, pi/2 = facing up
+Self "ShipModule.prpl" "exist" GetScriptVar ->exist #0 - the hull is destroyed, 1 - building, 2 - build
+
+Self "main" <-angle SetImageRotation
+
+<-exist 0 eq if
+    Self "main" 255 255 255 0 SetImageColor # RGBA, A = visibily, 0 visibility while hull is destroyed
+    0 ->energy
+    <-cooldown 1 sub ->cooldown
+endif
+<-exist 1 eq if
+    Self "main" 255 255 255 128 SetImageColor # half visibility while building
+    0 ->energy
+    <-cooldown 1 sub ->cooldown
+endif
+<-exist 2 eq if
+    Self "main" 255 255 255 255 SetImageColor # full visibility when built
+    
+    <-cooldown 0 lte if # cooldown ready
+        <-sid.ShipEnergy 1 gte if # enough energy
+            <-energy 1 add ->energy # increase own energy
+            <-sid.ShipEnergy 1 sub ->sid.ShipEnergy # decrease ship energy
+            <-EnergyCooldown ->cooldown # reset cooldown
+            
+            <-energy <-EnergyNeeded gte if # energy fully charged
+                @Fire
+                0 ->energy # reset energy
+            endif
+        endif
+    else
+        <-cooldown 1 sub ->cooldown
+    endif
+endif
+
+:Fire # [ - ]
+    "TODO: Custom module fires" Trace

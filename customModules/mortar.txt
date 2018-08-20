@@ -4,3 +4,4 @@ height:3
 imgName:mortar.png
 buildCost:20
 scriptName:Mortar.prpl
+saveToMaps:Tutorial one

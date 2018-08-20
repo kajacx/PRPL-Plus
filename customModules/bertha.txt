@@ -4,3 +4,4 @@ height:9
 imgName:bertha.png
 buildCost:150
 scriptName:Bertha.prpl
+saveToMaps:Map 1, Map 2

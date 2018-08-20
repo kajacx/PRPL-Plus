@@ -2,3 +2,7 @@ name:The Thing
 width:3
 height:3
 imgName:the_thing.png
+doesCollide:false
+buildCost:80
+scriptName:TheThing.prpl
+saveToMaps:map name, another map

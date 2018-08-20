@@ -15,7 +15,7 @@ public class Settings {
     /**
      * When in ship editor, show the original 35x25 maximal size
      */
-    public static boolean OUTLINE_35_25_BOX = true;
+    public static boolean OUTLINE_35_25_BOX = false;
 
     public static String WORK_IN = "default";
 
@@ -29,6 +29,8 @@ public class Settings {
      */
     public static boolean enableForceExport = false;
 
+    public static boolean colorGrid = false;
+
     static {
         Properties props = new Properties();
         InputStream stream = null;
@@ -37,8 +39,8 @@ public class Settings {
             props.load(stream);
             ZOOM_TO_CURSOR = props.getProperty("zoomToCursor", "false").equals("true");
             OUTLINE_35_25_BOX = props.getProperty("displayMaxSizeOutline", "true").equals("true");
-            MAX_SIZE = readInt(props, "maxSize", 128);
-            MAX_SIZE = Math.min(Math.max(35, MAX_SIZE), 128);
+            //MAX_SIZE = readInt(props, "maxSize", 128);
+            //MAX_SIZE = Math.min(Math.max(35, MAX_SIZE), 128);
             WORK_IN = props.getProperty("PFDirectory", WORK_IN);
             PREFIX_DELIM = props.getProperty("PrefixDelimitier", PREFIX_DELIM);
             if (WORK_IN.equals("default")) {

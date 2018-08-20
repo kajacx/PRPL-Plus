@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
@@ -72,9 +73,11 @@ public class Module {
     public final int buildCost;
     public final String scriptName;
     public final boolean doesCollide;
+    public final boolean placeOnArmor;
+    public final List<String> saveToMaps = new ArrayList<>();
 
     //create an arbitary module
-    public Module(int width, int height, int code, String name, Image image, int buildCost, String scriptName, boolean doesCollide) {
+    public Module(int width, int height, int code, String name, Image image, int buildCost, String scriptName, boolean doesCollide, boolean placeOnArmor, String saveToMaps) {
         this.width = width;
         this.height = height;
         this.code = code;
@@ -83,6 +86,11 @@ public class Module {
         this.buildCost = buildCost;
         this.scriptName = scriptName;
         this.doesCollide = doesCollide;
+        this.placeOnArmor = placeOnArmor;
+        if (saveToMaps != null && saveToMaps.length() > 0) {
+            this.saveToMaps.clear();
+            this.saveToMaps.addAll(Arrays.stream(saveToMaps.split(",")).map(String::trim).collect(Collectors.toList()));
+        }
     }
 
     //create a standart module
@@ -110,10 +118,11 @@ public class Module {
         }
         image = i;
         this.doesCollide = doesCollide;
+        this.placeOnArmor = false;
     }
 
     //create a custom module
-    private Module(int width, int height, String name, String imgName, int buildCost, String scriptName, boolean doesCollide) {
+    private Module(int width, int height, String name, String imgName, int buildCost, String scriptName, boolean doesCollide, boolean placeOnArmor, String saveToMaps) {
         this.width = width;
         this.height = height;
         this.code = CUSTOM_CODE;
@@ -129,7 +138,13 @@ public class Module {
             i = null;
         }
         image = i;
+
         this.doesCollide = doesCollide;
+        this.placeOnArmor = placeOnArmor;
+        if (saveToMaps != null && saveToMaps.length() > 0) {
+            this.saveToMaps.clear();
+            this.saveToMaps.addAll(Arrays.stream(saveToMaps.split(",")).map(String::trim).collect(Collectors.toList()));
+        }
     }
 
     //create an unknown custom module with this name
@@ -142,6 +157,7 @@ public class Module {
         this.buildCost = UNKNOWN.buildCost;
         this.scriptName = UNKNOWN.scriptName;
         this.doesCollide = UNKNOWN.doesCollide;
+        this.placeOnArmor = UNKNOWN.placeOnArmor;
     }
 
     static {
@@ -165,8 +181,10 @@ public class Module {
                     int buildCost = Integer.parseInt(moduleProps.getProperty("buildCost", "50"));
                     String scriptName = moduleProps.getProperty("scriptName");
                     boolean doesCollide = moduleProps.getProperty("doesCollide", "true").equals("true");
+                    boolean placeOnArmor = moduleProps.getProperty("placeOnArmor", "false").equals("true");
+                    String saveToMaps = moduleProps.getProperty("saveToMaps", "");
 
-                    customModules.add(new Module(width, height, name, imgName, buildCost, scriptName, doesCollide));
+                    customModules.add(new Module(width, height, name, imgName, buildCost, scriptName, doesCollide, placeOnArmor, saveToMaps));
                 }
             } catch (Exception ex) {
                 ex.printStackTrace(System.out);
@@ -227,6 +245,43 @@ public class Module {
         return width == height;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Module [width=");
+        builder.append(width);
+        builder.append(", height=");
+        builder.append(height);
+        builder.append(", ");
+        if (name != null) {
+            builder.append("name=");
+            builder.append(name);
+            builder.append(", ");
+        }
+        builder.append("code=");
+        builder.append(code);
+        builder.append(" ");
+        builder.append("buildCost=");
+        builder.append(buildCost);
+        builder.append(" ");
+        if (scriptName != null) {
+            builder.append("scriptName=");
+            builder.append(scriptName);
+            builder.append(" ");
+        }
+        builder.append("doesCollide=");
+        builder.append(doesCollide);
+        builder.append(" ");
+        if (saveToMaps != null) {
+            builder.append("saveToMaps=");
+            builder.append(saveToMaps);
+        }
+        builder.append("]");
+        return builder.toString();
+    }
+
+
+
     public static class BrushManager {
         private List<List<Module>> brushes = new ArrayList<>();
 
@@ -237,7 +292,7 @@ public class Module {
 
             List<Module> inner = brushes.get(width - 1);
             for (int i = inner.size(); i < height; i++) {
-                inner.add(new Module(width, height, BRUSH_CODE, "Brush" + width + "x" + height, null, 0, null, false));
+                inner.add(new Module(width, height, BRUSH_CODE, "Brush" + width + "x" + height, null, 0, null, false, true, null));
             }
 
             return inner.get(height - 1);

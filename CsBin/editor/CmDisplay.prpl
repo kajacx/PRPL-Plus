@@ -1,0 +1,338 @@
+# --CmDisplay-- 8/1/2018 10:02:36 PM
+
+#Custom module display script - use thi to see custom modules in the ship menu preview
+
+#Ship[ShipName]:List of modules (list of lists)
+#Ship[ShipName]Width: the width of the ship
+#Ship[ShipName]Height: the height of the ship
+
+$IsCmDisplay:1 # discovery flag for script integration
+
+once
+    # Good Morning's (I think) ShowUIDs script
+    Self 0 SetUnitTakeMapSpace
+    Self 0 SetUnitIsGoal
+    Self 0 SetUnitLatheTargets
+    Self 0 SetUnitCreateFootprint
+    Self 0 SetUnitMissionGoal
+    
+    1 ->CMP_ON
+    0 ->CMP_SHIP_HOVER
+    0 ->CMP_OFFSET_X
+    0 ->CMP_OFFSET_Y
+    
+    @awake
+    
+    ### Ship modules initialization ###
+    
+    0 if #example of usage
+        #ShipName Width Height @RegisterShipSize
+        "Player0" 11 11 @RegisterShipSize
+        
+        #ShipName X Y Width Height ImageName @RegisterShipModule
+        "Player0" 0 1 2 3 "Custom0" @RegisterShipModule
+        "Player0" 2 1 2 3 "Custom1" @RegisterShipModule
+        
+        
+        #Another ship ...
+        "Player1" 11 11 @RegisterShipSize
+        "Player1" 1 1 3 3 "Custom0" @RegisterShipModule
+        "Player1" 4 4 3 3 "Custom0" @RegisterShipModule
+        "Player1" 7 7 3 3 "Custom0" @RegisterShipModule
+    endif
+    
+    # put your real ship's custom module definition here
+    
+    ###    End of initialization    ###
+    
+endonce
+
+@SetPosition
+@RefreshBuildSlotRatios
+
+@ReadInput
+
+@GetActiveSlotId ->CurId
+<-CurId <-LastId neq <-Dirty or ->Dirty
+<-CurId ->LastId
+
+<-Dirty if
+    Self RemoveImages
+    <-CurId -1 neq if
+        "Ship" <-CurId GetShipNameFromSlot concat @DrawModules
+    endif
+    0 ->Dirty
+    @SetText
+endif
+
+#first you need t oregister the ship's size (in cells)
+:RegisterShipSize # shipName width height -
+    ->RSS_Height
+    ->RSS_Width
+    ->RSS_ShipName
+    
+    <-RSS_Width  ->!("Ship" <-RSS_ShipName concat "Width"  concat)
+    <-RSS_Height ->!("Ship" <-RSS_ShipName concat "Height" concat)
+    
+#then you can add one module at a time. X Y is the lower-left position of the module, stating from 0,0 at bottom-left
+:RegisterShipModule # shipName x y width height image -
+    ->RSM_Image  #4
+    ->RSM_Height #3
+    ->RSM_Width  #2
+    ->RSM_Y      #1
+    ->RSM_X      #0
+    ->RSM_ShipName
+    
+    CreateList ->RSM_List
+    <-RSM_List <-RSM_X AppendToList
+    <-RSM_List <-RSM_Y AppendToList
+    <-RSM_List <-RSM_Width AppendToList
+    <-RSM_List <-RSM_Height AppendToList
+    <-RSM_List <-RSM_Image AppendToList
+    
+    "Ship" <-RSM_ShipName concat # leave the name on stack
+    dup -?! not if
+        dup CreateList swap ->! #initialize the ship list
+    endif
+    <-! <-RSM_List AppendToList #add the module to the list
+
+#Same function as RegisterShipSize, but you can call it from another core
+#first you need t oregister the ship's size (in cells)
+:RegisterShipSizeRemote # shipName width height -
+    ->RSS_Height
+    ->RSS_Width
+    ->RSS_ShipName
+    
+    -1 ->RSS_Uid
+    "IsCmDisplay" 1 GetCoresWithVar 0 do
+        ->RSS_Uid
+    loop
+    <-RSS_Uid -1 eq if
+        return
+    endif
+    
+    <-RSS_Uid "CmDisplay.prpl" "Ship" <-RSS_ShipName concat "Width"  concat <-RSS_Width  SetScriptVar
+    <-RSS_Uid "CmDisplay.prpl" "Ship" <-RSS_ShipName concat "Height" concat <-RSS_Height SetScriptVar
+    
+#Same function as RegisterShipModule, but you can call it from another core
+#then you can add one module at a time. X Y is the lower-left position of the module, stating from 0,0 at bottom-left
+:RegisterShipModuleRemote # shipName x y width height image -
+    ->RSM_Image  #4
+    ->RSM_Height #3
+    ->RSM_Width  #2
+    ->RSM_Y      #1
+    ->RSM_X      #0
+    ->RSM_ShipName
+    
+    -1 ->RSS_Uid
+    "IsCmDisplay" 1 GetCoresWithVar 0 do
+        ->RSS_Uid
+    loop
+    <-RSS_Uid -1 eq if
+        return
+    endif
+    
+    CreateList ->RSM_List
+    <-RSM_List <-RSM_X AppendToList
+    <-RSM_List <-RSM_Y AppendToList
+    <-RSM_List <-RSM_Width AppendToList
+    <-RSM_List <-RSM_Height AppendToList
+    <-RSM_List <-RSM_Image AppendToList
+    
+    <-RSS_Uid "CmDisplay.prpl" "Ship" <-RSS_ShipName concat GetScriptVar ->RSS_ShipList    
+    <-RSS_ShipList eq0 if
+        CreateList ->RSS_ShipList
+        <-RSS_Uid "CmDisplay.prpl" "Ship" <-RSS_ShipName concat <-RSS_ShipList SetScriptVar
+    endif
+    
+    <-RSS_ShipList <-RSM_List AppendToList #add the module to the list
+
+#Resets custom modules for a ship. This is useful when integrating with scritps that dynamicly re-create ships with the same name
+:ResetShipModulesRemote # shipName -
+    ->RSM_ShipName
+    
+    -1 ->RSS_Uid
+    "IsCmDisplay" 1 GetCoresWithVar 0 do
+        ->RSS_Uid
+    loop
+    <-RSS_Uid -1 eq if
+        return
+    endif
+    
+    <-RSS_Uid "CmDisplay.prpl" "Ship" <-RSS_ShipName concat CreateList SetScriptVar
+    
+:ReadInput
+    "O" GetKeyDown if
+        "LeftControl" GetKey "RightControl" GetKey or if
+            <-CMP_ON not ->CMP_ON
+            1 ->Dirty
+        endif
+    endif
+    "P" GetKeyDown if
+        "LeftControl" GetKey "RightControl" GetKey or if
+            <-CMP_SHIP_HOVER not ->CMP_SHIP_HOVER
+            1 ->Dirty
+        endif
+    endif
+    "I" GetKeyDown if
+        "LeftControl" GetKey "RightControl" GetKey or if
+            <-CMP_OFFSET_Y 1 add ->CMP_OFFSET_Y
+            1 ->Dirty
+        endif
+    endif
+    "J" GetKeyDown if
+        "LeftControl" GetKey "RightControl" GetKey or if
+            <-CMP_OFFSET_X 1 sub ->CMP_OFFSET_X
+            1 ->Dirty
+        endif
+    endif
+    "K" GetKeyDown if
+        "LeftControl" GetKey "RightControl" GetKey or if
+            <-CMP_OFFSET_Y 1 sub ->CMP_OFFSET_Y
+            1 ->Dirty
+        endif
+    endif
+    "L" GetKeyDown if
+        "LeftControl" GetKey "RightControl" GetKey or if
+            <-CMP_OFFSET_X 1 add ->CMP_OFFSET_X
+            1 ->Dirty
+        endif
+    endif
+
+:GetActiveSlotId
+    <-CMP_ON not "LeftShift" GetKey or "RightShift" GetKey or if
+        -1 return
+    endif
+    
+    <-CMP_SHIP_HOVER if
+        GetMouseCell 6 0 GetNearestShipInRange GetSlotFromShip ->GASI_Id
+        <-GASI_Id -1 neq if
+            "Ship" <-GASI_Id GetShipNameFromSlot concat -?! if #module list exists
+                <-GASI_Id return
+            else
+                -1 return
+            endif
+        endif
+    endif
+    
+    @GetHoveredSlotId ->GASI_Id
+    <-GASI_Id -1 neq if
+        <-GASI_Id GetShipNameFromSlot "" neq if
+            "Ship" <-GASI_Id GetShipNameFromSlot concat -?! if #module list exists
+                <-GASI_Id return
+            else
+                -1 return
+            endif
+        endif
+    endif
+    
+    -1 return
+
+:DrawModules # string -
+    #TODO: compute the bottom-left corner if the ship
+    
+    dup "Width"  concat <-! ->DM_W
+    dup "Height" concat <-! ->DM_H
+    
+    1 2 @GetBuildSlotCoords pop <-CMP_OFFSET_X add ->DM_X
+    <-DM_X 14 <-GBSC_Ratio mul add ->DM_X
+    
+    ScreenHeight 542 <-GBSC_Ratio mul sub <-CMP_OFFSET_Y add ->DM_Y
+    
+    1 2 @GetBuildSlotCoords pop 0 1 @GetBuildSlotCoords pop sub 173.0 <-GBSC_Ratio mul div ->DM_LeanRatio
+    #<-DM_LeanRatio Trace
+    #<-DM_Y 18.0 1 <-DM_LeanRatio sub mul <-GBSC_Ratio mul add ->DM_Y
+    
+    <-DM_X add(35 <-DM_W sub 3 mul <-GBSC_Ratio mul) ->DM_X
+    <-DM_Y add(25 <-DM_H sub 3 mul <-GBSC_Ratio mul) ->DM_Y
+    
+    <-! dup GetListCount 0 do
+        dup[I] ->DM_Module
+        "module" I concat ->name
+        
+        Self <-name <-DM_Module[4] SetImage
+        Self <-name "UI" SetImageLayer
+        Self <-name <-DM_Module[2] 0.5 mul <-GBSC_Ratio mul @FixScreenImage <-DM_Module[3] 0.5 mul <-GBSC_Ratio mul @FixScreenImage SetImageScale
+        Self <-name <-DM_X <-DM_Module[0] 6 mul <-DM_Module[2] 3 mul add <-GBSC_Ratio mul add @FixScreenImage <-DM_Y <-DM_Module[1] 6 mul <-DM_Module[3] 3 mul add <-GBSC_Ratio mul add @FixScreenImage 0 SetImagePosition
+        #Self <-name 255 64 0 128 SetImageColor #for debug only
+    loop pop
+
+:GetHoveredSlotId # [ - i ]
+    GetMouseScreenPixelPosition ->GHSI_MY ->GHSI_MX
+
+    2 0 do
+        I 1 @GetBuildSlotCoords pop ->GHSI_X1
+        I 2 @GetBuildSlotCoords pop ->GHSI_X2
+        
+        <-GHSI_MX <-GHSI_X1 gte <-GHSI_MX <-GHSI_X2 lt and if
+            <-GHSI_X2 <-GHSI_MX sub <-GHSI_X2 <-GHSI_X1 sub div(asfloat) ->GHSI_Coef1
+            <-GHSI_MX <-GHSI_X1 sub <-GHSI_X2 <-GHSI_X1 sub div(asfloat) ->GHSI_Coef2
+        
+            #search for the correct Y coord
+            12 0 do
+                I 2 mul J add # leave index on stack
+                dup 1 @GetBuildSlotCoords ->GHSI_Y1 pop
+                dup 2 @GetBuildSlotCoords ->GHSI_Y2 pop
+                <-GHSI_MY <-GHSI_Y1 <-GHSI_Coef1 mul <-GHSI_Y2 <-GHSI_Coef2 mul add lt if
+                    dup 0 @GetBuildSlotCoords ->GHSI_Y1 pop
+                    dup 3 @GetBuildSlotCoords ->GHSI_Y2 pop
+                    <-GHSI_MY <-GHSI_Y1 <-GHSI_Coef1 mul <-GHSI_Y2 <-GHSI_Coef2 mul add gte if
+                        return #return the index that is on stack
+                    endif
+                endif
+                pop #remove index
+            loop
+        endif
+    loop
+    
+    -1 return
+
+:RefreshBuildSlotRatios # [ - ] call this every frame BEFORE you read the buttom position
+    0 1 GETBUILDSLOTSCREENCOORDS swap pop ScreenHeight mul ScreenHeight swap sub 22.975 sub ->GBSC_Offset
+    
+    1 ->GBSC_Ratio
+    <-GBSC_Offset ScreenHeight div # leave EHH on stack
+    16 0 do
+        dup -5 I add 5 I add div(asfloat) sub abs 0.02 lt if
+            I 10.0 div 0.5 add ->GBSC_Ratio 
+            break
+        endif
+    loop
+    pop # remove EHH from stack
+
+:GetBuildSlotCoords # [ i i - f f ] this returns correct PIXEL coordinates
+    GetBuildSlotScreenCoords swap ScreenWidth mul <-GBSC_Ratio mul swap ScreenHeight mul <-GBSC_Offset add ScreenHeight swap sub <-GBSC_Ratio mul ScreenHeight swap sub
+
+:FixScreenImage # f - f
+    384.0 ScreenHeight div mul
+    
+:SetPosition
+    1 SetScreenMode
+    0 0 SetScreenPixelCoords
+
+:SetText
+    <-CMP_ON if
+        "Custom Module Preview: " <-CMP_ON if "ON" else "OFF" endif " (Ctrl+O)" LF concat concat concat
+        "Ship Hover Display: " <-CMP_SHIP_HOVER if "ON" else "OFF" endif " (Ctrl+P)" LF concat concat concat concat
+        "Offset: " <-CMP_OFFSET_X "," <-CMP_OFFSET_Y " (Ctrl+IJKL)" concat concat concat concat concat
+        SetText
+        120 SetTextX
+        200 SetTextY
+        20 SetTextSize
+    else
+        "CMP OFF (Ctrl+O)"
+        SetText
+        120 SetTextX
+        200 SetTextY
+        20 SetTextSize
+    endif
+    
+:awake
+    -1 ->LastId
+    1 ->Dirty
+    1 OperateWhilePaused
+    Self RemoveImages
+    Self "main" "none" SetImage
+    @SetPosition
+    @SetText
+    

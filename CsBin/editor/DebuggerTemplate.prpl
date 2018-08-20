@@ -22,114 +22,127 @@ once
     #blockstart #keyboard definition
     #"Space", "Backspace", "At", "Minus", "Comma", "DoubleQuote", "Less", "Greater", "Period", "Quote"
     
-    "[" # EN keyboard
-    "[" " " "Space" "]"
-    "[" "Backspace" "Backspace" "]"
-    "[" "Enter" "Return" "]"
-    "[" "Enter" "KeypadEnter" "]"
-    "[" "@" "Alpha2" "LeftShift" "]"
-    "[" "@" "Alpha2" "RightShift" "]"
-    "[" "-" "Minus" "]"
-    "[" "-" "KeypadMinus" "]"
-    "[" "!" "Alpha1" "LeftShift" "]"
-    "[" "!" "Alpha1" "RightShift" "]"
-    "[" "?" "Slash" "LeftShift" "]"
-    "[" "?" "Slash" "RightShift" "]"
-    "[" DoubleQuote "Quote" "LeftShift" "]"
-    "[" DoubleQuote "Quote" "RightShift" "]"
-    "[" "<" "Comma" "LeftShift" "]"
-    "[" "<" "Comma" "RightShift" "]"
-    "[" ">" "Period" "LeftShift" "]"
-    "[" ">" "Period" "RightShift" "]"
-    "[" "." "Period" "]"
-    "[" "." "KeypadPeriod" "]"
-    "[" "1" "Alpha1" "]"
-    "[" "2" "Alpha2" "]"
-    "[" "3" "Alpha3" "]"
-    "[" "4" "Alpha4" "]"
-    "[" "5" "Alpha5" "]"
-    "[" "6" "Alpha6" "]"
-    "[" "7" "Alpha7" "]"
-    "[" "8" "Alpha8" "]"
-    "[" "9" "Alpha9" "]"
-    "[" "0" "Alpha0" "]"
-    "[" "1" "Keypad1" "]"
-    "[" "2" "Keypad2" "]"
-    "[" "3" "Keypad3" "]"
-    "[" "4" "Keypad4" "]"
-    "[" "5" "Keypad5" "]"
-    "[" "6" "Keypad6" "]"
-    "[" "7" "Keypad7" "]"
-    "[" "8" "Keypad8" "]"
-    "[" "9" "Keypad9" "]"
-    "[" "0" "Keypad0" "]"
-    "]" @guiMakeListRecursive ->guiKeyboardEN
+    "_PRPL_Plus_ListStart_" # EN keyboard
+    "_PRPL_Plus_ListStart_" " " "Space" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "Backspace" "Backspace" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "Enter" "Return" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "Enter" "KeypadEnter" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "@" "Alpha2" "LeftShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "@" "Alpha2" "RightShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "-" "Minus" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "-" "KeypadMinus" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "!" "Alpha1" "LeftShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "!" "Alpha1" "RightShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "?" "Slash" "LeftShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "?" "Slash" "RightShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" DoubleQuote "Quote" "LeftShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" DoubleQuote "Quote" "RightShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "<" "Comma" "LeftShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "<" "Comma" "RightShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" ">" "Period" "LeftShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" ">" "Period" "RightShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "." "Period" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "." "KeypadPeriod" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "1" "Alpha1" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "2" "Alpha2" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "3" "Alpha3" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "4" "Alpha4" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "5" "Alpha5" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "6" "Alpha6" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "7" "Alpha7" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "8" "Alpha8" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "9" "Alpha9" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "0" "Alpha0" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "1" "Keypad1" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "2" "Keypad2" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "3" "Keypad3" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "4" "Keypad4" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "5" "Keypad5" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "6" "Keypad6" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "7" "Keypad7" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "8" "Keypad8" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "9" "Keypad9" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "0" "Keypad0" @PRPL_Plus_MakeList
+    @PRPL_Plus_MakeList ->guiKeyboardEN
     #<~keyboardEN pop #so that PRPL+ doesn't complain that variable is never read from (it is via <~!)
     
     
-    "[" # CZ keyboard
-    "[" " " "Space" "]"
-    "[" "Backspace" "Backspace" "]"
-    "[" "Enter" "Return" "]"
-    "[" "Enter" "KeypadEnter" "]"
-    "[" "@" "V" "AltGr" "]"
-    "[" "@" "V" "LeftControl" "LeftAlt" "]"
-    "[" "@" "V" "LeftControl" "RightAlt" "]"
-    "[" "-" "Minus" "]"
-    "[" "-" "KeypadMinus" "]"
-    "[" "!" "Quote" "LeftShift" "]"
-    "[" "!" "Quote" "RightShift" "]"
-    "[" "?" "Comma" "LeftShift" "]"
-    "[" "?" "Comma" "RightShift" "]"
-    "[" DoubleQuote "Semicolon" "LeftShift" "]"
-    "[" DoubleQuote "Semicolon" "RightShift" "]"
-    "[" "<" "Comma" "AltGr" "]"
-    "[" ">" "Period" "AltGr" "]"
-    "[" "." "Period" "]"
-    "[" "." "KeypadPeriod" "]"
-    "[" "1" "Alpha1" "RightShift" "]"
-    "[" "2" "Alpha2" "RightShift" "]"
-    "[" "3" "Alpha3" "RightShift" "]"
-    "[" "4" "Alpha4" "RightShift" "]"
-    "[" "5" "Alpha5" "RightShift" "]"
-    "[" "6" "Alpha6" "RightShift" "]"
-    "[" "7" "Alpha7" "RightShift" "]"
-    "[" "8" "Alpha8" "RightShift" "]"
-    "[" "9" "Alpha9" "RightShift" "]"
-    "[" "0" "Alpha0" "LeftShift" "]"
-    "[" "1" "Alpha1" "LeftShift" "]"
-    "[" "2" "Alpha2" "LeftShift" "]"
-    "[" "3" "Alpha3" "LeftShift" "]"
-    "[" "4" "Alpha4" "LeftShift" "]"
-    "[" "5" "Alpha5" "LeftShift" "]"
-    "[" "6" "Alpha6" "LeftShift" "]"
-    "[" "7" "Alpha7" "LeftShift" "]"
-    "[" "8" "Alpha8" "LeftShift" "]"
-    "[" "9" "Alpha9" "LeftShift" "]"
-    "[" "0" "Alpha0" "LeftShift" "]"
-    "[" "1" "Keypad1" "]"
-    "[" "2" "Keypad2" "]"
-    "[" "3" "Keypad3" "]"
-    "[" "4" "Keypad4" "]"
-    "[" "5" "Keypad5" "]"
-    "[" "6" "Keypad6" "]"
-    "[" "7" "Keypad7" "]"
-    "[" "8" "Keypad8" "]"
-    "[" "9" "Keypad9" "]"
-    "[" "0" "Keypad0" "]"
-    "]" @guiMakeListRecursive ->guiKeyboardCZ
+    "_PRPL_Plus_ListStart_" # CZ keyboard
+    "_PRPL_Plus_ListStart_" " " "Space" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "Backspace" "Backspace" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "Enter" "Return" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "Enter" "KeypadEnter" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "@" "V" "AltGr" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "@" "V" "LeftControl" "LeftAlt" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "@" "V" "LeftControl" "RightAlt" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "-" "Minus" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "-" "KeypadMinus" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "!" "Quote" "LeftShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "!" "Quote" "RightShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "?" "Comma" "LeftShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "?" "Comma" "RightShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" DoubleQuote "Semicolon" "LeftShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" DoubleQuote "Semicolon" "RightShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "<" "Comma" "AltGr" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" ">" "Period" "AltGr" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "." "Period" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "." "KeypadPeriod" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "1" "Alpha1" "RightShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "2" "Alpha2" "RightShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "3" "Alpha3" "RightShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "4" "Alpha4" "RightShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "5" "Alpha5" "RightShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "6" "Alpha6" "RightShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "7" "Alpha7" "RightShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "8" "Alpha8" "RightShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "9" "Alpha9" "RightShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "0" "Alpha0" "LeftShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "1" "Alpha1" "LeftShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "2" "Alpha2" "LeftShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "3" "Alpha3" "LeftShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "4" "Alpha4" "LeftShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "5" "Alpha5" "LeftShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "6" "Alpha6" "LeftShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "7" "Alpha7" "LeftShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "8" "Alpha8" "LeftShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "9" "Alpha9" "LeftShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "0" "Alpha0" "LeftShift" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "1" "Keypad1" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "2" "Keypad2" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "3" "Keypad3" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "4" "Keypad4" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "5" "Keypad5" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "6" "Keypad6" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "7" "Keypad7" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "8" "Keypad8" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "9" "Keypad9" @PRPL_Plus_MakeList
+    "_PRPL_Plus_ListStart_" "0" "Keypad0" @PRPL_Plus_MakeList
+    @PRPL_Plus_MakeList ->guiKeyboardCZ
     #<~keyboardCZ pop #so that PRPL+ doesn't complain that variable is never read from (it is via <~!)
     #blockend
     
     <-guiKeyboardEN ->guiCurrentKeyboard
     
     Self RemoveImages
-    1 OperateWhilePaused
+    #1 OperateWhilePaused - this should be up to the user to decide
 
     0 ->s1___selectedTextField
     "" ->s1___selectedTextFieldName
     
     CreateList ->s1___activeWindow
+    
+    -?TextBindTextSize not if
+        20 ->TextBindTextSize
+    endif
+    
+    -?GuiLineWidth not if
+        0.08333333333 ->GuiLineWidth # 1 / 12
+    endif
+    
+    0 if
+        "" ->GuiImageLayer #get rid of "variable never writen to" warning
+        0 ->GuiImageOrder #get rid of "variable never writen to" warning
+    endif
 endonce
 
 @guiCheckInput
@@ -159,37 +172,37 @@ endonce
 
 once
     #blockstart #GUI window definition
-    "[" "mainbox" 12 -10 250 200 "[" #main window
-        "[" "box" 0 180 250 20 "[" # satus & controll
-            "[" "label" 5 5 30 10 "Ready" "]"
-            "[" "button" 40 5 30 10 "Step Over" "[" "StepOver" "]" "]"
-            "[" "button" 75 5 30 10 "Step Line" "[" "StepLine" "]" "]"
-            "[" "button" 110 5 30 10 "Step Into" "[" "StepInto" "]" "]"
-            "[" "button" 145 5 30 10 "Step Out" "[" "StepOut" "]" "]"
-            "[" "button" 180 5 30 10 "Continue" "[" "Continue" "]" "]"
-            "[" "button" 215 5 30 10 "Break" "[" "Break" "]" "]"
-        "]" "]"
-        "[" "box" 0 100 250 80 "[" # source code
-            "[" "label" 0 70 250 10 "Source code" "]"
-            "[" "label" 0 65 250 10 "Call stack" "]"
-            "[" "label" 0 34 250 30 "Source code (above)" "]"
-            "[" "label" 0 30 250 5 "Source code (commands)" "]"
-            "[" "label" 0 1 250 30 "Source code (bellow)" "]"
-        "]" "]"
-        "[" "box" 0 0 80 100 "[" #stack visualizer
-            "[" "label" 0 90 80 10 "Stack (top)" "]"
-            "[" "label" 0 10 80 80 "Stack (content)" "]"
-            "[" "label" 0 0 80 10 "Stack (bottom)" "]"
-        "]" "]"
-        "[" "box" 80 0 90 100 "[" #variable visualizer
-            "[" "label" 0 90 90 10 "Local variables" "]"
-            "[" "label" 0 0 90 90 "Variables (content)" "]"
-        "]" "]"
-        "[" "box" 170 0 80 100 "[" #list visualizer
-            "[" "label" 0 90 80 10 "Lists" "]"
-            "[" "label" 0 0 80 90 "Lists (content)" "]"
-        "]" "]"
-    "]" "]" @guiMakeListRecursive ->guiWindow
+    "_PRPL_Plus_ListStart_" "mainbox" 12 -10 250 200 "_PRPL_Plus_ListStart_" #main window
+        "_PRPL_Plus_ListStart_" "box" 0 180 250 20 "_PRPL_Plus_ListStart_" # satus & controll
+            "_PRPL_Plus_ListStart_" "label" 5 5 30 10 "Ready" @PRPL_Plus_MakeList
+            "_PRPL_Plus_ListStart_" "button" 40 5 30 10 "Step Over" "_PRPL_Plus_ListStart_" "StepOver" @PRPL_Plus_MakeList @PRPL_Plus_MakeList
+            "_PRPL_Plus_ListStart_" "button" 75 5 30 10 "Step Line" "_PRPL_Plus_ListStart_" "StepLine" @PRPL_Plus_MakeList @PRPL_Plus_MakeList
+            "_PRPL_Plus_ListStart_" "button" 110 5 30 10 "Step Into" "_PRPL_Plus_ListStart_" "StepInto" @PRPL_Plus_MakeList @PRPL_Plus_MakeList
+            "_PRPL_Plus_ListStart_" "button" 145 5 30 10 "Step Out" "_PRPL_Plus_ListStart_" "StepOut" @PRPL_Plus_MakeList @PRPL_Plus_MakeList
+            "_PRPL_Plus_ListStart_" "button" 180 5 30 10 "Continue" "_PRPL_Plus_ListStart_" "Continue" @PRPL_Plus_MakeList @PRPL_Plus_MakeList
+            "_PRPL_Plus_ListStart_" "button" 215 5 30 10 "Break" "_PRPL_Plus_ListStart_" "Break" @PRPL_Plus_MakeList @PRPL_Plus_MakeList
+        @PRPL_Plus_MakeList @PRPL_Plus_MakeList
+        "_PRPL_Plus_ListStart_" "box" 0 100 250 80 "_PRPL_Plus_ListStart_" # source code
+            "_PRPL_Plus_ListStart_" "label" 0 70 250 10 "Source code" @PRPL_Plus_MakeList
+            "_PRPL_Plus_ListStart_" "label" 0 65 250 10 "Call stack" @PRPL_Plus_MakeList
+            "_PRPL_Plus_ListStart_" "label" 0 34 250 30 "Source code (above)" @PRPL_Plus_MakeList
+            "_PRPL_Plus_ListStart_" "label" 0 30 250 5 "Source code (commands)" @PRPL_Plus_MakeList
+            "_PRPL_Plus_ListStart_" "label" 0 1 250 30 "Source code (bellow)" @PRPL_Plus_MakeList
+        @PRPL_Plus_MakeList @PRPL_Plus_MakeList
+        "_PRPL_Plus_ListStart_" "box" 0 0 80 100 "_PRPL_Plus_ListStart_" #stack visualizer
+            "_PRPL_Plus_ListStart_" "label" 0 90 80 10 "Stack (top)" @PRPL_Plus_MakeList
+            "_PRPL_Plus_ListStart_" "label" 0 10 80 80 "Stack (content)" @PRPL_Plus_MakeList
+            "_PRPL_Plus_ListStart_" "label" 0 0 80 10 "Stack (bottom)" @PRPL_Plus_MakeList
+        @PRPL_Plus_MakeList @PRPL_Plus_MakeList
+        "_PRPL_Plus_ListStart_" "box" 80 0 90 100 "_PRPL_Plus_ListStart_" #variable visualizer
+            "_PRPL_Plus_ListStart_" "label" 0 90 90 10 "Local variables" @PRPL_Plus_MakeList
+            "_PRPL_Plus_ListStart_" "label" 0 0 90 90 "Variables (content)" @PRPL_Plus_MakeList
+        @PRPL_Plus_MakeList @PRPL_Plus_MakeList
+        "_PRPL_Plus_ListStart_" "box" 170 0 80 100 "_PRPL_Plus_ListStart_" #list visualizer
+            "_PRPL_Plus_ListStart_" "label" 0 90 80 10 "Lists" @PRPL_Plus_MakeList
+            "_PRPL_Plus_ListStart_" "label" 0 0 80 90 "Lists (content)" @PRPL_Plus_MakeList
+        @PRPL_Plus_MakeList @PRPL_Plus_MakeList
+    @PRPL_Plus_MakeList @PRPL_Plus_MakeList ->guiWindow
     
     <-guiWindow @guiShow
     #blockend
@@ -382,6 +395,7 @@ endonce
     
     # source code commands
     <-s___spaceFiller LF Concat <-s___line @debuggerFormatLine Concat " " Concat
+    "debugger__spaces" <-s___line Concat <-! Concat
     "debugger__commands" <-s___line Concat <-! ->f3___commands
     <-f3___commands GetListCount 0 do
         I <-s___col eq if
@@ -1113,14 +1127,11 @@ endif
 
 :guiCheckInput
 #Listen for mouse clicks
-<-f8___mouseWasDown not 0 GetMouseButton dup ->f8___mouseWasDown and if
-    #TraceStack
-    "Command:" @guiGetLabel "TextBind.prpl" dup2 "TextToShow" "Command:" SetScriptVar
-                                                 "NeedsUpdate" 1 SetScriptVar
+<-f8___mouseWasDown0 not 0 GetMouseButton dup ->f8___mouseWasDown0 and if
     0 ->s1___selectedTextField
+    0 ->GuiMouseButtonPressed
     GetMousePosition ->f8___y ->f8___x
     <-f8___x Self GetUnitPixelCoordX sub <-f8___y Self GetUnitPixelCoordY sub <-s1___activeWindow @guiClickFind
-    #TraceStack
 endif
 
 
@@ -1204,10 +1215,7 @@ pop "" return
 
 
 
-:guiShow #[ list - ]
-#save active window
-dup ->s1___activeWindow
-
+:guiHide # [ - ]
 #delete all old text-binds
 "TextBindCoreId" Self GETCORESWITHVAR 0 do
     0 DestroyUnit
@@ -1215,6 +1223,16 @@ loop
 
 #remove images, they will be re-generated
 Self RemoveImages
+
+
+
+
+:guiShow #[ list - ]
+#save active window
+dup ->s1___activeWindow
+
+#delete the old gui
+@guiHide
 
 #now draw the GUI
 @guiDrawElements
@@ -1225,26 +1243,26 @@ Self RemoveImages
 #blockstart #drawing
 #draws elements [ rootElement - ]
 :guiDrawElements #[ list - ]
-0 0 100 4 @guiMakeList ->f12___list # [e1, x1, y1, d1, e2, x2, y2, d2, ...]
-0 ->f12___i4
-100 ->f12___depth
-while <-f12___i4 <-f12___list GetListCount lt repeat
-    <-f12___list[<-f12___i4] ->f12___el
-    <-f12___list[<-f12___i4 1 add] <-f12___el[1] add ->f12___x
-    <-f12___list[<-f12___i4 2 add] <-f12___el[2] add ->f12___y
-    <-f12___list[<-f12___i4 3 add] ->f12___depth
+"_PRPL_Plus_ListStart_" swap 0 0 100 @PRPL_Plus_MakeList ->f13___list # [e1, x1, y1, d1, e2, x2, y2, d2, ...]
+0 ->f13___i4
+100 ->f13___depth
+while <-f13___i4 <-f13___list GetListCount lt repeat
+    <-f13___list[<-f13___i4] ->f13___el
+    <-f13___list[<-f13___i4 1 add] <-f13___el[1] add ->f13___x
+    <-f13___list[<-f13___i4 2 add] <-f13___el[2] add ->f13___y
+    <-f13___list[<-f13___i4 3 add] ->f13___depth
     
-    <-f12___depth <-f12___x <-f12___y <-f12___el @guiDrawImage
-    <-f12___el[0] "box" eq <-f12___el[0] "mainbox" eq or if
-        <-f12___el[5] dup GetListCount 0 do
-            dup[I] <-f12___list swap AppendToList
-            <-f12___list <-f12___x AppendToList
-            <-f12___list <-f12___y AppendToList
-            <-f12___list <-f12___depth 5 sub AppendToList
+    <-f13___depth <-f13___x <-f13___y <-f13___el @guiDrawImage
+    <-f13___el[0] "box" eq <-f13___el[0] "mainbox" eq or if
+        <-f13___el[5] dup GetListCount 0 do
+            dup[I] <-f13___list swap AppendToList
+            <-f13___list <-f13___x AppendToList
+            <-f13___list <-f13___y AppendToList
+            <-f13___list <-f13___depth 5 sub AppendToList
         loop
         pop
     endif
-    <-f12___i4 4 add ->f12___i4
+    <-f13___i4 4 add ->f13___i4
 endwhile
 
 
@@ -1252,103 +1270,99 @@ endwhile
 
 :guiDrawImage #[ int float float list - ]
 #get position and size
-->f13___el <-f13___el[3] ->f13___width <-f13___el[4] ->f13___height
-<-f13___height 2.0 div add ->f13___y <-f13___width 2.0 div add ->f13___x ->f13___depth
+->f14___el <-f14___el[3] ->f14___width <-f14___el[4] ->f14___height
+<-f14___height 2.0 div add ->f14___y <-f14___width 2.0 div add ->f14___x ->f14___depth
 
-<-f13___el[0] "label" neq if
+<-f14___el[0] "label" neq if
+    <-f14___el[0] "mainbox" eq <-f14___el[0] "button" eq or ->f14___hasBg
     #get square
-    <-f13___el[0] "mainbox" eq if 
-    "guifill"        <-f13___imgCount 1 add dup ->f13___imgCount concat ->f13___fillName endif
-    "guibordertop"   <-f13___imgCount 1 add dup ->f13___imgCount concat ->f13___borderNameTop
-    "guiborderright" <-f13___imgCount 1 add dup ->f13___imgCount concat ->f13___borderNameRight
-    "guiborderdown"  <-f13___imgCount 1 add dup ->f13___imgCount concat ->f13___borderNameDown
-    "guiborderleft"  <-f13___imgCount 1 add dup ->f13___imgCount concat ->f13___borderNameLeft
-   #guilefttop"     <+imgCount 1 add dup +>imgCount concat +>borderNameLeftTop
-   #guirighttop"    <+imgCount 1 add dup +>imgCount concat +>borderNameRightTop
-   #guileftdown"    <+imgCount 1 add dup +>imgCount concat +>borderNameLeftDown
-   #guirightdown"   <+imgCount 1 add dup +>imgCount concat +>borderNameRightDown
-
-    <-f13___el[0] "mainbox" eq if
-    Self <-f13___fillName            <-ImgSquareFull SetImage endif
-    Self <-f13___borderNameTop       <-ImgSquareFull SetImage
-    Self <-f13___borderNameRight     <-ImgSquareFull SetImage
-    Self <-f13___borderNameDown      <-ImgSquareFull SetImage
-    Self <-f13___borderNameLeft      <-ImgSquareFull SetImage
-   #Self <+borderNameLeftTop   <-ImgSquareFull SetImage
-   #Self <+borderNameRightTop  <-ImgSquareFull SetImage
-   #Self <+borderNameLeftDown  <-ImgSquareFull SetImage
-   #Self <+borderNameRightDown <-ImgSquareFull SetImage
+    <-f14___hasBg if
+    "guifill"        <-f14___imgCount 1 add dup ->f14___imgCount concat ->f14___fillName endif
+    "guibordertop"   <-f14___imgCount 1 add dup ->f14___imgCount concat ->f14___borderNameTop
+    "guiborderright" <-f14___imgCount 1 add dup ->f14___imgCount concat ->f14___borderNameRight
+    "guiborderdown"  <-f14___imgCount 1 add dup ->f14___imgCount concat ->f14___borderNameDown
+    "guiborderleft"  <-f14___imgCount 1 add dup ->f14___imgCount concat ->f14___borderNameLeft
+    
+    <-f14___hasBg if
+    Self <-f14___fillName            <-ImgSquareFull SetImage endif
+    Self <-f14___borderNameTop       <-ImgSquareFull SetImage
+    Self <-f14___borderNameRight     <-ImgSquareFull SetImage
+    Self <-f14___borderNameDown      <-ImgSquareFull SetImage
+    Self <-f14___borderNameLeft      <-ImgSquareFull SetImage
 
     #set colors, pos and whatnot
-    <-f13___el[0] "mainbox" eq if
-    Self <-f13___fillName            <-guiFillRed   <-guiFillGreen   <-guiFillBlue   255 SetImageColor endif
-    Self <-f13___borderNameTop       <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
-    Self <-f13___borderNameRight     <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
-    Self <-f13___borderNameDown      <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
-    Self <-f13___borderNameLeft      <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
-   #Self <+borderNameLeftTop   <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
-   #Self <+borderNameRightTop  <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
-   #Self <+borderNameLeftDown  <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
-   #Self <+borderNameRightDown <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
-
-    <-f13___x <-f13___width  2.0 div add ->f13___xpw
-    <-f13___x <-f13___width  2.0 div sub ->f13___xmw
-    <-f13___y <-f13___height 2.0 div add ->f13___yph
-    <-f13___y <-f13___height 2.0 div sub ->f13___ymh
+    <-f14___hasBg if
+    Self <-f14___fillName            <-guiFillRed   <-guiFillGreen   <-guiFillBlue   255 SetImageColor endif
+    Self <-f14___borderNameTop       <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
+    Self <-f14___borderNameRight     <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
+    Self <-f14___borderNameDown      <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
+    Self <-f14___borderNameLeft      <-guiBorderRed <-guiBorderGreen <-guiBorderBlue 255 SetImageColor
     
-    <-f13___el[0] "mainbox" eq if
-    Self <-f13___fillName            <-f13___x <-f13___y     <-f13___depth SetImagePosition endif
-    Self <-f13___borderNameTop       <-f13___x <-f13___yph   <-f13___depth 1 sub SetImagePosition
-    Self <-f13___borderNameRight     <-f13___xpw <-f13___y   <-f13___depth 1 sub SetImagePosition
-    Self <-f13___borderNameDown      <-f13___x <-f13___ymh   <-f13___depth 1 sub SetImagePosition
-    Self <-f13___borderNameLeft      <-f13___xmw <-f13___y   <-f13___depth 1 sub SetImagePosition
-   #Self <+borderNameLeftTop   <+xmw <+yph <+depth 1 sub SetImagePosition
-   #Self <+borderNameRightTop  <+xpw <+yph <+depth 1 sub SetImagePosition
-   #Self <+borderNameLeftDown  <+xmw <+ymh <+depth 1 sub SetImagePosition
-   #Self <+borderNameRightDown <+xpw <+ymh <+depth 1 sub SetImagePosition
-   
-    <-f13___width  12.0 div 0.08333333333 add ->f13___w # 1 / 12
-    <-f13___height 12.0 div 0.08333333333 add ->f13___h
-
-    <-f13___el[0] "mainbox" eq if
-    Self <-f13___fillName            <-f13___w <-f13___h                     SetImageScale endif
-    Self <-f13___borderNameTop       <-f13___w 0.08333333333           SetImageScale # 1 / 12
-    Self <-f13___borderNameRight     0.08333333333 <-f13___h           SetImageScale
-    Self <-f13___borderNameDown      <-f13___w 0.08333333333           SetImageScale
-    Self <-f13___borderNameLeft      0.08333333333 <-f13___h           SetImageScale
-   #Self <+borderNameLeftTop   0.05892556509 0.05892556509 SetImageScale # sqrt(2)/2 /12
-   #Self <+borderNameRightTop  0.05892556509 0.05892556509 SetImageScale
-   #Self <+borderNameLeftDown  0.05892556509 0.05892556509 SetImageScale
-   #Self <+borderNameRightDown 0.05892556509 0.05892556509 SetImageScale
+    <-f14___x <-f14___width  2.0 div add ->f14___xpw
+    <-f14___x <-f14___width  2.0 div sub ->f14___xmw
+    <-f14___y <-f14___height 2.0 div add ->f14___yph
+    <-f14___y <-f14___height 2.0 div sub ->f14___ymh
     
-   #Self <+borderNameLeftTop   0.785398 SetImageRotation
-   #Self <+borderNameRightTop  0.785398 SetImageRotation
-   #Self <+borderNameLeftDown  0.785398 SetImageRotation
-   #Self <+borderNameRightDown 0.785398 SetImageRotation
+    <-f14___hasBg if
+    Self <-f14___fillName            <-f14___x <-f14___y     <-f14___depth SetImagePosition endif
+    Self <-f14___borderNameTop       <-f14___x <-f14___yph   <-f14___depth 1 sub SetImagePosition
+    Self <-f14___borderNameRight     <-f14___xpw <-f14___y   <-f14___depth 1 sub SetImagePosition
+    Self <-f14___borderNameDown      <-f14___x <-f14___ymh   <-f14___depth 1 sub SetImagePosition
+    Self <-f14___borderNameLeft      <-f14___xmw <-f14___y   <-f14___depth 1 sub SetImagePosition
+    
+    <-f14___width  12.0 div <-GuiLineWidth add ->f14___w # 1 / 12
+    <-f14___height 12.0 div <-GuiLineWidth add ->f14___h
+
+    <-f14___hasBg if
+    Self <-f14___fillName            <-f14___w <-f14___h                     SetImageScale endif
+    Self <-f14___borderNameTop       <-f14___w <-GuiLineWidth          SetImageScale # 1 / 12
+    Self <-f14___borderNameRight     <-GuiLineWidth  <-f14___h         SetImageScale
+    Self <-f14___borderNameDown      <-f14___w <-GuiLineWidth          SetImageScale
+    Self <-f14___borderNameLeft      <-GuiLineWidth <-f14___h          SetImageScale
+    
+    -?GuiImageLayer if
+        <-f14___hasBg if
+        Self <-f14___fillName        <-GuiImageLayer SetImageLayer endif
+        Self <-f14___borderNameTop   <-GuiImageLayer SetImageLayer # 1 / 12
+        Self <-f14___borderNameRight <-GuiImageLayer SetImageLayer
+        Self <-f14___borderNameDown  <-GuiImageLayer SetImageLayer
+        Self <-f14___borderNameLeft  <-GuiImageLayer SetImageLayer
+    endif
+    
+    -?GuiImageOrder if
+        <-f14___hasBg if
+        Self <-f14___fillName        <-GuiImageOrder SetImageOrder endif
+        Self <-f14___borderNameTop   <-GuiImageOrder SetImageOrder # 1 / 12
+        Self <-f14___borderNameRight <-GuiImageOrder SetImageOrder
+        Self <-f14___borderNameDown  <-GuiImageOrder SetImageOrder
+        Self <-f14___borderNameLeft  <-GuiImageOrder SetImageOrder
+    endif
+    
 endif
 
-<-f13___el[0] "label" eq <-f13___el[0] "button" eq <-f13___el[0] "input" eq or or if
-    "PRPLCORE" 0 0 CreateUnit ->f13___textUnit
-    <-f13___textUnit "TextBind.prpl" AddScriptToUnit
-    <-f13___textUnit "TextBind.prpl" "TextBindCoreId" Self SetScriptVar
-    <-f13___textUnit "TextBind.prpl" "TextToShow" <-f13___el[5] SetScriptVar
-    <-f13___textUnit "TextBind.prpl" "TextX" <-f13___x 2 sub SetScriptVar
-    <-f13___textUnit "TextBind.prpl" "TextY" <-f13___y 2 sub SetScriptVar
+<-f14___el[0] "label" eq <-f14___el[0] "button" eq <-f14___el[0] "input" eq or or if
+    "PRPLCORE" 0 0 CreateUnit ->f14___textUnit
+    <-f14___textUnit "TextBind.prpl" AddScriptToUnit
+    <-f14___textUnit "TextBind.prpl" "TextBindCoreId" Self SetScriptVar
+    <-f14___textUnit "TextBind.prpl" "TextToShow" <-f14___el[5] SetScriptVar
+    <-f14___textUnit "TextBind.prpl" "TextX" <-f14___x 2 sub SetScriptVar
+    <-f14___textUnit "TextBind.prpl" "TextY" <-f14___y 2 sub SetScriptVar
+    <-f14___textUnit "TextBind.prpl" "TextSize" <-TextBindTextSize SetScriptVar
 endif
 
-<-f13___el[0] "input" eq if
-    <-f13___el[5] <-f13___textUnit @guiRegisterInput
-    <-f13___textUnit "TextBind.prpl" dup2 "TextToShow" "" SetScriptVar
+<-f14___el[0] "input" eq if
+    <-f14___el[5] <-f14___textUnit @guiRegisterInput
+    <-f14___textUnit "TextBind.prpl" "TextToShow" "" SetScriptVar
 endif
 
-<-f13___el[0] "label" eq if
-    <-f13___el[5] <-f13___textUnit @guiRegisterLabel
+<-f14___el[0] "label" eq if
+    <-f14___el[5] <-f14___textUnit @guiRegisterLabel
 endif
 
-<-f13___el[0] "button" eq if
-    <-f13___el[5] <-f13___textUnit @guiRegisterButton
+<-f14___el[0] "button" eq if
+    <-f14___el[5] <-f14___textUnit @guiRegisterButton
+    <-f14___el[5] <-f14___fillName @guiRegisterButtonBackground
 endif
-
 
 #blockend
 
@@ -1361,35 +1375,35 @@ endif
 
 #starts with mouse position relative to the core [x y element]
 :guiClickFind # [ float float list - ]
-->f14___e ->f14___y ->f14___x <-f14___e <-f14___x <-f14___y 3 @guiMakeList ->f14___list # [e1, x1, y1, e2, x2, y2, ...]
-0 ->f14___i3
-while <-f14___i3 <-f14___list GetListCount lt repeat
-    <-f14___list[<-f14___i3] ->f14___el
-    <-f14___list[<-f14___i3 1 add] <-f14___el[1] sub ->f14___mx
-    <-f14___list[<-f14___i3 2 add] <-f14___el[2] sub ->f14___my
+->f15___e ->f15___y ->f15___x <-f15___e <-f15___x <-f15___y 3 @guiMakeList ->f15___list # [e1, x1, y1, e2, x2, y2, ...]
+0 ->f15___i3
+while <-f15___i3 <-f15___list GetListCount lt repeat
+    <-f15___list[<-f15___i3] ->f15___el
+    <-f15___list[<-f15___i3 1 add] <-f15___el[1] sub ->f15___mx
+    <-f15___list[<-f15___i3 2 add] <-f15___el[2] sub ->f15___my
     
-    <-f14___mx 0 gte <-f14___my 0 gte <-f14___mx <-f14___el[3] lt <-f14___my <-f14___el[4] lt and and and if
-        <-f14___el[0] "box" eq <-f14___el[0] "mainbox" eq or if
-            <-f14___el[5] dup GetListCount 0 do
-                dup[I] <-f14___list swap AppendToList
-                <-f14___list <-f14___mx AppendToList
-                <-f14___list <-f14___my AppendToList
+    <-f15___mx 0 gte <-f15___my 0 gte <-f15___mx <-f15___el[3] lt <-f15___my <-f15___el[4] lt and and and if
+        <-f15___el[0] "box" eq <-f15___el[0] "mainbox" eq or if
+            <-f15___el[5] dup GetListCount 0 do
+                dup[I] <-f15___list swap AppendToList
+                <-f15___list <-f15___mx AppendToList
+                <-f15___list <-f15___my AppendToList
             loop
             pop
         endif
-        <-f14___el[0] "button" eq if
-            <-f14___el[6] @guiDumpList @guiEventDispatch
+        <-f15___el[0] "button" eq if
+            <-f15___el[6] @guiDumpList @guiEventDispatch
             return
         endif
-        <-f14___el[0] "input" eq if
-            <-f14___el[5] ->s1___selectedTextFieldName
-            <-f14___el[5] @guiGetInput ->s1___selectedTextField
-            <-f14___el[5] "InputFocus" @guiEventDispatch
+        <-f15___el[0] "input" eq if
+            <-f15___el[5] ->s1___selectedTextFieldName
+            <-f15___el[5] @guiGetInput ->s1___selectedTextField
+            <-f15___el[5] "InputFocus" @guiEventDispatch
             return
         endif
     endif
     
-    <-f14___i3 3 add ->f14___i3
+    <-f15___i3 3 add ->f15___i3
 endwhile
 
 
@@ -1397,27 +1411,35 @@ endwhile
 
 #registers input [ name textBindUid ]
 :guiRegisterInput # [ string int - ]
-swap "f15___" swap Concat ->!
+swap "f16___" swap Concat ->!
 
 :guiGetInput # [ string - int ]
 #sharenamespace
-"f15___" swap Concat <-!
+"f16___" swap Concat <-!
 
 #registers label [ name textBindUid ]
 :guiRegisterLabel # [ string int - ]
-swap "f16___" swap Concat ->!
+swap "f17___" swap Concat ->!
 
 :guiGetLabel # [ string - int ]
 #sharenamespace
-"f16___" swap Concat <-!
+"f17___" swap Concat <-!
 
 #registers button [ name textBindUid ]
 :guiRegisterButton # [ string int - ]
-swap "f17___" swap Concat ->!
+swap "f18___" swap Concat ->!
 
 :guiGetButton # [ string - int ]
 #sharenamespace
-"f17___" swap Concat <-!
+"f18___" swap Concat <-!
+
+#registers button background [ buttonName imageName ]
+:guiRegisterButtonBackground # [ string string - ]
+swap "f19___" swap Concat ->!
+
+:guiGetButtonBackground # [ string - int ]
+#sharenamespace
+"f19___" swap Concat <-!
 
 
 
@@ -1428,11 +1450,11 @@ swap "f17___" swap Concat ->!
 
 #makes list from N arguments, ex: 1 2 3 3 @guiMakeList -> [1, 2, 3]
 :guiMakeList # [ ... int - list ]
-CreateList ->f18___list 
+CreateList ->f20___list 
 0 do
-    <-f18___list swap PrependToList
+    <-f20___list swap PrependToList
 loop
-<-f18___list #return
+<-f20___list #return
 
 
 
@@ -1449,12 +1471,12 @@ pop
 
 # makes list recurively with { elems... "]" format
 :guiMakeListRecursive # [ string ... string - list]
-CreateList ->f20___currentList
-CreateList ->f20___listStack #stack of all lists except current list
+CreateList ->f22___currentList
+CreateList ->f22___listStack #stack of all lists except current list
 
 dup "]" neq if
     "Warning: expecting ']' on top of the stack." Trace
-    <-f20___currentList return
+    <-f22___currentList return
 else
     pop
 endif
@@ -1462,25 +1484,25 @@ endif
 while StackSize 0 gt repeat
     dup dup GetType "STRING" eq swap "]" eq and if
         pop
-        <-f20___listStack <-f20___currentList PrependToList
-        CreateList ->f20___currentList
+        <-f22___listStack <-f22___currentList PrependToList
+        CreateList ->f22___currentList
     else dup dup GetType "STRING" eq swap "[" eq and if
         pop
-        <-f20___listStack GetListCount 0 gt if
-            <-f20___listStack[0] <-f20___currentList PrependToList
-            <-f20___listStack[0] ->f20___currentList
-            <-f20___listStack 0 RemoveListElement
+        <-f22___listStack GetListCount 0 gt if
+            <-f22___listStack[0] <-f22___currentList PrependToList
+            <-f22___listStack[0] ->f22___currentList
+            <-f22___listStack 0 RemoveListElement
         else
-            <-f20___currentList return
+            <-f22___currentList return
         endif
     else
-        <-f20___currentList swap PrependToList
+        <-f22___currentList swap PrependToList
     endif
     endif
 endwhile
 
 "Error: malformed list notation format, the entire stack was destroyed!" Trace
-<-f20___currentList
+<-f22___currentList
 
 # -- Functions from 'c:\Users\Karel\Documents\My Games\particlefleet\editor\lib\Invoke.prpl+' -- #
 
@@ -1524,13 +1546,13 @@ endif
 ######################################################################
 
 :invokeRegisterVariable # [ string - ]
-->f25___varName
+->f27___varName
 <-invokeUsedVariables dup GetListCount 0 do
-    dup[I] <-f25___varName eq if
+    dup[I] <-f27___varName eq if
         pop return #variable already registerer
     endif
 loop
-<-f25___varName AppendToList
+<-f27___varName AppendToList
 
 
 
@@ -3251,72 +3273,72 @@ endif
 #dup "My word is" swap Trace2
 
 #try parse as number
-0 ->f28___value
-0 ->f28___float # position of the float point + 1
+0 ->f30___value
+0 ->f30___float # position of the float point + 1
 dup StringLength 0 do
-    0 ->f28___valid
+    0 ->f30___valid
     dup I 1 SubString #leave char on stack
     #dup "My char is" swap Trace2
     dup "0" eq if
-        <-f28___value 10 mul 0 add ->f28___value
-        1 ->f28___valid
+        <-f30___value 10 mul 0 add ->f30___value
+        1 ->f30___valid
     endif
     #blockstart
     dup "1" eq if
-        <-f28___value 10 mul 1 add ->f28___value
-        1 ->f28___valid
+        <-f30___value 10 mul 1 add ->f30___value
+        1 ->f30___valid
     endif
     dup "2" eq if
-        <-f28___value 10 mul 2 add ->f28___value
-        1 ->f28___valid
+        <-f30___value 10 mul 2 add ->f30___value
+        1 ->f30___valid
     endif
     dup "3" eq if
-        <-f28___value 10 mul 3 add ->f28___value
-        1 ->f28___valid
+        <-f30___value 10 mul 3 add ->f30___value
+        1 ->f30___valid
     endif
     dup "4" eq if
-        <-f28___value 10 mul 4 add ->f28___value
-        1 ->f28___valid
+        <-f30___value 10 mul 4 add ->f30___value
+        1 ->f30___valid
     endif
     dup "5" eq if
-        <-f28___value 10 mul 5 add ->f28___value
-        1 ->f28___valid
+        <-f30___value 10 mul 5 add ->f30___value
+        1 ->f30___valid
     endif
     dup "6" eq if
-        <-f28___value 10 mul 6 add ->f28___value
-        1 ->f28___valid
+        <-f30___value 10 mul 6 add ->f30___value
+        1 ->f30___valid
     endif
     dup "7" eq if
-        <-f28___value 10 mul 7 add ->f28___value
-        1 ->f28___valid
+        <-f30___value 10 mul 7 add ->f30___value
+        1 ->f30___valid
     endif
     dup "8" eq if
-        <-f28___value 10 mul 8 add ->f28___value
-        1 ->f28___valid
+        <-f30___value 10 mul 8 add ->f30___value
+        1 ->f30___valid
     endif
     #blockend
     dup "9" eq if
-        <-f28___value 10 mul 9 add ->f28___value
-        1 ->f28___valid
+        <-f30___value 10 mul 9 add ->f30___value
+        1 ->f30___valid
     endif
     dup "." eq if
-        <-f28___float 0 eq if
-            I 1 add ->f28___float
-            1 ->f28___valid
+        <-f30___float 0 eq if
+            I 1 add ->f30___float
+            1 ->f30___valid
         endif
     endif
     
     pop #remove the char
-    <-f28___valid eq0 if
+    <-f30___valid eq0 if
         #dup "found invalid char:" swap Trace2
         pop #remove the parsed word
         0 return #return FAIL
     endif
 loop
 
-<-f28___float 0 gt if
+<-f30___float 0 gt if
     1 #leave exponent on stack
-    swap StringLength <-f28___float do
+    swap StringLength <-f30___float do
         10 mul
     loop
     dup 1 eq if
@@ -3324,36 +3346,36 @@ loop
         pop #remove the exponent
         0 return #return FAIL
     endif
-    <-f28___value asfloat swap div ->f28___value
+    <-f30___value asfloat swap div ->f30___value
 else
     pop #remove the word
 endif
 
-<-f28___value 1 return #return value and SUCCESS
+<-f30___value 1 return #return value and SUCCESS
 
 
 
 
 #invokes command
 :invoke # [ ? string - ? ]
-->f29___command
-<-f29___command "" eq if
+->f31___command
+<-f31___command "" eq if
     return
 endif
-<-f29___command @tryInvokePush if
+<-f31___command @tryInvokePush if
     return
 endif
-<-f29___command @tryInvokeCommand if
+<-f31___command @tryInvokeCommand if
     return
 endif
-<-f29___command @tryInvokeVariable if
+<-f31___command @tryInvokeVariable if
     return
 endif
-<-f29___command "@" StartsWith if
-    <-f29___command @invokeUserFunction
+<-f31___command "@" StartsWith if
+    <-f31___command @invokeUserFunction
     return
 endif
-"Failed to invoke command:" <-f29___command Trace2
+"Failed to invoke command:" <-f31___command Trace2
 
 
 
@@ -3378,22 +3400,34 @@ pop CreateList ->invokeUsedVariables #create a new list instead of clearing the 
 
 :getListId # list - int
     <-listRegistry GetListCount 0 do
-        dup <-listRegistry[I] "f32___" swap Concat <-! @listRefEquals if
+        dup <-listRegistry[I] "f34___" swap Concat <-! @listRefEquals if
             pop <-listRegistry[I] return
         endif
     loop
-    <-s4___nextFreeId "f32___" swap Concat ->! #save the list into a local variable
+    <-s4___nextFreeId "f34___" swap Concat ->! #save the list into a local variable
     <-listRegistry <-s4___nextFreeId AppendToList #append the variable name into the registry
     <-s4___nextFreeId dup 1 add ->s4___nextFreeId #increment the list id counter, but return the original value (dup)
 
 
 :getListById # int - list
     #sharenamespace
-    dup "f32___" swap Concat -?! if
-        "f32___" swap Concat <-! return #return the lists if it exists
+    dup "f34___" swap Concat -?! if
+        "f34___" swap Concat <-! return #return the lists if it exists
     endif
     "Warning: trying to get a lsit with non-existing ID:" swap Trace2
     CreateList #return a new empty unregistered list
     
     
     
+
+:PRPL_Plus_MakeList
+CreateList #put an empty list on top of the stack
+while StackSize 0 gt repeat
+    swap
+    dup dup GetType "STRING" eq swap "_PRPL_Plus_ListStart_" eq and if
+        pop return
+    endif
+    dup2 PrependToList
+    pop
+endwhile
+"Error: your list syntax was not correct and the entire stack was destroyed!" Trace

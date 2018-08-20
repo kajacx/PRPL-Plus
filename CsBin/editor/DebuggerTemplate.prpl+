@@ -39,7 +39,7 @@ once
             { "label" 0 90 80 10 "Lists" }
             { "label" 0 0 80 90 "Lists (content)" }
         } }
-    } } @guiMakeListRecursive ->guiWindow
+    } } ->guiWindow
     
     <-guiWindow @guiShow
     %blockend
@@ -232,6 +232,7 @@ endonce
     
     # source code commands
     <~spaceFiller LF Concat <~line @debuggerFormatLine Concat " " Concat
+    "debugger__spaces" <~line Concat <-! Concat
     "debugger__commands" <~line Concat <-! +>commands
     <+commands GetListCount 0 do
         I <~col eq if

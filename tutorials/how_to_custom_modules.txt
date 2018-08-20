@@ -3,8 +3,10 @@ How to use:
  - Custom modules are not exported to base-64 nor to the ".dat" file
  - However, when you "Save as", you will get the list of your custom modules,
     as well as the center point of the command module.
- - Also you will get a "ModuleAdder.prpl" script in the same folder,
+ - Also you will get a "zz_adder_[ModuleName].prpl" script in the same folder,
     which serves as the "Master.prpl" script from planetfall's custom module solution
+ - Also you will get a "zz_robot_[ModuleName].prpl" script in the same folder,
+    which you can use to add the modules on NPC ships
  - Custom modules are loaded correctly when you "Load from" a file
  - Unknown modules are displayed as a 1x1 question mark (when loading from a file)
 

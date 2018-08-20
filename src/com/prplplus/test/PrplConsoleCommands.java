@@ -19,22 +19,61 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class PrplConsoleCommands {
-    public static final boolean testMode = true;
+    public static boolean testMode = false;
+    public static String language;
 
-    public static final String wikiUrl = "https://knucklecracker.com/wiki/doku.php?id=prpl:prplreference";
-    public static final String wikiBaseUrl = "https://knucklecracker.com";
+    public static String wikiUrl;
+    public static String wikiBaseUrl = "https://knucklecracker.com";
 
-    public static final boolean useCache = true;
-    public static final String seriablizedPath = "wiki_serialized.dat";
+    public static boolean useCache = false;
+    public static String serializedPath;
 
     private static Queue<Runnable> queue = new ConcurrentLinkedQueue<>();
 
     public static void main(String[] args) throws Exception {
+        //set to PF
+        wikiUrl = "https://knucklecracker.com/wiki/doku.php?id=prpl:prplreference";
+        serializedPath = "wiki_prpl_serialized.dat";
+        language = "PRPL";
+
+        //set to CW3
+        //wikiUrl = "https://knucklecracker.com/wiki/doku.php?id=crpl:crplreference";
+        //serializedPath = "wiki_crpl_serialized.dat";
+        //language = "CRPL";
+
+
         List<ProcessedTable> tables = loadTables();
 
         System.out.println("CreateList ~>wikiTables");
         System.out.println();
         tables.forEach(PrplConsoleCommands::printTable);
+
+        /*System.out.println("<?xml version=\"1.0\" encoding=\"Utf-8\" ?>\r\n" +
+                "<NotepadPlus>\r\n" +
+                "\t<AutoComplete language=\"" + language + "\">");
+        for (ProcessedTable table : tables) {
+            for (Command c : table.commands) {
+                System.out.format("\t\t<KeyWord name=\"%s\" func=\"yes\">%n", c.name);
+                System.out.format("\t\t\t<Overload retVal=\"%s\" descr=\"%s%n%s\">%n", escapeParam(c.output), escapeParam(c.notation), escapeParam(c.description));
+                if (c.input != null && !c.input.trim().isEmpty()) {
+                    System.out.format("\t\t\t\t<Param name=\"%s\" />%n", c.input);
+                }
+                System.out.format("\t\t\t</Overload>%n");
+                System.out.format("\t\t</KeyWord>%n");
+                //System.out.format("#%s%n", c.name, c.input.replace(" ", ""));
+                //System.out.format("#%s-%s-%s-%s%n", c.name, c.input.replace(" ", "_"), c.output.replace(" ", "_"), c.notation.replace(" ", "_"));
+                //System.out.format("#%s%s%n", c.name, c.notation.replace(" ", "_").replace("[", "-").replace("]", ""));
+            }
+        }
+        System.out.println("\t</AutoComplete>\r\n" +
+                "</NotepadPlus>");*/
+    }
+
+    public static String escapeParam(String param) {
+        if (param == null) {
+            return "";
+        }
+        return param.replace("&", "&amp;").replace("\"", "&quot;");
     }
 
     public static void printTable(ProcessedTable table) {
@@ -95,7 +134,7 @@ public class PrplConsoleCommands {
 
         if (useCache) {
             try {
-                ObjectInputStream ois = new ObjectInputStream(new FileInputStream(seriablizedPath));
+                ObjectInputStream ois = new ObjectInputStream(new FileInputStream(serializedPath));
                 tables = (List<ProcessedTable>) ois.readObject();
                 ois.close();
             } catch (IOException ex) {
@@ -123,7 +162,7 @@ public class PrplConsoleCommands {
                 testMax = queue.size();
             }
 
-            Thread[] workers = new Thread[12];
+            Thread[] workers = new Thread[24];
             for (int i = 0; i < workers.length; i++) {
                 workers[i] = new Thread(() -> {
                     Runnable job;
@@ -141,7 +180,7 @@ public class PrplConsoleCommands {
                 workers[i].join();
             }
 
-            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(seriablizedPath));
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(serializedPath));
             oos.writeObject(tables);
             oos.close();
         }

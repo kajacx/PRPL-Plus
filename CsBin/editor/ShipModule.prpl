@@ -1,0 +1,88 @@
+# --ShipModule-- 06/29/2016 20:02:50
+
+$Ship:-1
+$width:0
+$height:0
+$hullX:0
+$hullY:0
+$CommandX:0
+$CommandY:0
+$BuildCost:0
+
+<-Ship -1 eq if
+	"RecompileDel" trace
+	Self 0 DestroyUnit # kill on recompile.
+endif
+
+<-Ship GetShipIsDestroyed if
+	"ShipLost" trace
+	Self 0 DestroyUnit
+endif
+
+IsPaused if
+	return
+endif
+
+once
+	<-hullX <-width 2.0 div add 0.5 sub ->centerX
+	<-hullY <-height 2.0 div add 0.5 sub ->centerY
+	<-hullX <-width add ->maxX
+	<-hullY <-height add ->maxY
+	<-centerY <-CommandY sub <-centerX <-CommandX sub atan2 ->theta
+	<-centerY <-centerX <-CommandY <-CommandX Distance 4 mul ->arr
+endonce
+
+0 ->destflag
+
+<-maxX <-hullX do
+	<-maxY <-hullY do
+		<-Ship J I GetShipHullSectionBuilt eq0 if
+			1 ->destflag
+			break
+		endif
+	loop
+	<-destflag if
+		break
+	endif
+loop
+
+<-destflag if
+	0 ->exist
+	return
+else
+	<-exist eq0 if
+		1 ->exist
+		0 ->buildProgress
+	endif
+endif
+
+<-exist 1 eq if
+	<-timer 0 lte if
+		<-Ship.ShipEnergy 1 gte if
+			<-Ship.ShipEnergy 1 sub ->Ship.ShipEnergy
+			<-buildProgress 1 add ->buildProgress
+			<-buildProgress <-BuildCost eq if
+				2 ->exist
+				"build complete!" trace
+			endif
+			15 ->timer
+		endif
+	else
+		<-timer 1 sub ->timer
+	endif
+endif
+
+<-Ship.ShipRotation ->ShipAngle
+<-ShipAngle <-Heading sub ->delta
+<-ShipAngle ->Heading
+
+Self CONST_PIXELCOORDX <-Ship.ShipPixelCoordX <-ShipAngle <-theta add cos <-arr mul add SetAttribute
+Self CONST_PIXELCOORDY <-Ship.ShipPixelCoordY <-ShipAngle <-theta add sin <-arr mul add SetAttribute
+
+:awake
+	1 OperateWhilePaused
+	once
+		Self "main" "Ships" SetImageLayer
+		Self "main" 1 SetImageOrder
+		Self CONST_TAKEMAPSPACE 0 SetAttribute
+	endonce
